@@ -1,0 +1,11 @@
+SCR_BaseGameMode : "{1B76F75A3175E85C}Prefabs/MP/Modes/Plain/GameMode_Plain.et" {
+ ID "56B2B479C6B96951"
+ components {
+  ZW_ObjectivesComponent "{6AE53027676CF91B}" {
+  }
+  ZW_TicketsComponent "{6AE5302757FE3B04}" {
+  }
+  ZW_TimerComponent "{6AE530275D000CF0}" {
+  }
+ }
+}
