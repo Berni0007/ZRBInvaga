@@ -3,14 +3,17 @@ SCR_FactionManager FactionManager_USxUSSR1 : "{589540B35EBA8CDC}Prefabs/MP/Manag
 }
 SCR_BaseGameMode GameMode_ZW_Invasion1 : "{BEECC6DCCEF65323}Prefabs/MP/Modes/Plain/GameMode_ZW_Invasion.et" {
  components {
-  SCR_CaptureAndHoldManager "{6AE53023D2AFE041}" {
-  }
   ZW_ObjectivesComponent "{6AE53027676CF91B}" {
    m_sAttackerFactionKey "US"
    m_sDefenderFactionKey "USSR"
   }
   ZW_TimerComponent "{6AE530275D000CF0}" {
    m_iPrepSeconds 10
+  }
+  ZW_RallyManagerComponent "{6AE5B7D2C41A8E37}" {
+   m_bDebugSkipBuddy 1
+   m_bDebugAutoDeploy 1
+   m_bBlockNearSpawnPoints 0
   }
  }
  coords 6397.788 1404.204 6442.021
@@ -23,6 +26,9 @@ SCR_SpawnPoint : "{5A2220DD0C16958B}Prefabs/MP/Spawning/SpawnPoint_US.et" {
 }
 SCR_LoadoutManager : "{97EF4C1A41F63DDB}Prefabs/MP/Managers/Loadouts/LoadoutManager_USxUSSR.et" {
  coords 5545.759 99.055 6315.268
+}
+GenericEntity : "{9B6B61BB3FE3DFB0}Prefabs/Items/Equipment/Radios/Radio_ANPRC77.et" {
+ coords 5785 100.5 5937.5
 }
 $grp ZW_InvasionPoint : "{ECE27EF946F651A9}Prefabs/MP/Modes/CaptureAndHold/Areas/ZW_InvasionPoint.et" {
  {

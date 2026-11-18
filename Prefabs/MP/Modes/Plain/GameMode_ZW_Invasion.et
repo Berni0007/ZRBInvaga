@@ -11,5 +11,9 @@ SCR_BaseGameMode : "{1B76F75A3175E85C}Prefabs/MP/Modes/Plain/GameMode_Plain.et" 
   }
   SCR_CaptureAndHoldManager "{6AE53023D2AFE041}" {
   }
+  ZW_RallyManagerComponent "{6AE5B7D2C41A8E37}" {
+  }
+  SCR_PlayerSpawnPointManagerComponent "{6AE5C1A9E3D74B52}" {
+  }
  }
 }
