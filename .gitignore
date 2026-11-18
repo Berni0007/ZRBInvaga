@@ -1,0 +1,7 @@
+# Workbench: генерируемые файлы
+resourceDatabase.rdb
+*.rdb
+thumbnails/
+autosaves/
+logs/
+*.log

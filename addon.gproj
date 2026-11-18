@@ -1,0 +1,8 @@
+GameProject {
+ ID "ZRBinvaga"
+ GUID "6AE52C01E203D39A"
+ TITLE "ZRBinvaga"
+ Dependencies {
+  "58D0FB3206B6F859"
+ }
+}
