@@ -284,7 +284,13 @@ class ZW_RallyManagerComponent : SCR_BaseGameModeComponent
 			return;
 		}
 
-		groups.AddPlayerToGroup(group.GetGroupID(), playerId);
+		// Штатный путь: компонент группы у контроллера игрока тоже узнаёт об отряде.
+		SCR_PlayerControllerGroupComponent groupComponent = SCR_PlayerControllerGroupComponent.GetPlayerControllerComponent(playerId);
+		if (groupComponent)
+			groupComponent.RequestJoinGroup(group.GetGroupID());
+		else
+			groups.AddPlayerToGroup(group.GetGroupID(), playerId);
+
 		if (group.GetPlayerCount() <= 1)
 			groups.SetGroupLeader(group.GetGroupID(), playerId);
 

@@ -4,6 +4,7 @@
 modded class SCR_RestrictedDeployableSpawnPointComponent
 {
 	protected bool m_bZWApplied;
+	protected bool m_bZWInDeploy;
 
 	//------------------------------------------------------------------------------------------------
 	//! Настройки rally для Invasion. Вызывается лениво: гейм-мод может появиться позже рации.
@@ -28,6 +29,7 @@ modded class SCR_RestrictedDeployableSpawnPointComponent
 		m_bQueryBases = false;
 		m_bQueryAllBases = false;
 		m_bQueryFactionRadioRange = false;
+		m_bRestrictDeploy = false;
 		m_bQuerySpawnPoints = manager.BlockNearSpawnPoints();
 
 		// Враг рядом блокирует спавн.
@@ -88,16 +90,30 @@ modded class SCR_RestrictedDeployableSpawnPointComponent
 	override void Deploy(IEntity userEntity, bool reload = false)
 	{
 		ZW_RallyManagerComponent manager = ZW_ApplyRallySettings();
-		if (manager && !reload && userEntity)
+		if (!manager || reload || !userEntity || m_bZWInDeploy)
 		{
-			string reason;
-			if (!manager.CanDeployRally(userEntity, reason))
-			{
-				Print("[ZW_Invasion] Rally не развёрнут: " + reason, LogLevel.NORMAL);
-				return;
-			}
+			super.Deploy(userEntity, reload);
+			return;
 		}
 
-		super.Deploy(userEntity, reload);
+		string reason;
+		if (!manager.CanDeployRally(userEntity, reason))
+		{
+			Print("[ZW_Invasion] Rally не развёрнут: " + reason, LogLevel.NORMAL);
+			return;
+		}
+
+		// Отряд передаём явно: штатный Deploy берёт его из контроллера игрока.
+		SCR_AIGroup group;
+		ZW_RallyManagerComponent.IsSquadLeader(userEntity, group);
+
+		m_bZWInDeploy = true;
+		if (group)
+			DeployByGroup(group, userEntity, reload);
+		else
+			super.Deploy(userEntity, reload);
+		m_bZWInDeploy = false;
+
+		Print(string.Format("[ZW_Invasion] Rally после Deploy: развёрнута=%1, отряд=%2", IsDeployed(), GetGroupID()), LogLevel.NORMAL);
 	}
 }

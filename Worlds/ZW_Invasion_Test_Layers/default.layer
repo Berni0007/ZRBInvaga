@@ -12,7 +12,6 @@ SCR_BaseGameMode GameMode_ZW_Invasion1 : "{BEECC6DCCEF65323}Prefabs/MP/Modes/Pla
   }
   ZW_RallyManagerComponent "{6AE5B7D2C41A8E37}" {
    m_bDebugSkipBuddy 1
-   m_bDebugAutoDeploy 1
    m_bBlockNearSpawnPoints 0
   }
  }
