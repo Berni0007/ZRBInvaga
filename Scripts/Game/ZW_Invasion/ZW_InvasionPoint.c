@@ -33,6 +33,10 @@ class ZW_InvasionPoint : SCR_CaptureAndHoldArea
 
 	protected int m_iTickCounter;
 
+	//! Идёт ли захват (прогресс > 0). Обороне HUD показывает только это — без процентов.
+	[RplProp()]
+	protected bool m_bBeingCaptured;
+
 	//------------------------------------------------------------------------------------------------
 	int GetOrder()
 	{
@@ -61,6 +65,12 @@ class ZW_InvasionPoint : SCR_CaptureAndHoldArea
 	int GetProgress()
 	{
 		return m_iProgress;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	bool IsBeingCaptured()
+	{
+		return m_bBeingCaptured;
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -159,14 +169,22 @@ class ZW_InvasionPoint : SCR_CaptureAndHoldArea
 		int defenders = GetOccupantsCount(defender);
 		int before = m_iProgress;
 
-		if (attackers >= m_iMinAttackers && defenders == 0)
-			m_iProgress++;                       // чистый перевес атаки — захват идёт
-		else if (attackers == 0 && m_iProgress > 0)
-			m_iProgress--;                       // атака ушла — прогресс откатывается
-		// иначе точка оспаривается — прогресс замирает
+		// Перетягивание: кого в зоне больше, тот и тянет прогресс в свою сторону.
+		if (attackers > defenders && attackers >= m_iMinAttackers)
+			m_iProgress++;                       // перевес атаки — захват идёт
+		else if (defenders > attackers && m_iProgress > 0)
+			m_iProgress--;                       // перевес обороны — прогресс отбивают
+		else if (attackers == 0 && defenders == 0 && m_iProgress > 0)
+			m_iProgress--;                       // на точке пусто — прогресс откатывается
+		// равенство сил (или атакующих меньше минимума) — прогресс замирает
 
-		if (m_iProgress != before)
+		// Для HUD: оборона видит только факт захвата, без процентов и численности.
+		bool beingCaptured = m_iProgress > 0;
+		if (m_iProgress != before || beingCaptured != m_bBeingCaptured)
+		{
+			m_bBeingCaptured = beingCaptured;
 			Replication.BumpMe();
+		}
 
 		m_iTickCounter++;
 		if (m_iTickCounter % 5 == 0)
@@ -186,6 +204,7 @@ class ZW_InvasionPoint : SCR_CaptureAndHoldArea
 	{
 		m_bLocked = true;
 		m_bActive = false;
+		m_bBeingCaptured = false;
 		m_iProgress = m_iCaptureSeconds;
 		Replication.BumpMe();
 		EnablePeriodicQueries(false);
