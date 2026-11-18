@@ -6,9 +6,8 @@ SCR_BaseGameMode GameMode_ZW_Invasion1 : "{BEECC6DCCEF65323}Prefabs/MP/Modes/Pla
   SCR_CaptureAndHoldManager "{6AE53023D2AFE041}" {
   }
   ZW_ObjectivesComponent "{6AE53027676CF91B}" {
-   m_sAttackerFactionKey "USSR"
-   m_sDefenderFactionKey "US"
-   m_iDebugAutoCaptureSeconds 15
+   m_sAttackerFactionKey "US"
+   m_sDefenderFactionKey "USSR"
   }
   ZW_TimerComponent "{6AE530275D000CF0}" {
    m_iPrepSeconds 10

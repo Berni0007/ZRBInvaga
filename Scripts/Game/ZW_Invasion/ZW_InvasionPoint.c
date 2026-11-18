@@ -21,6 +21,13 @@ class ZW_InvasionPoint : SCR_CaptureAndHoldArea
 	[Attribute("2", UIWidgets.EditBox, "Минимум атакующих на точке для захвата", category: "Invasion")]
 	protected int m_iMinAttackers;
 
+	[Attribute("40", UIWidgets.EditBox, "Радиус зоны захвата, м (подсчёт игроков, HUD и сфера в редакторе)", category: "Invasion")]
+	protected float m_fCaptureRadius;
+
+	// Временные поля для подсчёта игроков в зоне.
+	protected Faction m_CountFaction;
+	protected int m_iCountResult;
+
 	//! Текущая цель атаки — только её можно захватывать.
 	protected bool m_bActive;
 
@@ -74,6 +81,40 @@ class ZW_InvasionPoint : SCR_CaptureAndHoldArea
 	}
 
 	//------------------------------------------------------------------------------------------------
+	float GetCaptureRadius()
+	{
+		return m_fCaptureRadius;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Живые персонажи фракции в радиусе m_fCaptureRadius.
+	int ZW_CountInside(notnull Faction faction)
+	{
+		m_CountFaction = faction;
+		m_iCountResult = 0;
+		GetWorld().QueryEntitiesBySphere(GetOrigin(), m_fCaptureRadius, ZW_CountCallback, null, EQueryEntitiesFlags.DYNAMIC);
+		m_CountFaction = null;
+		return m_iCountResult;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	protected bool ZW_CountCallback(IEntity entity)
+	{
+		ChimeraCharacter character = ChimeraCharacter.Cast(entity);
+		if (!character)
+			return true;
+
+		CharacterControllerComponent controller = character.GetCharacterController();
+		if (controller && controller.IsDead())
+			return true;
+
+		if (ZW_Invasion.GetEntityFaction(character) == m_CountFaction)
+			m_iCountResult++;
+
+		return true;
+	}
+
+	//------------------------------------------------------------------------------------------------
 	int GetCaptureSeconds()
 	{
 		return m_iCaptureSeconds;
@@ -111,7 +152,7 @@ class ZW_InvasionPoint : SCR_CaptureAndHoldArea
 			color = ARGB(255, 255, 40, 40);   // красный — ошибка расстановки
 
 		// Радиус зоны захвата.
-		Shape.CreateSphere(color, ShapeFlags.ONCE | ShapeFlags.WIREFRAME | ShapeFlags.NOOUTLINE, pos, GetSphereRadius());
+		Shape.CreateSphere(color, ShapeFlags.ONCE | ShapeFlags.WIREFRAME | ShapeFlags.NOOUTLINE, pos, m_fCaptureRadius);
 
 		// Подпись: номер, название, ошибка.
 		string label = string.Format("#%1", m_iOrder);
@@ -165,8 +206,8 @@ class ZW_InvasionPoint : SCR_CaptureAndHoldArea
 		if (!m_bActive || m_bLocked)
 			return false;
 
-		int attackers = GetOccupantsCount(attacker);
-		int defenders = GetOccupantsCount(defender);
+		int attackers = ZW_CountInside(attacker);
+		int defenders = ZW_CountInside(defender);
 		int before = m_iProgress;
 
 		// Перетягивание: кого в зоне больше, тот и тянет прогресс в свою сторону.

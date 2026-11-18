@@ -46,6 +46,7 @@ class ZW_InvasionHUDComponent : SCR_BaseGameModeComponent
 		}
 
 		ApplyLayout();
+		ApplyColors();
 
 		SetVisible("PrepBox", false);
 		SetVisible("CaptureBox", false);
@@ -136,6 +137,21 @@ class ZW_InvasionHUDComponent : SCR_BaseGameModeComponent
 		Place("DefAlert", 0.5, 1, 0.5, 1, 0, -180, 340, 44);
 		Place("DefAlertBg", 0, 0, 0, 0, 0, 0, 340, 44);
 		Place("DefAlertText", 0, 0, 0, 0, 16, 0, 310, 44);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Цвета подложек и полос задаём из скрипта (как и цвета точек) — так они точно применяются.
+	protected void ApplyColors()
+	{
+		SetColor("TopBg", ARGB(122, 0, 0, 0));
+		SetColor("TimerBg", ARGB(107, 0, 0, 0));
+		SetColor("PrepBg", ARGB(128, 0, 0, 0));
+		SetColor("CaptureBg", ARGB(128, 0, 0, 0));
+		SetColor("CaptureBarBg", ARGB(46, 255, 255, 255));
+		SetColor("CaptureFill", ARGB(255, 232, 120, 32));
+		SetColor("DefAlertBg", ARGB(158, 120, 28, 20));
+		SetColor("AttackSwatch", ARGB(255, 91, 143, 216));
+		SetColor("DefendSwatch", ARGB(255, 200, 71, 58));
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -344,7 +360,7 @@ class ZW_InvasionHUDComponent : SCR_BaseGameModeComponent
 		if (!player)
 			return false;
 
-		return vector.Distance(player.GetOrigin(), point.GetOrigin()) <= point.GetSphereRadius();
+		return vector.Distance(player.GetOrigin(), point.GetOrigin()) <= point.GetCaptureRadius();
 	}
 
 	//------------------------------------------------------------------------------------------------
