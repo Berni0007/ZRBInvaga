@@ -90,7 +90,7 @@ class ZW_ObjectivesComponent : SCR_BaseGameModeComponent
 		if (!Replication.IsServer())
 			return;
 
-		Print("[ZW_Invasion] v0.1.2 старт матча", LogLevel.WARNING);
+		Print("[ZW_Invasion] v0.2.0 старт матча", LogLevel.WARNING);
 
 		if (!GetAttackerFaction() || !GetDefenderFaction())
 		{
@@ -135,7 +135,33 @@ class ZW_ObjectivesComponent : SCR_BaseGameModeComponent
 			return;
 
 		ActivatePoint(0);
+		GetGame().GetCallqueue().CallLater(TickActivePoint, 1000, true);
 		Print("[ZW_Invasion] Штурм начался", LogLevel.NORMAL);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Сервер, раз в секунду: считаем захват текущей цели.
+	protected void TickActivePoint()
+	{
+		if (m_bEnded)
+		{
+			GetGame().GetCallqueue().Remove(TickActivePoint);
+			return;
+		}
+
+		ZW_InvasionPoint point = GetPoint(m_iActiveIndex);
+		if (!point)
+			return;
+
+		if (point.ZW_Tick(GetAttackerFaction(), GetDefenderFaction()))
+			OnPointCaptured(point);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	override void OnGameModeEnd(SCR_GameModeEndData data)
+	{
+		super.OnGameModeEnd(data);
+		GetGame().GetCallqueue().Remove(TickActivePoint);
 	}
 
 	//------------------------------------------------------------------------------------------------
