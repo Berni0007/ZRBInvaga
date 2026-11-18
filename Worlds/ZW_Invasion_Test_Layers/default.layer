@@ -1,0 +1,32 @@
+SCR_FactionManager FactionManager_USxUSSR1 : "{589540B35EBA8CDC}Prefabs/MP/Managers/Factions/FactionManager_USxUSSR.et" {
+ coords 5889.429 78.007 5721.135
+}
+SCR_BaseGameMode GameMode_ZW_Invasion1 : "{BEECC6DCCEF65323}Prefabs/MP/Modes/Plain/GameMode_ZW_Invasion.et" {
+ components {
+  SCR_CaptureAndHoldManager "{6AE53023D2AFE041}" {
+  }
+ }
+ coords 6397.788 1404.204 6442.021
+}
+SCR_SpawnPoint : "{4FEA25583D0975F7}Prefabs/MP/Spawning/SpawnPoint_USSR.et" {
+ coords 5592.574 100.315 6245.14
+}
+SCR_SpawnPoint : "{5A2220DD0C16958B}Prefabs/MP/Spawning/SpawnPoint_US.et" {
+ coords 5856.639 91.999 5846.99
+}
+SCR_LoadoutManager : "{97EF4C1A41F63DDB}Prefabs/MP/Managers/Loadouts/LoadoutManager_USxUSSR.et" {
+ coords 5545.759 99.055 6315.268
+}
+$grp ZW_InvasionPoint : "{ECE27EF946F651A9}Prefabs/MP/Modes/CaptureAndHold/Areas/ZW_InvasionPoint.et" {
+ {
+  coords 5789.907 100.9 5930.195
+ }
+ {
+  coords 5707.672 105.877 6023.828
+  m_iOrder 2
+ }
+ {
+  coords 5647.836 113.809 6130.536
+  m_iOrder 3
+ }
+}

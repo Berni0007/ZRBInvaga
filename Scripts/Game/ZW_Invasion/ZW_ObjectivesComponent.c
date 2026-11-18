@@ -90,11 +90,17 @@ class ZW_ObjectivesComponent : SCR_BaseGameModeComponent
 		if (!Replication.IsServer())
 			return;
 
+		Print("[ZW_Invasion] v0.1.2 старт матча", LogLevel.WARNING);
+
 		if (!GetAttackerFaction() || !GetDefenderFaction())
 		{
 			Print("[ZW_Invasion] Не найдены фракции атаки/обороны — проверьте ключи в ZW_ObjectivesComponent", LogLevel.ERROR);
 			return;
 		}
+
+		// В Workbench статический список переживает перезапуск игры и сцены редактора,
+		// поэтому оставляем только живые точки из текущего игрового мира.
+		PrunePoints();
 
 		if (GetPointCount() == 0)
 		{
@@ -103,6 +109,11 @@ class ZW_ObjectivesComponent : SCR_BaseGameModeComponent
 		}
 
 		SortPoints();
+		Print(string.Format("[ZW_Invasion] Точек в цепочке: %1", GetPointCount()), LogLevel.WARNING);
+		foreach (ZW_InvasionPoint p : s_aPoints)
+		{
+			Print(string.Format("[ZW_Invasion]   точка #%1 '%2' %3", p.GetOrder(), p.GetPointName(), p.GetOrigin()), LogLevel.WARNING);
+		}
 
 		// Со старта все точки у обороны и закрыты для захвата.
 		Faction defender = GetDefenderFaction();
@@ -190,6 +201,25 @@ class ZW_ObjectivesComponent : SCR_BaseGameModeComponent
 		ZW_InvasionPoint point = GetPoint(index);
 		if (point)
 			point.ZW_SetActive();
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Убирает из списка удалённые точки и точки из чужих миров (редактор, сцена префаба).
+	protected void PrunePoints()
+	{
+		if (!s_aPoints)
+		{
+			s_aPoints = new array<ZW_InvasionPoint>();
+			return;
+		}
+
+		BaseWorld gameWorld = GetOwner().GetWorld();
+		for (int i = s_aPoints.Count() - 1; i >= 0; i--)
+		{
+			ZW_InvasionPoint point = s_aPoints[i];
+			if (!point || point.GetWorld() != gameWorld)
+				s_aPoints.Remove(i);
+		}
 	}
 
 	//------------------------------------------------------------------------------------------------
