@@ -174,9 +174,7 @@ class ZW_InvasionPoint : SCR_CaptureAndHoldArea
 			m_iProgress++;                       // перевес атаки — захват идёт
 		else if (defenders > attackers && m_iProgress > 0)
 			m_iProgress--;                       // перевес обороны — прогресс отбивают
-		else if (attackers == 0 && defenders == 0 && m_iProgress > 0)
-			m_iProgress--;                       // на точке пусто — прогресс откатывается
-		// равенство сил (или атакующих меньше минимума) — прогресс замирает
+		// равенство сил, пустая точка или атакующих меньше минимума — прогресс замирает
 
 		// Для HUD: оборона видит только факт захвата, без процентов и численности.
 		bool beingCaptured = m_iProgress > 0;
