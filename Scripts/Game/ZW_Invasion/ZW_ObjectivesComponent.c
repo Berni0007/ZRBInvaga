@@ -46,6 +46,41 @@ class ZW_ObjectivesComponent : SCR_BaseGameModeComponent
 	}
 
 	//------------------------------------------------------------------------------------------------
+	//! Точка с заданным номером в том же мире (exclude — не возвращать её саму).
+	static ZW_InvasionPoint FindPointByOrder(BaseWorld world, int order, ZW_InvasionPoint exclude = null)
+	{
+		if (!s_aPoints)
+			return null;
+
+		foreach (ZW_InvasionPoint point : s_aPoints)
+		{
+			if (point && point != exclude && point.GetWorld() == world && point.GetOrder() == order)
+				return point;
+		}
+
+		return null;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Проверка расстановки одной точки. Пустая строка — ошибок нет.
+	//! Используется и подсветкой в редакторе, и проверкой на старте матча.
+	static string ValidatePoint(notnull ZW_InvasionPoint point)
+	{
+		int order = point.GetOrder();
+		if (order < 1)
+			return "order < 1";
+
+		BaseWorld world = point.GetWorld();
+		if (FindPointByOrder(world, order, point))
+			return string.Format("duplicate #%1", order);
+
+		if (order > 1 && !FindPointByOrder(world, order - 1, point))
+			return string.Format("missing #%1", order - 1);
+
+		return string.Empty;
+	}
+
+	//------------------------------------------------------------------------------------------------
 	Faction GetAttackerFaction()
 	{
 		return GetGame().GetFactionManager().GetFactionByKey(m_sAttackerFactionKey);
@@ -95,7 +130,7 @@ class ZW_ObjectivesComponent : SCR_BaseGameModeComponent
 		if (!Replication.IsServer())
 			return;
 
-		Print("[ZW_Invasion] v0.3.0 старт матча", LogLevel.WARNING);
+		Print("[ZW_Invasion] v0.4.0 старт матча", LogLevel.WARNING);
 
 		if (!GetAttackerFaction() || !GetDefenderFaction())
 		{
@@ -307,11 +342,12 @@ class ZW_ObjectivesComponent : SCR_BaseGameModeComponent
 			s_aPoints[j + 1] = current;
 		}
 
-		// Проверка: номера без дублей.
-		for (int k = 1; k < s_aPoints.Count(); k++)
+		// Проверка расстановки: те же правила, что подсвечивает редактор.
+		foreach (ZW_InvasionPoint point : s_aPoints)
 		{
-			if (s_aPoints[k].GetOrder() == s_aPoints[k - 1].GetOrder())
-				Print(string.Format("[ZW_Invasion] Дубль порядкового номера %1 у точек", s_aPoints[k].GetOrder()), LogLevel.WARNING);
+			string error = ValidatePoint(point);
+			if (!error.IsEmpty())
+				Print(string.Format("[ZW_Invasion] ОШИБКА РАССТАНОВКИ: точка #%1 '%2' — %3", point.GetOrder(), point.GetPointName(), error), LogLevel.ERROR);
 		}
 	}
 

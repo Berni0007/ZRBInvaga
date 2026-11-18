@@ -76,6 +76,51 @@ class ZW_InvasionPoint : SCR_CaptureAndHoldArea
 		ZW_ObjectivesComponent.RegisterPoint(this);
 	}
 
+#ifdef WORKBENCH
+	//------------------------------------------------------------------------------------------------
+	// ИНСТРУМЕНТЫ РЕДАКТОРА: в World Editor у каждой точки видны радиус, номер, название
+	// и стрелка к следующей точке цепочки. Ошибки расстановки подсвечиваются красным.
+	//------------------------------------------------------------------------------------------------
+	override int _WB_GetAfterWorldUpdateSpecs(IEntitySource src)
+	{
+		return EEntityFrameUpdateSpecs.CALL_WHEN_ENTITY_VISIBLE;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	override void _WB_AfterWorldUpdate(float timeSlice)
+	{
+		super._WB_AfterWorldUpdate(timeSlice);
+
+		BaseWorld world = GetWorld();
+		vector pos = GetOrigin();
+		vector up = "0 3 0";
+
+		string error = ZW_ObjectivesComponent.ValidatePoint(this);
+		int color = ARGB(255, 255, 170, 0);   // оранжевый — всё в порядке
+		if (!error.IsEmpty())
+			color = ARGB(255, 255, 40, 40);   // красный — ошибка расстановки
+
+		// Радиус зоны захвата.
+		Shape.CreateSphere(color, ShapeFlags.ONCE | ShapeFlags.WIREFRAME | ShapeFlags.NOOUTLINE, pos, GetSphereRadius());
+
+		// Подпись: номер, название, ошибка.
+		string label = string.Format("#%1", m_iOrder);
+		if (!m_sPointName.IsEmpty())
+			label = label + " " + m_sPointName;
+		// Шрифт отладочного текста не знает кириллицу — подписи латиницей.
+		label = label + string.Format("  [%1s, min %2]", m_iCaptureSeconds, m_iMinAttackers);
+		if (!error.IsEmpty())
+			label = label + "  ERROR: " + error;
+
+		DebugTextWorldSpace.Create(world, label, DebugTextFlags.ONCE | DebugTextFlags.CENTER | DebugTextFlags.FACE_CAMERA, pos[0], pos[1] + 6, pos[2], 20.0, color);
+
+		// Стрелка к следующей точке цепочки.
+		ZW_InvasionPoint next = ZW_ObjectivesComponent.FindPointByOrder(world, m_iOrder + 1, this);
+		if (next)
+			Shape.CreateArrow(pos + up, next.GetOrigin() + up, 4.0, color, ShapeFlags.ONCE | ShapeFlags.NOZBUFFER);
+	}
+#endif
+
 	//------------------------------------------------------------------------------------------------
 	void ~ZW_InvasionPoint()
 	{
