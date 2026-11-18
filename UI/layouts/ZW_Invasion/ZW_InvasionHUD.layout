@@ -1,0 +1,920 @@
+FrameWidgetClass "{FAA367E7E90BBDBA}" {
+ Name "ZW_InvasionHUDRoot"
+ Slot FrameWidgetSlot "{EBD23BFF6575C233}" {
+  Anchor 0 0 1 1
+  PositionX 0
+  OffsetLeft 0
+  PositionY 0
+  OffsetTop 0
+  SizeX 0
+  OffsetRight 0
+  SizeY 0
+  OffsetBottom 0
+ }
+ "Z Order" 50
+ {
+ FrameWidgetClass "{87027E7E859D5892}" {
+  Name "TopBar"
+  Slot FrameWidgetSlot "{1B6A9F8A91EB2DFB}" {
+   Anchor 0.5 0 0.5 0
+   PositionX 0
+   OffsetLeft 0
+   PositionY 22
+   OffsetTop 22
+   SizeX 640
+   OffsetRight -640
+   SizeY 64
+   OffsetBottom -64
+   Alignment 0.5 0
+  }
+  {
+   ImageWidgetClass "{93F7199AD90DE5D4}" {
+    Name "TopBg"
+    Slot FrameWidgetSlot "{A8924DED3948465B}" {
+     Anchor 0 0 0 0
+     PositionX 0
+     OffsetLeft 0
+     PositionY 0
+     OffsetTop 0
+     SizeX 640
+     OffsetRight -640
+     SizeY 64
+     OffsetBottom -64
+    }
+    Color 0 0 0 0.48
+    Size 640 64
+   }
+   ImageWidgetClass "{9A86E98FAB229BF2}" {
+    Name "AttackSwatch"
+    Slot FrameWidgetSlot "{2F759B9E55154B48}" {
+     Anchor 0 0 0 0
+     PositionX 16
+     OffsetLeft 16
+     PositionY 22
+     OffsetTop 22
+     SizeX 30
+     OffsetRight -30
+     SizeY 20
+     OffsetBottom -20
+    }
+    Color 0.357 0.561 0.847 1
+    Size 30 20
+   }
+   TextWidgetClass "{8B17336D7117067C}" {
+    Name "AttackTickets"
+    Slot FrameWidgetSlot "{982B408B42ECD6E9}" {
+     Anchor 0 0 0 0
+     PositionX 56
+     OffsetLeft 56
+     PositionY 4
+     OffsetTop 4
+     SizeX 100
+     OffsetRight -100
+     SizeY 36
+     OffsetBottom -36
+    }
+    Color 0.949 0.949 0.933 1
+    Text "300"
+    "Font Size" 32
+    "Min Font Size" 32
+    "Vertical Alignment" Center
+    FontProperties FontProperties "{A83B55F51CDE4E72}" {
+     Font "{D3E75BCBECEB273E}UI/Fonts/NotoSans/NotoSans-Enhanced-Regular-JP-KOR-SC-LAT.fnt"
+     ShadowSize 16
+     ShadowColor 0 0 0 0.45
+     ShadowOffset 0 0
+    }
+   }
+   TextWidgetClass "{82BB160FE6F81FF7}" {
+    Name "AttackLabel"
+    Slot FrameWidgetSlot "{FEC626BC63967354}" {
+     Anchor 0 0 0 0
+     PositionX 56
+     OffsetLeft 56
+     PositionY 40
+     OffsetTop 40
+     SizeX 110
+     OffsetRight -110
+     SizeY 18
+     OffsetBottom -18
+    }
+    Color 0.725 0.784 0.871 1
+    Text "Атака"
+    "Font Size" 14
+    "Min Font Size" 14
+    "Vertical Alignment" Center
+    FontProperties FontProperties "{5E56A7EED4AB9EF7}" {
+     Font "{D3E75BCBECEB273E}UI/Fonts/NotoSans/NotoSans-Enhanced-Regular-JP-KOR-SC-LAT.fnt"
+     ShadowSize 16
+     ShadowColor 0 0 0 0.45
+     ShadowOffset 0 0
+    }
+   }
+   ImageWidgetClass "{6DACDEB32A4FF2F2}" {
+    Name "DefendSwatch"
+    Slot FrameWidgetSlot "{9134F2D5AECB9CBB}" {
+     Anchor 0 0 0 0
+     PositionX 594
+     OffsetLeft 594
+     PositionY 22
+     OffsetTop 22
+     SizeX 30
+     OffsetRight -30
+     SizeY 20
+     OffsetBottom -20
+    }
+    Color 0.784 0.278 0.227 1
+    Size 30 20
+   }
+   TextWidgetClass "{A0A489E59F3A5F4A}" {
+    Name "DefendTickets"
+    Slot FrameWidgetSlot "{8808C260DE4E6927}" {
+     Anchor 0 0 0 0
+     PositionX 500
+     OffsetLeft 500
+     PositionY 4
+     OffsetTop 4
+     SizeX 90
+     OffsetRight -90
+     SizeY 36
+     OffsetBottom -36
+    }
+    Color 0.949 0.949 0.933 1
+    Text "800"
+    "Font Size" 32
+    "Min Font Size" 32
+    "Vertical Alignment" Center
+    FontProperties FontProperties "{246F75E068999205}" {
+     Font "{D3E75BCBECEB273E}UI/Fonts/NotoSans/NotoSans-Enhanced-Regular-JP-KOR-SC-LAT.fnt"
+     ShadowSize 16
+     ShadowColor 0 0 0 0.45
+     ShadowOffset 0 0
+    }
+   }
+   TextWidgetClass "{D346E8A9351B2AF5}" {
+    Name "DefendLabel"
+    Slot FrameWidgetSlot "{F3E10748BFB56F30}" {
+     Anchor 0 0 0 0
+     PositionX 500
+     OffsetLeft 500
+     PositionY 40
+     OffsetTop 40
+     SizeX 90
+     OffsetRight -90
+     SizeY 18
+     OffsetBottom -18
+    }
+    Color 0.886 0.725 0.702 1
+    Text "Оборона"
+    "Font Size" 14
+    "Min Font Size" 14
+    "Vertical Alignment" Center
+    FontProperties FontProperties "{B4C7526254671DC0}" {
+     Font "{D3E75BCBECEB273E}UI/Fonts/NotoSans/NotoSans-Enhanced-Regular-JP-KOR-SC-LAT.fnt"
+     ShadowSize 16
+     ShadowColor 0 0 0 0.45
+     ShadowOffset 0 0
+    }
+   }
+   ImageWidgetClass "{BDA3119862A8CABF}" {
+    Name "Pt1Outer"
+    Slot FrameWidgetSlot "{072166F245E0F26D}" {
+     Anchor 0 0 0 0
+     PositionX 170
+     OffsetLeft 170
+     PositionY 17
+     OffsetTop 17
+     SizeX 30
+     OffsetRight -30
+     SizeY 30
+     OffsetBottom -30
+    }
+    Color 1 1 1 0.5
+    Size 30 30
+   }
+   ImageWidgetClass "{E651FC7C481E5F68}" {
+    Name "Pt1Inner"
+    Slot FrameWidgetSlot "{814D0A02D31F104B}" {
+     Anchor 0 0 0 0
+     PositionX 173
+     OffsetLeft 173
+     PositionY 20
+     OffsetTop 20
+     SizeX 24
+     OffsetRight -24
+     SizeY 24
+     OffsetBottom -24
+    }
+    Color 0 0 0 0.6
+    Size 24 24
+   }
+   TextWidgetClass "{07DB644023849B78}" {
+    Name "Pt1Num"
+    Slot FrameWidgetSlot "{A0B9B9A59A9E4278}" {
+     Anchor 0 0 0 0
+     PositionX 180
+     OffsetLeft 180
+     PositionY 17
+     OffsetTop 17
+     SizeX 20
+     OffsetRight -20
+     SizeY 30
+     OffsetBottom -30
+    }
+    Color 0.949 0.949 0.933 1
+    Text "1"
+    "Font Size" 18
+    "Min Font Size" 18
+    "Vertical Alignment" Center
+    FontProperties FontProperties "{2825E200BA03A0C8}" {
+     Font "{D3E75BCBECEB273E}UI/Fonts/NotoSans/NotoSans-Enhanced-Regular-JP-KOR-SC-LAT.fnt"
+     ShadowSize 16
+     ShadowColor 0 0 0 0.45
+     ShadowOffset 0 0
+    }
+   }
+   ImageWidgetClass "{CBB28FEC5414740E}" {
+    Name "Pt2Outer"
+    Slot FrameWidgetSlot "{2E9EB68E1FDB0DDC}" {
+     Anchor 0 0 0 0
+     PositionX 214
+     OffsetLeft 214
+     PositionY 17
+     OffsetTop 17
+     SizeX 30
+     OffsetRight -30
+     SizeY 30
+     OffsetBottom -30
+    }
+    Color 1 1 1 0.5
+    Size 30 30
+   }
+   ImageWidgetClass "{64AFA7C88B4A61C5}" {
+    Name "Pt2Inner"
+    Slot FrameWidgetSlot "{9C2C1DFA286FC1BA}" {
+     Anchor 0 0 0 0
+     PositionX 217
+     OffsetLeft 217
+     PositionY 20
+     OffsetTop 20
+     SizeX 24
+     OffsetRight -24
+     SizeY 24
+     OffsetBottom -24
+    }
+    Color 0 0 0 0.6
+    Size 24 24
+   }
+   TextWidgetClass "{775607CB202F09C3}" {
+    Name "Pt2Num"
+    Slot FrameWidgetSlot "{19BCFF59117E0123}" {
+     Anchor 0 0 0 0
+     PositionX 224
+     OffsetLeft 224
+     PositionY 17
+     OffsetTop 17
+     SizeX 20
+     OffsetRight -20
+     SizeY 30
+     OffsetBottom -30
+    }
+    Color 0.949 0.949 0.933 1
+    Text "2"
+    "Font Size" 18
+    "Min Font Size" 18
+    "Vertical Alignment" Center
+    FontProperties FontProperties "{486700431ACFA10A}" {
+     Font "{D3E75BCBECEB273E}UI/Fonts/NotoSans/NotoSans-Enhanced-Regular-JP-KOR-SC-LAT.fnt"
+     ShadowSize 16
+     ShadowColor 0 0 0 0.45
+     ShadowOffset 0 0
+    }
+   }
+   ImageWidgetClass "{3AFF409A005859D2}" {
+    Name "Pt3Outer"
+    Slot FrameWidgetSlot "{1EEB8BF152E534F6}" {
+     Anchor 0 0 0 0
+     PositionX 258
+     OffsetLeft 258
+     PositionY 17
+     OffsetTop 17
+     SizeX 30
+     OffsetRight -30
+     SizeY 30
+     OffsetBottom -30
+    }
+    Color 1 1 1 0.5
+    Size 30 30
+   }
+   ImageWidgetClass "{35F664778DC0A7CA}" {
+    Name "Pt3Inner"
+    Slot FrameWidgetSlot "{9B453F7CEC1C4A45}" {
+     Anchor 0 0 0 0
+     PositionX 261
+     OffsetLeft 261
+     PositionY 20
+     OffsetTop 20
+     SizeX 24
+     OffsetRight -24
+     SizeY 24
+     OffsetBottom -24
+    }
+    Color 0 0 0 0.6
+    Size 24 24
+   }
+   TextWidgetClass "{AFFD7B305F9736EB}" {
+    Name "Pt3Num"
+    Slot FrameWidgetSlot "{CAB6B0F5A2D7C41E}" {
+     Anchor 0 0 0 0
+     PositionX 268
+     OffsetLeft 268
+     PositionY 17
+     OffsetTop 17
+     SizeX 20
+     OffsetRight -20
+     SizeY 30
+     OffsetBottom -30
+    }
+    Color 0.949 0.949 0.933 1
+    Text "3"
+    "Font Size" 18
+    "Min Font Size" 18
+    "Vertical Alignment" Center
+    FontProperties FontProperties "{9F72747EF519A9A3}" {
+     Font "{D3E75BCBECEB273E}UI/Fonts/NotoSans/NotoSans-Enhanced-Regular-JP-KOR-SC-LAT.fnt"
+     ShadowSize 16
+     ShadowColor 0 0 0 0.45
+     ShadowOffset 0 0
+    }
+   }
+   ImageWidgetClass "{70358CBA3773EBD5}" {
+    Name "Pt4Outer"
+    Slot FrameWidgetSlot "{5C5B90EBFEFE97F1}" {
+     Anchor 0 0 0 0
+     PositionX 302
+     OffsetLeft 302
+     PositionY 17
+     OffsetTop 17
+     SizeX 30
+     OffsetRight -30
+     SizeY 30
+     OffsetBottom -30
+    }
+    Color 1 1 1 0.5
+    Size 30 30
+   }
+   ImageWidgetClass "{ACB529F25203291A}" {
+    Name "Pt4Inner"
+    Slot FrameWidgetSlot "{CA92C0468D1E835F}" {
+     Anchor 0 0 0 0
+     PositionX 305
+     OffsetLeft 305
+     PositionY 20
+     OffsetTop 20
+     SizeX 24
+     OffsetRight -24
+     SizeY 24
+     OffsetBottom -24
+    }
+    Color 0 0 0 0.6
+    Size 24 24
+   }
+   TextWidgetClass "{36748979C18F917D}" {
+    Name "Pt4Num"
+    Slot FrameWidgetSlot "{E3290063DBF10CD0}" {
+     Anchor 0 0 0 0
+     PositionX 312
+     OffsetLeft 312
+     PositionY 17
+     OffsetTop 17
+     SizeX 20
+     OffsetRight -20
+     SizeY 30
+     OffsetBottom -30
+    }
+    Color 0.949 0.949 0.933 1
+    Text "4"
+    "Font Size" 18
+    "Min Font Size" 18
+    "Vertical Alignment" Center
+    FontProperties FontProperties "{0AB321BCAA4BF4DE}" {
+     Font "{D3E75BCBECEB273E}UI/Fonts/NotoSans/NotoSans-Enhanced-Regular-JP-KOR-SC-LAT.fnt"
+     ShadowSize 16
+     ShadowColor 0 0 0 0.45
+     ShadowOffset 0 0
+    }
+   }
+   ImageWidgetClass "{37E022B70BF4E17E}" {
+    Name "Pt5Outer"
+    Slot FrameWidgetSlot "{86EEED3AB8BE7F9A}" {
+     Anchor 0 0 0 0
+     PositionX 346
+     OffsetLeft 346
+     PositionY 17
+     OffsetTop 17
+     SizeX 30
+     OffsetRight -30
+     SizeY 30
+     OffsetBottom -30
+    }
+    Color 1 1 1 0.5
+    Size 30 30
+   }
+   ImageWidgetClass "{9C4B98C7247C35EF}" {
+    Name "Pt5Inner"
+    Slot FrameWidgetSlot "{D443FD0B509F3917}" {
+     Anchor 0 0 0 0
+     PositionX 349
+     OffsetLeft 349
+     PositionY 20
+     OffsetTop 20
+     SizeX 24
+     OffsetRight -24
+     SizeY 24
+     OffsetBottom -24
+    }
+    Color 0 0 0 0.6
+    Size 24 24
+   }
+   TextWidgetClass "{3B714A4E27EC8E52}" {
+    Name "Pt5Num"
+    Slot FrameWidgetSlot "{BD55107488C31259}" {
+     Anchor 0 0 0 0
+     PositionX 356
+     OffsetLeft 356
+     PositionY 17
+     OffsetTop 17
+     SizeX 20
+     OffsetRight -20
+     SizeY 30
+     OffsetBottom -30
+    }
+    Color 0.949 0.949 0.933 1
+    Text "5"
+    "Font Size" 18
+    "Min Font Size" 18
+    "Vertical Alignment" Center
+    FontProperties FontProperties "{FE413717792B231C}" {
+     Font "{D3E75BCBECEB273E}UI/Fonts/NotoSans/NotoSans-Enhanced-Regular-JP-KOR-SC-LAT.fnt"
+     ShadowSize 16
+     ShadowColor 0 0 0 0.45
+     ShadowOffset 0 0
+    }
+   }
+   ImageWidgetClass "{FF94D67C75D3A636}" {
+    Name "Pt6Outer"
+    Slot FrameWidgetSlot "{F561C4B932AE2FAD}" {
+     Anchor 0 0 0 0
+     PositionX 390
+     OffsetLeft 390
+     PositionY 17
+     OffsetTop 17
+     SizeX 30
+     OffsetRight -30
+     SizeY 30
+     OffsetBottom -30
+    }
+    Color 1 1 1 0.5
+    Size 30 30
+   }
+   ImageWidgetClass "{7A022E205DD3A0B9}" {
+    Name "Pt6Inner"
+    Slot FrameWidgetSlot "{631460D3340A281E}" {
+     Anchor 0 0 0 0
+     PositionX 393
+     OffsetLeft 393
+     PositionY 20
+     OffsetTop 20
+     SizeX 24
+     OffsetRight -24
+     SizeY 24
+     OffsetBottom -24
+    }
+    Color 0 0 0 0.6
+    Size 24 24
+   }
+   TextWidgetClass "{724F1E035F2329DA}" {
+    Name "Pt6Num"
+    Slot FrameWidgetSlot "{6F6275CA987E5BA8}" {
+     Anchor 0 0 0 0
+     PositionX 400
+     OffsetLeft 400
+     PositionY 17
+     OffsetTop 17
+     SizeX 20
+     OffsetRight -20
+     SizeY 30
+     OffsetBottom -30
+    }
+    Color 0.949 0.949 0.933 1
+    Text "6"
+    "Font Size" 18
+    "Min Font Size" 18
+    "Vertical Alignment" Center
+    FontProperties FontProperties "{6573ABC0A3302A37}" {
+     Font "{D3E75BCBECEB273E}UI/Fonts/NotoSans/NotoSans-Enhanced-Regular-JP-KOR-SC-LAT.fnt"
+     ShadowSize 16
+     ShadowColor 0 0 0 0.45
+     ShadowOffset 0 0
+    }
+   }
+   ImageWidgetClass "{0F26FB5BCFDC38EF}" {
+    Name "Pt7Outer"
+    Slot FrameWidgetSlot "{E0B4D82B89D24FAC}" {
+     Anchor 0 0 0 0
+     PositionX 434
+     OffsetLeft 434
+     PositionY 17
+     OffsetTop 17
+     SizeX 30
+     OffsetRight -30
+     SizeY 30
+     OffsetBottom -30
+    }
+    Color 1 1 1 0.5
+    Size 30 30
+   }
+   ImageWidgetClass "{FA7E798A9FA3CBB2}" {
+    Name "Pt7Inner"
+    Slot FrameWidgetSlot "{CF2AA9A5F1416E6D}" {
+     Anchor 0 0 0 0
+     PositionX 437
+     OffsetLeft 437
+     PositionY 20
+     OffsetTop 20
+     SizeX 24
+     OffsetRight -24
+     SizeY 24
+     OffsetBottom -24
+    }
+    Color 0 0 0 0.6
+    Size 24 24
+   }
+   TextWidgetClass "{6A3C58A38D4B4E12}" {
+    Name "Pt7Num"
+    Slot FrameWidgetSlot "{8FDEA347FB8FD5A0}" {
+     Anchor 0 0 0 0
+     PositionX 444
+     OffsetLeft 444
+     PositionY 17
+     OffsetTop 17
+     SizeX 20
+     OffsetRight -20
+     SizeY 30
+     OffsetBottom -30
+    }
+    Color 0.949 0.949 0.933 1
+    Text "7"
+    "Font Size" 18
+    "Min Font Size" 18
+    "Vertical Alignment" Center
+    FontProperties FontProperties "{F510BF653DEB026B}" {
+     Font "{D3E75BCBECEB273E}UI/Fonts/NotoSans/NotoSans-Enhanced-Regular-JP-KOR-SC-LAT.fnt"
+     ShadowSize 16
+     ShadowColor 0 0 0 0.45
+     ShadowOffset 0 0
+    }
+   }
+  }
+ }
+ FrameWidgetClass "{F305AC6620FA7A70}" {
+  Name "TimerBar"
+  Slot FrameWidgetSlot "{A1C998AA0A9E4629}" {
+   Anchor 0.5 0 0.5 0
+   PositionX 0
+   OffsetLeft 0
+   PositionY 92
+   OffsetTop 92
+   SizeX 260
+   OffsetRight -260
+   SizeY 30
+   OffsetBottom -30
+   Alignment 0.5 0
+  }
+  {
+   ImageWidgetClass "{42364A617A7CF347}" {
+    Name "TimerBg"
+    Slot FrameWidgetSlot "{32FD35E6C8B06C76}" {
+     Anchor 0 0 0 0
+     PositionX 0
+     OffsetLeft 0
+     PositionY 0
+     OffsetTop 0
+     SizeX 260
+     OffsetRight -260
+     SizeY 30
+     OffsetBottom -30
+    }
+    Color 0 0 0 0.42
+    Size 260 30
+   }
+   TextWidgetClass "{BF0607F754E08484}" {
+    Name "TimerText"
+    Slot FrameWidgetSlot "{C70D5D60DC7BBD86}" {
+     Anchor 0 0 0 0
+     PositionX 12
+     OffsetLeft 12
+     PositionY 0
+     OffsetTop 0
+     SizeX 240
+     OffsetRight -240
+     SizeY 30
+     OffsetBottom -30
+    }
+    Color 0.949 0.949 0.933 1
+    Text "60:00  до конца штурма"
+    "Font Size" 20
+    "Min Font Size" 20
+    "Vertical Alignment" Center
+    FontProperties FontProperties "{869062F2542E8A69}" {
+     Font "{D3E75BCBECEB273E}UI/Fonts/NotoSans/NotoSans-Enhanced-Regular-JP-KOR-SC-LAT.fnt"
+     ShadowSize 16
+     ShadowColor 0 0 0 0.45
+     ShadowOffset 0 0
+    }
+   }
+  }
+ }
+ FrameWidgetClass "{36DD2665F641A54E}" {
+  Name "PrepBox"
+  Slot FrameWidgetSlot "{C87F3F134A523DC5}" {
+   Anchor 0.5 0 0.5 0
+   PositionX 0
+   OffsetLeft 0
+   PositionY 140
+   OffsetTop 140
+   SizeX 380
+   OffsetRight -380
+   SizeY 124
+   OffsetBottom -124
+   Alignment 0.5 0
+  }
+  {
+   ImageWidgetClass "{2602932382E23714}" {
+    Name "PrepBg"
+    Slot FrameWidgetSlot "{8EDBF10B80DFA85B}" {
+     Anchor 0 0 0 0
+     PositionX 0
+     OffsetLeft 0
+     PositionY 0
+     OffsetTop 0
+     SizeX 380
+     OffsetRight -380
+     SizeY 124
+     OffsetBottom -124
+    }
+    Color 0 0 0 0.5
+    Size 380 124
+   }
+   TextWidgetClass "{4289F722BE841B5A}" {
+    Name "PrepTitle"
+    Slot FrameWidgetSlot "{A4B26CC0309E261F}" {
+     Anchor 0 0 0 0
+     PositionX 20
+     OffsetLeft 20
+     PositionY 8
+     OffsetTop 8
+     SizeX 340
+     OffsetRight -340
+     SizeY 26
+     OffsetBottom -26
+    }
+    Color 0.839 0.839 0.812 1
+    Text "Штурм начнётся через"
+    "Font Size" 18
+    "Min Font Size" 18
+    "Vertical Alignment" Center
+    FontProperties FontProperties "{BA32AD10B7529C67}" {
+     Font "{D3E75BCBECEB273E}UI/Fonts/NotoSans/NotoSans-Enhanced-Regular-JP-KOR-SC-LAT.fnt"
+     ShadowSize 16
+     ShadowColor 0 0 0 0.45
+     ShadowOffset 0 0
+    }
+   }
+   TextWidgetClass "{1527402B9060C51E}" {
+    Name "PrepTime"
+    Slot FrameWidgetSlot "{DED57B257749CDB3}" {
+     Anchor 0 0 0 0
+     PositionX 20
+     OffsetLeft 20
+     PositionY 34
+     OffsetTop 34
+     SizeX 340
+     OffsetRight -340
+     SizeY 56
+     OffsetBottom -56
+    }
+    Color 0.949 0.949 0.933 1
+    Text "3:00"
+    "Font Size" 52
+    "Min Font Size" 52
+    "Vertical Alignment" Center
+    FontProperties FontProperties "{7BE4D88A9CB485C1}" {
+     Font "{D3E75BCBECEB273E}UI/Fonts/NotoSans/NotoSans-Enhanced-Regular-JP-KOR-SC-LAT.fnt"
+     ShadowSize 16
+     ShadowColor 0 0 0 0.45
+     ShadowOffset 0 0
+    }
+   }
+   TextWidgetClass "{7D4C0FA4CEA3CAED}" {
+    Name "PrepHint"
+    Slot FrameWidgetSlot "{92357BE75086DEE1}" {
+     Anchor 0 0 0 0
+     PositionX 20
+     OffsetLeft 20
+     PositionY 92
+     OffsetTop 92
+     SizeX 340
+     OffsetRight -340
+     SizeY 24
+     OffsetBottom -24
+    }
+    Color 0.949 0.949 0.933 1
+    Text ""
+    "Font Size" 17
+    "Min Font Size" 17
+    "Vertical Alignment" Center
+    FontProperties FontProperties "{7D79CB16A7FD1948}" {
+     Font "{D3E75BCBECEB273E}UI/Fonts/NotoSans/NotoSans-Enhanced-Regular-JP-KOR-SC-LAT.fnt"
+     ShadowSize 16
+     ShadowColor 0 0 0 0.45
+     ShadowOffset 0 0
+    }
+   }
+  }
+ }
+ FrameWidgetClass "{4FB4B34FBC55B4BA}" {
+  Name "CaptureBox"
+  Slot FrameWidgetSlot "{692EF55252DACD92}" {
+   Anchor 0.5 1 0.5 1
+   PositionX 0
+   OffsetLeft 0
+   PositionY -180
+   OffsetTop -180
+   SizeX 400
+   OffsetRight -400
+   SizeY 64
+   OffsetBottom -64
+   Alignment 0.5 1
+  }
+  {
+   ImageWidgetClass "{B4436094AFF62FE6}" {
+    Name "CaptureBg"
+    Slot FrameWidgetSlot "{0885E65486FB6460}" {
+     Anchor 0 0 0 0
+     PositionX 0
+     OffsetLeft 0
+     PositionY 0
+     OffsetTop 0
+     SizeX 400
+     OffsetRight -400
+     SizeY 64
+     OffsetBottom -64
+    }
+    Color 0 0 0 0.5
+    Size 400 64
+   }
+   TextWidgetClass "{11855C7707C43ED2}" {
+    Name "CaptureTitle"
+    Slot FrameWidgetSlot "{5FB17AD33F0F6D2E}" {
+     Anchor 0 0 0 0
+     PositionX 16
+     OffsetLeft 16
+     PositionY 4
+     OffsetTop 4
+     SizeX 270
+     OffsetRight -270
+     SizeY 30
+     OffsetBottom -30
+    }
+    Color 0.949 0.949 0.933 1
+    Text "Захват точки"
+    "Font Size" 20
+    "Min Font Size" 20
+    "Vertical Alignment" Center
+    FontProperties FontProperties "{4847E436D858AA37}" {
+     Font "{D3E75BCBECEB273E}UI/Fonts/NotoSans/NotoSans-Enhanced-Regular-JP-KOR-SC-LAT.fnt"
+     ShadowSize 16
+     ShadowColor 0 0 0 0.45
+     ShadowOffset 0 0
+    }
+   }
+   TextWidgetClass "{7B935C3257EA6367}" {
+    Name "CaptureTime"
+    Slot FrameWidgetSlot "{897E36472140083B}" {
+     Anchor 0 0 0 0
+     PositionX 290
+     OffsetLeft 290
+     PositionY 4
+     OffsetTop 4
+     SizeX 100
+     OffsetRight -100
+     SizeY 30
+     OffsetBottom -30
+    }
+    Color 0.839 0.839 0.812 1
+    Text "0 / 60 с"
+    "Font Size" 18
+    "Min Font Size" 18
+    "Vertical Alignment" Center
+    FontProperties FontProperties "{594215D5E228F620}" {
+     Font "{D3E75BCBECEB273E}UI/Fonts/NotoSans/NotoSans-Enhanced-Regular-JP-KOR-SC-LAT.fnt"
+     ShadowSize 16
+     ShadowColor 0 0 0 0.45
+     ShadowOffset 0 0
+    }
+   }
+   ImageWidgetClass "{B1EA141FE51B755B}" {
+    Name "CaptureBarBg"
+    Slot FrameWidgetSlot "{B134CBBBA60BFFB4}" {
+     Anchor 0 0 0 0
+     PositionX 16
+     OffsetLeft 16
+     PositionY 42
+     OffsetTop 42
+     SizeX 368
+     OffsetRight -368
+     SizeY 8
+     OffsetBottom -8
+    }
+    Color 1 1 1 0.18
+    Size 368 8
+   }
+   ImageWidgetClass "{F7AA4F0896F48BA9}" {
+    Name "CaptureFill"
+    Slot FrameWidgetSlot "{75AC633552BAC65F}" {
+     Anchor 0 0 0 0
+     PositionX 16
+     OffsetLeft 16
+     PositionY 42
+     OffsetTop 42
+     SizeX 0
+     OffsetRight 0
+     SizeY 8
+     OffsetBottom -8
+    }
+    Color 0.91 0.471 0.125 1
+    Size 0 8
+   }
+  }
+ }
+ FrameWidgetClass "{909D28FF71BBCD0D}" {
+  Name "DefAlert"
+  Slot FrameWidgetSlot "{5682A23617D6EB1F}" {
+   Anchor 0.5 1 0.5 1
+   PositionX 0
+   OffsetLeft 0
+   PositionY -180
+   OffsetTop -180
+   SizeX 340
+   OffsetRight -340
+   SizeY 44
+   OffsetBottom -44
+   Alignment 0.5 1
+  }
+  {
+   ImageWidgetClass "{D359D61B63814329}" {
+    Name "DefAlertBg"
+    Slot FrameWidgetSlot "{5B7C39C2C90A9360}" {
+     Anchor 0 0 0 0
+     PositionX 0
+     OffsetLeft 0
+     PositionY 0
+     OffsetTop 0
+     SizeX 340
+     OffsetRight -340
+     SizeY 44
+     OffsetBottom -44
+    }
+    Color 0.471 0.11 0.078 0.62
+    Size 340 44
+   }
+   TextWidgetClass "{68FA3566162E8AD8}" {
+    Name "DefAlertText"
+    Slot FrameWidgetSlot "{994770FFA6831EBC}" {
+     Anchor 0 0 0 0
+     PositionX 16
+     OffsetLeft 16
+     PositionY 0
+     OffsetTop 0
+     SizeX 310
+     OffsetRight -310
+     SizeY 44
+     OffsetBottom -44
+    }
+    Color 0.949 0.949 0.933 1
+    Text "Точку захватывают"
+    "Font Size" 20
+    "Min Font Size" 20
+    "Vertical Alignment" Center
+    FontProperties FontProperties "{BB66BE131998AA43}" {
+     Font "{D3E75BCBECEB273E}UI/Fonts/NotoSans/NotoSans-Enhanced-Regular-JP-KOR-SC-LAT.fnt"
+     ShadowSize 16
+     ShadowColor 0 0 0 0.45
+     ShadowOffset 0 0
+    }
+   }
+  }
+ }
+ }
+}

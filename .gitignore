@@ -5,3 +5,6 @@ thumbnails/
 autosaves/
 logs/
 *.log
+
+# Справочные копии штатных файлов игры — не публикуем
+UI/layouts/Common/ZW_Ref*

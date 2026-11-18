@@ -7,5 +7,9 @@ SCR_BaseGameMode : "{1B76F75A3175E85C}Prefabs/MP/Modes/Plain/GameMode_Plain.et" 
   }
   ZW_TimerComponent "{6AE530275D000CF0}" {
   }
+  ZW_InvasionHUDComponent "{6AE5A3C41B7E2D90}" {
+  }
+  SCR_CaptureAndHoldManager "{6AE53023D2AFE041}" {
+  }
  }
 }
