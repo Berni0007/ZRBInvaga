@@ -130,11 +130,20 @@ class ZW_InvasionPoint : SCR_CaptureAndHoldArea
 		if (m_iProgress < m_iCaptureSeconds)
 			return false;
 
-		// Взята атакой: блокируем навсегда, оборона отбить не может.
+		ZW_LockForAttacker(attacker);
+		return true;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Сервер: точка взята атакой — блокируем навсегда, оборона отбить не может.
+	//! Вызывается из ZW_Tick и из отладочного авто-захвата.
+	void ZW_LockForAttacker(notnull Faction attacker)
+	{
 		m_bLocked = true;
 		m_bActive = false;
+		m_iProgress = m_iCaptureSeconds;
+		Replication.BumpMe();
 		EnablePeriodicQueries(false);
 		SetOwningFactionInternalAuthority(GetOwningFaction(), attacker);
-		return true;
 	}
 }

@@ -23,6 +23,11 @@ class ZW_ObjectivesComponent : SCR_BaseGameModeComponent
 
 	protected bool m_bEnded;
 
+	[Attribute("0", UIWidgets.EditBox, "ОТЛАДКА: авто-захват текущей точки каждые N сек (0 = выкл). Только для тестов, на сервере держать 0!", category: "Invasion Debug")]
+	protected int m_iDebugAutoCaptureSeconds;
+
+	protected int m_iDebugCounter;
+
 	//------------------------------------------------------------------------------------------------
 	static void RegisterPoint(notnull ZW_InvasionPoint point)
 	{
@@ -90,7 +95,7 @@ class ZW_ObjectivesComponent : SCR_BaseGameModeComponent
 		if (!Replication.IsServer())
 			return;
 
-		Print("[ZW_Invasion] v0.2.0 старт матча", LogLevel.WARNING);
+		Print("[ZW_Invasion] v0.3.0 старт матча", LogLevel.WARNING);
 
 		if (!GetAttackerFaction() || !GetDefenderFaction())
 		{
@@ -153,6 +158,20 @@ class ZW_ObjectivesComponent : SCR_BaseGameModeComponent
 		if (!point)
 			return;
 
+		// Отладка: точка берётся сама через N секунд, без игроков.
+		if (m_iDebugAutoCaptureSeconds > 0)
+		{
+			m_iDebugCounter++;
+			if (m_iDebugCounter >= m_iDebugAutoCaptureSeconds)
+			{
+				m_iDebugCounter = 0;
+				Print(string.Format("[ZW_Invasion] ОТЛАДКА: авто-захват точки #%1", point.GetOrder()), LogLevel.WARNING);
+				point.ZW_LockForAttacker(GetAttackerFaction());
+				OnPointCaptured(point);
+				return;
+			}
+		}
+
 		if (point.ZW_Tick(GetAttackerFaction(), GetDefenderFaction()))
 			OnPointCaptured(point);
 	}
@@ -196,6 +215,7 @@ class ZW_ObjectivesComponent : SCR_BaseGameModeComponent
 		if (timer)
 			timer.AddCaptureBonus();
 
+		LogState("после взятия точки");
 		ActivatePoint(index + 1);
 	}
 
@@ -213,9 +233,32 @@ class ZW_ObjectivesComponent : SCR_BaseGameModeComponent
 			winner = GetAttackerFaction();
 
 		int winnerIndex = GetGame().GetFactionManager().GetFactionIndex(winner);
-		Print(string.Format("[ZW_Invasion] Конец матча. Победила %1", winner.GetFactionKey()), LogLevel.NORMAL);
+		Print(string.Format("[ZW_Invasion] Конец матча. Победила %1 (причина %2)", winner.GetFactionKey(), reason), LogLevel.WARNING);
+		LogState("конец матча");
 
 		GetGameMode().EndGameMode(SCR_GameModeEndData.CreateSimple(reason, -1, winnerIndex));
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Тикеты и время в лог — для проверки баланса и отладки.
+	protected void LogState(string context)
+	{
+		ZW_TicketsComponent tickets = ZW_Invasion.GetTickets();
+		ZW_TimerComponent timer = ZW_Invasion.GetTimer();
+
+		int attackerTickets = -1;
+		int defenderTickets = -1;
+		if (tickets)
+		{
+			attackerTickets = tickets.GetAttackerTickets();
+			defenderTickets = tickets.GetDefenderTickets();
+		}
+
+		int seconds = -1;
+		if (timer)
+			seconds = timer.GetRemainingSeconds();
+
+		Print(string.Format("[ZW_Invasion] Состояние (%1): тикеты атака %2 / оборона %3, осталось %4 с", context, attackerTickets, defenderTickets, seconds), LogLevel.WARNING);
 	}
 
 	//------------------------------------------------------------------------------------------------
