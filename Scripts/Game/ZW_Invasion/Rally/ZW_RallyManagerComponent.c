@@ -316,6 +316,9 @@ class ZW_RallyManagerComponent : SCR_BaseGameModeComponent
 		}
 
 		spawnPoints.EnableDeployableSpawnPoints(true);
+		// Лимит rally считает этот менеджер; снабжение за спавн на rally не списывается.
+		spawnPoints.SetDeployableSpawnPointBudgetType(SCR_ESpawnPointBudgetType.SPAWNTICKET);
+		spawnPoints.SetDeployableSpawnPointTicketAmount(1000);
 		Print("[ZW_Invasion] Разворачиваемые rally-рации включены", LogLevel.NORMAL);
 	}
 

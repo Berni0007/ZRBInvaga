@@ -19,6 +19,7 @@ modded class SCR_RestrictedDeployableSpawnPointComponent
 		// Лимит считает менеджер (9 спавнов, затем пополнение у хаба); штатный счётчик не мешает.
 		m_iMaxRespawns = 1000;
 		m_iRespawnGenerationAmount = 0;
+		SetBudgetType(SCR_ESpawnPointBudgetType.SPAWNTICKET);
 
 		// Спавн только для своего отряда, один rally на отряд.
 		m_bAllowAllGroupsToSpawn = false;

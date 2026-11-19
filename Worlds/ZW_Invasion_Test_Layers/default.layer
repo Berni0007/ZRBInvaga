@@ -12,7 +12,6 @@ SCR_BaseGameMode GameMode_ZW_Invasion1 : "{BEECC6DCCEF65323}Prefabs/MP/Modes/Pla
   }
   ZW_RallyManagerComponent "{6AE5B7D2C41A8E37}" {
    m_bDebugSkipBuddy 1
-   m_bBlockNearSpawnPoints 0
    m_bDebugKillAfterDeploy 1
   }
  }
@@ -28,7 +27,7 @@ SCR_LoadoutManager : "{97EF4C1A41F63DDB}Prefabs/MP/Managers/Loadouts/LoadoutMana
  coords 5545.759 99.055 6315.268
 }
 GenericEntity : "{9B6B61BB3FE3DFB0}Prefabs/Items/Equipment/Radios/Radio_ANPRC77.et" {
- coords 5785 100.5 5937.5
+ coords 5700 108 6040
 }
 $grp ZW_InvasionPoint : "{ECE27EF946F651A9}Prefabs/MP/Modes/CaptureAndHold/Areas/ZW_InvasionPoint.et" {
  {
