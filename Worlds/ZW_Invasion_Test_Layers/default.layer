@@ -23,6 +23,9 @@ SCR_BaseGameMode GameMode_ZW_Invasion1 : "{BEECC6DCCEF65323}Prefabs/MP/Modes/Pla
 Vehicle ZW_KSHM_US1 : "{6AE5F2A1B3C40010}Prefabs/Invasion/ZW_KSHM_US.et" {
  coords 5774 101.704 5945
 }
+GenericEntity ZW_MainSupply1 : "{6AE5F2A1B3C400B0}Prefabs/Invasion/ZW_MainSupply.et" {
+ coords 5778 101.6 5937
+}
 Vehicle ZW_KSHM_RF1 : "{6AE5F2A1B3C40050}Prefabs/Invasion/ZW_KSHM_RF.et" {
  coords 5766 102.5 5952
 }

@@ -1,0 +1,21 @@
+GenericEntity : "{EDE6EC8B05227E3E}Prefabs/Props/Military/Arsenal/ArsenalBoxes/USSR/ArsenalBox_USSR.et" {
+ ID "6AE5F2A1B3C40091"
+ components {
+  SCR_ResourceComponent "{5D7D07D2F7A252D2}" {
+   m_aConsumers {
+    SCR_ResourceConsumerServicePoint "{5E5AE189C57A9FD7}" {
+     m_fResourceRange 15
+     m_ContainerQueue SCR_ResourceConsumerContainerQueue "{6AE5F2A1B3C40091}" {
+      m_StoragePolicies {
+       SCR_ResourceConsumerStoragePolicy "{6AE5F2A1B3C40092}" {
+        m_StorageQueue SCR_ResourceConsumerContainerStorageQueueExtended "{6AE5F2A1B3C40093}" {
+        }
+        m_eStorageType CARGO_VEHICLE
+       }
+      }
+     }
+    }
+   }
+  }
+ }
+}

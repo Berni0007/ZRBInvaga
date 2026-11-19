@@ -3,7 +3,9 @@
 //   - Машина сдвинулась, свёрнута или уничтожена — точка исчезает.
 //   - Враг ближе m_fEnemyBlockRadius — спавн на КШМ выключен (точка видна, но недоступна).
 //   - Не больше m_iMaxDeployedPerFaction развёрнутых КШМ на фракцию.
-// Склад ресурсов КШМ — следующий шаг (система снабжения).
+//   - Ресурсы: штатный склад снабжения в машине (SCR_ResourceComponent в префабе КШМ), загрузка
+//     штатным действием «Загрузить снабжение» у склада мейна. У развёрнутой КШМ появляется штатный
+//     арсенал (m_sArsenalPrefab), который тратит ресурсы из машины.
 
 [ComponentEditorProps(category: "ZRB/Invasion", description: "Invasion: КШМ — мобильный хаб атаки")]
 class ZW_KshmComponentClass : ScriptComponentClass
@@ -20,6 +22,12 @@ class ZW_KshmComponent : ScriptComponent
 
 	[Attribute("0 0 -6", UIWidgets.EditBox, "Точка спавна относительно машины (за кузовом), м", category: "КШМ")]
 	protected vector m_vSpawnOffset;
+
+	[Attribute("", UIWidgets.ResourceNamePicker, "Арсенал у развёрнутой КШМ (тратит ресурсы машины)", "et", category: "КШМ")]
+	protected ResourceName m_sArsenalPrefab;
+
+	[Attribute("2.5 0 -6", UIWidgets.EditBox, "Арсенал относительно машины, м", category: "КШМ")]
+	protected vector m_vArsenalOffset;
 
 	[Attribute("50", UIWidgets.EditBox, "Враг ближе этого радиуса выключает спавн на КШМ, м", category: "КШМ")]
 	protected float m_fEnemyBlockRadius;
@@ -45,6 +53,7 @@ class ZW_KshmComponent : ScriptComponent
 	protected bool m_bEnemyNear;
 
 	protected ZW_KshmSpawnPoint m_SpawnPoint;
+	protected IEntity m_Arsenal;
 	protected vector m_vDeployOrigin;
 
 	// Временные поля для поиска врагов.
@@ -206,6 +215,7 @@ class ZW_KshmComponent : ScriptComponent
 
 		m_SpawnPoint.SetFactionKey(m_sFactionKey);
 		m_SpawnPoint.ZW_SetKshm(this);
+		SpawnArsenal();
 		m_vDeployOrigin = GetOwner().GetOrigin();
 		m_bDeployed = true;
 		m_bEnemyNear = false;
@@ -234,6 +244,37 @@ class ZW_KshmComponent : ScriptComponent
 			SCR_EntityHelper.DeleteEntityAndChildren(m_SpawnPoint);
 
 		m_SpawnPoint = null;
+
+		if (m_Arsenal)
+			SCR_EntityHelper.DeleteEntityAndChildren(m_Arsenal);
+
+		m_Arsenal = null;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Сервер: штатный арсенал рядом с машиной, на земле.
+	protected void SpawnArsenal()
+	{
+		if (m_sArsenalPrefab.IsEmpty())
+			return;
+
+		Resource resource = Resource.Load(m_sArsenalPrefab);
+		if (!resource || !resource.IsValid())
+		{
+			Print("[ZW_Invasion] КШМ: не удалось загрузить арсенал " + m_sArsenalPrefab, LogLevel.ERROR);
+			return;
+		}
+
+		vector pos = GetOwner().CoordToParent(m_vArsenalOffset);
+		pos[1] = GetOwner().GetWorld().GetSurfaceY(pos[0], pos[2]);
+
+		float yaw = GetOwner().GetYawPitchRoll()[0];
+		EntitySpawnParams params = new EntitySpawnParams();
+		params.TransformMode = ETransformMode.WORLD;
+		Math3D.AnglesToMatrix(Vector(yaw, 0, 0), params.Transform);
+		params.Transform[3] = pos;
+
+		m_Arsenal = GetGame().SpawnEntityPrefab(resource, GetOwner().GetWorld(), params);
 	}
 
 	//------------------------------------------------------------------------------------------------

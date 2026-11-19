@@ -1,0 +1,20 @@
+GenericEntity : "{AD92C45B56130D08}PrefabLibrary/DefaultLibrary/Props/Shop/Crate_01/Crate_01_brown.et" {
+ ID "6AE5F2A1B3C400A1"
+ components {
+  SCR_ResourceComponent "{6AE5F2A1B3C400A2}" {
+   m_aContainers {
+    SCR_ResourceContainer "{6AE5F2A1B3C400A3}" {
+     m_eResourceRights ALL
+     m_eStorageType STORED
+     m_fResourceValueCurrent 100000
+     m_fResourceValueMax 100000
+     m_bEnableResourceGain 1
+     m_fResourceGain 1000
+     m_fResourceGainTickrate 1
+    }
+   }
+  }
+  RplComponent "{6AE5F2A1B3C400A4}" {
+  }
+ }
+}

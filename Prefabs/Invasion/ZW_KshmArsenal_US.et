@@ -1,0 +1,21 @@
+GenericEntity : "{BE99D77D1155B127}Prefabs/Props/Military/Arsenal/ArsenalBoxes/US/ArsenalBox_US.et" {
+ ID "6AE5F2A1B3C40081"
+ components {
+  SCR_ResourceComponent "{5D7D07D2F7A252D2}" {
+   m_aConsumers {
+    SCR_ResourceConsumerServicePoint "{5E5AE189C57A9FD7}" {
+     m_fResourceRange 15
+     m_ContainerQueue SCR_ResourceConsumerContainerQueue "{6AE5F2A1B3C40081}" {
+      m_StoragePolicies {
+       SCR_ResourceConsumerStoragePolicy "{6AE5F2A1B3C40082}" {
+        m_StorageQueue SCR_ResourceConsumerContainerStorageQueueExtended "{6AE5F2A1B3C40083}" {
+        }
+        m_eStorageType CARGO_VEHICLE
+       }
+      }
+     }
+    }
+   }
+  }
+ }
+}

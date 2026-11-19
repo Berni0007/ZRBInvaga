@@ -64,6 +64,8 @@ Scripts/Game/ZW_Invasion/
     ZW_KshmToggleAction.c       действие «Развернуть КШМ / Свернуть КШМ»
 Prefabs/Invasion/ZW_KSHM_US.et           КШМ НАТО (M923A1_command + контекст zw_kshm у кузова)
 Prefabs/Invasion/ZW_KSHM_RF.et           КШМ РФ (Ural4320_command {1BABF6B33DA0AEB6})
+Prefabs/Invasion/ZW_KshmArsenal_US/RF.et  штатный арсенал у развёрнутой КШМ, тратит ресурсы машины (CARGO_VEHICLE, 15 м)
+Prefabs/Invasion/ZW_MainSupply.et         склад мейна: 100 000 ресурсов с пополнением (временно ящик Crate_01_brown)
 Prefabs/Invasion/ZW_KshmSpawnPoint.et    точка спавна КШМ (основа SpawnPoint_US)
 Prefabs/Invasion/ZW_RallyRadioCrate.et   ящик на мейне: выдаёт рацию rally командиру (основа — Crate_01_brown)
 UI/layouts/ZW_Invasion/ZW_InvasionHUD.layout   макет HUD (GUID 751400A6DCCDBC09)
@@ -134,7 +136,8 @@ Worlds/ZW_Invasion_Test.ent + _Layers/default.layer   тестовый мир н
 - `ZW_KSHM_US.et` на `M923A1_command`: переопределён `ActionsManagerComponent` (GUID `{C97BE5489221AE18}`), добавлен контекст `zw_kshm` у кузова — штатные действия грузовика сохранились.
 - **Проверено в игре:** развернуть/свернуть, точка «КШМ» на экране возрождения, спавн на ней.
 - `ZW_KSHM_RF.et` на `Ural4320_command` — тот же GUID `ActionsManagerComponent`, контекст у кузова `0 1.4 -3.5`. Проверено в игре.
-- Осталось: ресурсы в КШМ, появление только на мейне, проверка врага в 50 м вдвоём.
+- **Ресурсы ✅ (проверено в игре):** в КШМ штатный `SCR_ResourceComponent` (CARGO_VEHICLE, 1000, старт 0) + штатные действия «Загрузить/Выгрузить снабжение» у кузова. На мейне `ZW_MainSupply` (STORED). При развёртывании спавнится `ZW_KshmArsenal_*` (наследник `ArsenalBox_US/USSR`, потребитель переопределён на CARGO_VEHICLE, радиус 15 м). Снабжение включается в `ZW_RallyManagerComponent.OnGameModeStart` (`SetResourceTypeEnabled`).
+- Осталось: появление только на мейне, проверка врага в 50 м вдвоём.
 
 ---
 
@@ -159,6 +162,8 @@ Worlds/ZW_Invasion_Test.ent + _Layers/default.layer   тестовый мир н
 
 17. **Штатная КШМ (`SCR_CampaignMobileAssemblyComponent`) работает только в Conflict** — нужен командный модуль кампании. Делаем свою (`ZW_KshmComponent`).
 18. Переопределить штатный компонент в префабе можно только с его GUID (узнать: временно изменить поле в мире и сохранить слой). Массивы `ActionContexts`/`additionalActions` при переопределении **сливаются** со штатными.
+
+19. Готовые .et штатных префабов (для GUID компонентов и конфигов снабжения) удобно смотреть в публичных модах на GitHub (`gh search code ... --extension et`), например CoalitionArma/Coalition-Reforger-Framework. GUID штатных компонентов в переопределениях модов совпадают с ванильными.
 
 ### Известные ошибки, ещё не исправленные
 - `SCR_SupportStationManagerComponent.AddSupportStation`: пустой `m_aSupportStationPriority`. Развёрнутая рация пытается зарегистрироваться как станция снабжения, а менеджер станций в режиме не настроен. Спавн не ломает, но засоряет лог VM-исключениями.

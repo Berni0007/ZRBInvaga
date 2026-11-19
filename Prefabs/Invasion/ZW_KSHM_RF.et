@@ -20,9 +20,50 @@ Vehicle : "{1BABF6B33DA0AEB6}Prefabs/Vehicles/Wheeled/Ural4320/Ural4320_command.
       Name "КШМ"
      }
     }
+    SCR_ResourceContainerVehicleLoadAction "{6AE5F2A1B3C40166}" : "{A0E53319BFA4E848}Configs/Resources/Supplies/Actions/Supplies_Vehicle_Load.conf" {
+     ParentContextList {
+      "zw_kshm"
+     }
+     UIInfo UIInfo "{6AE5F2A1B3C40167}" {
+      Name "#AR-Supplies_Vehicle_Load"
+      Description "#AR-Supplies_Vehicle_Load_Long"
+     }
+    }
+    SCR_ResourceContainerVehicleUnloadAction "{6AE5F2A1B3C40168}" : "{F10C4B3E2E87F15B}Configs/Resources/Supplies/Actions/Supplies_Vehicle_Unload.conf" {
+     ParentContextList {
+      "zw_kshm"
+     }
+     UIInfo UIInfo "{6AE5F2A1B3C40169}" {
+      Name "#AR-Supplies_Vehicle_Unload"
+      Description "#AR-Supplies_Vehicle_Unload_Long"
+     }
+    }
+   }
+  }
+  SCR_ResourceComponent "{6AE5F2A1B3C40160}" {
+   m_aContainers {
+    SCR_ResourceContainer "{6AE5F2A1B3C40161}" {
+     m_eResourceRights ALL
+     m_eStorageType CARGO_VEHICLE
+     m_fResourceValueCurrent 0
+     m_fResourceValueMax 1000
+    }
+   }
+   m_aConsumers {
+    SCR_ResourceConsumer "{6AE5F2A1B3C40162}" : "{4126DC9D9F44E513}Configs/Resources/Supplies/Consumers/Consumer_VehicleLoad.conf" {
+    }
+    SCR_ResourceConsumer "{6AE5F2A1B3C40163}" : "{3FF0B8C036F14239}Configs/Resources/Supplies/Consumers/Consumer_VehicleUnload.conf" {
+    }
+   }
+   m_aGenerators {
+    SCR_ResourceGenerator "{6AE5F2A1B3C40164}" : "{48782547A13061E2}Configs/Resources/Supplies/Generators/Generator_VehicleLoad.conf" {
+    }
+    SCR_ResourceGenerator "{6AE5F2A1B3C40165}" : "{F8496BD9E1CE43B3}Configs/Resources/Supplies/Generators/Generator_VehicleUnload.conf" {
+    }
    }
   }
   ZW_KshmComponent "{6AE5F2A1B3C40046}" {
+   m_sArsenalPrefab "{6AE5F2A1B3C40090}Prefabs/Invasion/ZW_KshmArsenal_RF.et"
    m_sFactionKey "USSR"
   }
  }

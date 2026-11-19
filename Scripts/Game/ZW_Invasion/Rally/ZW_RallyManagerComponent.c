@@ -463,6 +463,14 @@ class ZW_RallyManagerComponent : SCR_BaseGameModeComponent
 	{
 		super.OnGameModeStart();
 
+		// Снабжение (ресурсы КШМ, арсенал, склад мейна). В режимах на основе Plain/GM оно выключено.
+		SCR_BaseGameMode gameMode = SCR_BaseGameMode.Cast(GetGameMode());
+		if (gameMode && !gameMode.IsResourceTypeEnabled(EResourceType.SUPPLIES))
+		{
+			gameMode.SetResourceTypeEnabled(true, EResourceType.SUPPLIES);
+			Print("[ZW_Invasion] Снабжение включено", LogLevel.NORMAL);
+		}
+
 		if (!Replication.IsServer())
 			return;
 
