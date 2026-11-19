@@ -13,18 +13,55 @@ FrameWidgetClass "{FAA367E7E90BBDBA}" {
  }
  "Z Order" 50
  {
+ FrameWidgetClass "{8B7E183BF4820001}" {
+  Name "TicketBadge"
+  Slot FrameWidgetSlot "{8B7E183BF4820002}" {
+   Anchor 1 0 1 0
+   PositionX -24
+   PositionY 22
+   SizeX 232
+   SizeY 44
+   Alignment 1 0
+  }
+  {
+   ImageWidgetClass "{8B7E183BF4820003}" {
+    Name "TicketArtwork"
+    Slot FrameWidgetSlot "{8B7E183BF4820004}" {
+     Anchor 0 0 0 0
+     PositionX 0
+     PositionY 0
+     SizeX 232
+     SizeY 44
+    }
+    Size 232 44
+   }
+   TextWidgetClass "{8B7E183BF4820016}" {
+    Name "TicketCount"
+    Slot FrameWidgetSlot "{8B7E183BF4820017}" {
+     Anchor 0 0 0 0
+     PositionX 167
+     PositionY 0
+     SizeX 54
+     SizeY 44
+    }
+    Color 1 1 1 1
+    "Font Size" 23
+    "Min Font Size" 13
+    "Horizontal Alignment" Right
+    "Vertical Alignment" Center
+    FontProperties FontProperties "{8B7E183BF4820018}" {
+     Font "{E360EF5C08C00F9F}UI/Fonts/Roboto/Roboto_Bold.fnt"
+    }
+   }
+  }
+ }
  FrameWidgetClass "{87027E7E859D5892}" {
   Name "TopBar"
   Slot FrameWidgetSlot "{1B6A9F8A91EB2DFB}" {
    Anchor 0.5 0 0.5 0
-   PositionX 0
-   OffsetLeft 0
    PositionY 22
-   OffsetTop 22
-   SizeX 640
-   OffsetRight -640
-   SizeY 64
-   OffsetBottom -64
+   SizeX 324
+   SizeY 76
    Alignment 0.5 0
   }
   {
@@ -32,149 +69,31 @@ FrameWidgetClass "{FAA367E7E90BBDBA}" {
     Name "TopBg"
     Slot FrameWidgetSlot "{A8924DED3948465B}" {
      Anchor 0 0 0 0
-     PositionX 0
-     OffsetLeft 0
-     PositionY 0
-     OffsetTop 0
-     SizeX 640
-     OffsetRight -640
-     SizeY 64
-     OffsetBottom -64
+     SizeX 324
+     SizeY 76
     }
-    Color 0 0 0 0.48
-    Size 640 64
+    Color 0.063 0.094 0.129 0.96
+    Size 324 76
    }
-   ImageWidgetClass "{9A86E98FAB229BF2}" {
-    Name "AttackSwatch"
-    Slot FrameWidgetSlot "{2F759B9E55154B48}" {
+   ImageWidgetClass "{597CBCE24B9A1A51}" {
+    Name "TopEdge"
+    Slot FrameWidgetSlot "{597CBCE24B9A1A52}" {
      Anchor 0 0 0 0
-     PositionX 16
-     OffsetLeft 16
-     PositionY 22
-     OffsetTop 22
-     SizeX 30
-     OffsetRight -30
-     SizeY 20
-     OffsetBottom -20
+     SizeX 324
+     SizeY 2
     }
-    Color 0.357 0.561 0.847 1
-    Size 30 20
+    Size 324 2
    }
-   TextWidgetClass "{8B17336D7117067C}" {
-    Name "AttackTickets"
-    Slot FrameWidgetSlot "{982B408B42ECD6E9}" {
+   ImageWidgetClass "{597CBCE24B9A1A53}" {
+    Name "PointTrack"
+    Slot FrameWidgetSlot "{597CBCE24B9A1A54}" {
      Anchor 0 0 0 0
-     PositionX 56
-     OffsetLeft 56
-     PositionY 4
-     OffsetTop 4
-     SizeX 100
-     OffsetRight -100
-     SizeY 36
-     OffsetBottom -36
+     PositionX 36
+     PositionY 23
+     SizeX 252
+     SizeY 2
     }
-    Color 0.949 0.949 0.933 1
-    Text "300"
-    "Font Size" 32
-    "Min Font Size" 32
-    "Vertical Alignment" Center
-    FontProperties FontProperties "{A83B55F51CDE4E72}" {
-     Font "{D3E75BCBECEB273E}UI/Fonts/NotoSans/NotoSans-Enhanced-Regular-JP-KOR-SC-LAT.fnt"
-     ShadowSize 16
-     ShadowColor 0 0 0 0.45
-     ShadowOffset 0 0
-    }
-   }
-   TextWidgetClass "{82BB160FE6F81FF7}" {
-    Name "AttackLabel"
-    Slot FrameWidgetSlot "{FEC626BC63967354}" {
-     Anchor 0 0 0 0
-     PositionX 56
-     OffsetLeft 56
-     PositionY 40
-     OffsetTop 40
-     SizeX 110
-     OffsetRight -110
-     SizeY 18
-     OffsetBottom -18
-    }
-    Color 0.725 0.784 0.871 1
-    Text "Атака"
-    "Font Size" 14
-    "Min Font Size" 14
-    "Vertical Alignment" Center
-    FontProperties FontProperties "{5E56A7EED4AB9EF7}" {
-     Font "{D3E75BCBECEB273E}UI/Fonts/NotoSans/NotoSans-Enhanced-Regular-JP-KOR-SC-LAT.fnt"
-     ShadowSize 16
-     ShadowColor 0 0 0 0.45
-     ShadowOffset 0 0
-    }
-   }
-   ImageWidgetClass "{6DACDEB32A4FF2F2}" {
-    Name "DefendSwatch"
-    Slot FrameWidgetSlot "{9134F2D5AECB9CBB}" {
-     Anchor 0 0 0 0
-     PositionX 594
-     OffsetLeft 594
-     PositionY 22
-     OffsetTop 22
-     SizeX 30
-     OffsetRight -30
-     SizeY 20
-     OffsetBottom -20
-    }
-    Color 0.784 0.278 0.227 1
-    Size 30 20
-   }
-   TextWidgetClass "{A0A489E59F3A5F4A}" {
-    Name "DefendTickets"
-    Slot FrameWidgetSlot "{8808C260DE4E6927}" {
-     Anchor 0 0 0 0
-     PositionX 500
-     OffsetLeft 500
-     PositionY 4
-     OffsetTop 4
-     SizeX 90
-     OffsetRight -90
-     SizeY 36
-     OffsetBottom -36
-    }
-    Color 0.949 0.949 0.933 1
-    Text "800"
-    "Font Size" 32
-    "Min Font Size" 32
-    "Vertical Alignment" Center
-    FontProperties FontProperties "{246F75E068999205}" {
-     Font "{D3E75BCBECEB273E}UI/Fonts/NotoSans/NotoSans-Enhanced-Regular-JP-KOR-SC-LAT.fnt"
-     ShadowSize 16
-     ShadowColor 0 0 0 0.45
-     ShadowOffset 0 0
-    }
-   }
-   TextWidgetClass "{D346E8A9351B2AF5}" {
-    Name "DefendLabel"
-    Slot FrameWidgetSlot "{F3E10748BFB56F30}" {
-     Anchor 0 0 0 0
-     PositionX 500
-     OffsetLeft 500
-     PositionY 40
-     OffsetTop 40
-     SizeX 90
-     OffsetRight -90
-     SizeY 18
-     OffsetBottom -18
-    }
-    Color 0.886 0.725 0.702 1
-    Text "Оборона"
-    "Font Size" 14
-    "Min Font Size" 14
-    "Vertical Alignment" Center
-    FontProperties FontProperties "{B4C7526254671DC0}" {
-     Font "{D3E75BCBECEB273E}UI/Fonts/NotoSans/NotoSans-Enhanced-Regular-JP-KOR-SC-LAT.fnt"
-     ShadowSize 16
-     ShadowColor 0 0 0 0.45
-     ShadowOffset 0 0
-    }
+    Size 252 2
    }
    ImageWidgetClass "{BDA3119862A8CABF}" {
     Name "Pt1Outer"
@@ -223,8 +142,9 @@ FrameWidgetClass "{FAA367E7E90BBDBA}" {
     }
     Color 0.949 0.949 0.933 1
     Text "1"
-    "Font Size" 18
-    "Min Font Size" 18
+    "Font Size" 16
+    "Min Font Size" 16
+    "Horizontal Alignment" Center
     "Vertical Alignment" Center
     FontProperties FontProperties "{2825E200BA03A0C8}" {
      Font "{D3E75BCBECEB273E}UI/Fonts/NotoSans/NotoSans-Enhanced-Regular-JP-KOR-SC-LAT.fnt"
@@ -280,8 +200,9 @@ FrameWidgetClass "{FAA367E7E90BBDBA}" {
     }
     Color 0.949 0.949 0.933 1
     Text "2"
-    "Font Size" 18
-    "Min Font Size" 18
+    "Font Size" 16
+    "Min Font Size" 16
+    "Horizontal Alignment" Center
     "Vertical Alignment" Center
     FontProperties FontProperties "{486700431ACFA10A}" {
      Font "{D3E75BCBECEB273E}UI/Fonts/NotoSans/NotoSans-Enhanced-Regular-JP-KOR-SC-LAT.fnt"
@@ -337,8 +258,9 @@ FrameWidgetClass "{FAA367E7E90BBDBA}" {
     }
     Color 0.949 0.949 0.933 1
     Text "3"
-    "Font Size" 18
-    "Min Font Size" 18
+    "Font Size" 16
+    "Min Font Size" 16
+    "Horizontal Alignment" Center
     "Vertical Alignment" Center
     FontProperties FontProperties "{9F72747EF519A9A3}" {
      Font "{D3E75BCBECEB273E}UI/Fonts/NotoSans/NotoSans-Enhanced-Regular-JP-KOR-SC-LAT.fnt"
@@ -394,8 +316,9 @@ FrameWidgetClass "{FAA367E7E90BBDBA}" {
     }
     Color 0.949 0.949 0.933 1
     Text "4"
-    "Font Size" 18
-    "Min Font Size" 18
+    "Font Size" 16
+    "Min Font Size" 16
+    "Horizontal Alignment" Center
     "Vertical Alignment" Center
     FontProperties FontProperties "{0AB321BCAA4BF4DE}" {
      Font "{D3E75BCBECEB273E}UI/Fonts/NotoSans/NotoSans-Enhanced-Regular-JP-KOR-SC-LAT.fnt"
@@ -451,8 +374,9 @@ FrameWidgetClass "{FAA367E7E90BBDBA}" {
     }
     Color 0.949 0.949 0.933 1
     Text "5"
-    "Font Size" 18
-    "Min Font Size" 18
+    "Font Size" 16
+    "Min Font Size" 16
+    "Horizontal Alignment" Center
     "Vertical Alignment" Center
     FontProperties FontProperties "{FE413717792B231C}" {
      Font "{D3E75BCBECEB273E}UI/Fonts/NotoSans/NotoSans-Enhanced-Regular-JP-KOR-SC-LAT.fnt"
@@ -508,8 +432,9 @@ FrameWidgetClass "{FAA367E7E90BBDBA}" {
     }
     Color 0.949 0.949 0.933 1
     Text "6"
-    "Font Size" 18
-    "Min Font Size" 18
+    "Font Size" 16
+    "Min Font Size" 16
+    "Horizontal Alignment" Center
     "Vertical Alignment" Center
     FontProperties FontProperties "{6573ABC0A3302A37}" {
      Font "{D3E75BCBECEB273E}UI/Fonts/NotoSans/NotoSans-Enhanced-Regular-JP-KOR-SC-LAT.fnt"
@@ -565,8 +490,9 @@ FrameWidgetClass "{FAA367E7E90BBDBA}" {
     }
     Color 0.949 0.949 0.933 1
     Text "7"
-    "Font Size" 18
-    "Min Font Size" 18
+    "Font Size" 16
+    "Min Font Size" 16
+    "Horizontal Alignment" Center
     "Vertical Alignment" Center
     FontProperties FontProperties "{F510BF653DEB026B}" {
      Font "{D3E75BCBECEB273E}UI/Fonts/NotoSans/NotoSans-Enhanced-Regular-JP-KOR-SC-LAT.fnt"
@@ -575,62 +501,59 @@ FrameWidgetClass "{FAA367E7E90BBDBA}" {
      ShadowOffset 0 0
     }
    }
-  }
- }
- FrameWidgetClass "{F305AC6620FA7A70}" {
-  Name "TimerBar"
-  Slot FrameWidgetSlot "{A1C998AA0A9E4629}" {
-   Anchor 0.5 0 0.5 0
-   PositionX 0
-   OffsetLeft 0
-   PositionY 92
-   OffsetTop 92
-   SizeX 260
-   OffsetRight -260
-   SizeY 30
-   OffsetBottom -30
-   Alignment 0.5 0
-  }
-  {
-   ImageWidgetClass "{42364A617A7CF347}" {
-    Name "TimerBg"
-    Slot FrameWidgetSlot "{32FD35E6C8B06C76}" {
-     Anchor 0 0 0 0
-     PositionX 0
-     OffsetLeft 0
-     PositionY 0
-     OffsetTop 0
-     SizeX 260
-     OffsetRight -260
-     SizeY 30
-     OffsetBottom -30
-    }
-    Color 0 0 0 0.42
-    Size 260 30
-   }
-   TextWidgetClass "{BF0607F754E08484}" {
-    Name "TimerText"
-    Slot FrameWidgetSlot "{C70D5D60DC7BBD86}" {
+   FrameWidgetClass "{F305AC6620FA7A70}" {
+    Name "TimerBar"
+    Slot FrameWidgetSlot "{A1C998AA0A9E4629}" {
      Anchor 0 0 0 0
      PositionX 12
-     OffsetLeft 12
-     PositionY 0
-     OffsetTop 0
-     SizeX 240
-     OffsetRight -240
-     SizeY 30
-     OffsetBottom -30
+     PositionY 44
+     SizeX 300
+     SizeY 26
     }
-    Color 0.949 0.949 0.933 1
-    Text "60:00  до конца штурма"
-    "Font Size" 20
-    "Min Font Size" 20
-    "Vertical Alignment" Center
-    FontProperties FontProperties "{869062F2542E8A69}" {
-     Font "{D3E75BCBECEB273E}UI/Fonts/NotoSans/NotoSans-Enhanced-Regular-JP-KOR-SC-LAT.fnt"
-     ShadowSize 16
-     ShadowColor 0 0 0 0.45
-     ShadowOffset 0 0
+    {
+     ImageWidgetClass "{42364A617A7CF347}" {
+      Name "TimerDivider"
+      Slot FrameWidgetSlot "{32FD35E6C8B06C76}" {
+       Anchor 0 0 0 0
+       SizeX 300
+       SizeY 1
+      }
+      Size 300 1
+     }
+     TextWidgetClass "{597CBCE24B9A1A55}" {
+      Name "TimerValue"
+      Slot FrameWidgetSlot "{597CBCE24B9A1A56}" {
+       Anchor 0 0 0 0
+       PositionX 40
+       PositionY 3
+       SizeX 70
+       SizeY 23
+      }
+      Color 0.96 0.98 1 1
+      "Font Size" 21
+      "Min Font Size" 18
+      "Horizontal Alignment" Right
+      "Vertical Alignment" Center
+      FontProperties FontProperties "{597CBCE24B9A1A57}" {
+       Font "{E360EF5C08C00F9F}UI/Fonts/Roboto/Roboto_Bold.fnt"
+      }
+     }
+     TextWidgetClass "{BF0607F754E08484}" {
+      Name "TimerText"
+      Slot FrameWidgetSlot "{C70D5D60DC7BBD86}" {
+       Anchor 0 0 0 0
+       PositionX 121
+       PositionY 3
+       SizeX 145
+       SizeY 23
+      }
+      "Font Size" 16
+      "Min Font Size" 16
+      "Vertical Alignment" Center
+      FontProperties FontProperties "{869062F2542E8A69}" {
+       Font "{D3E75BCBECEB273E}UI/Fonts/NotoSans/NotoSans-Enhanced-Regular-JP-KOR-SC-LAT.fnt"
+      }
+     }
     }
    }
   }
@@ -746,16 +669,16 @@ FrameWidgetClass "{FAA367E7E90BBDBA}" {
  FrameWidgetClass "{4FB4B34FBC55B4BA}" {
   Name "CaptureBox"
   Slot FrameWidgetSlot "{692EF55252DACD92}" {
-   Anchor 0.5 1 0.5 1
+   Anchor 0.5 0 0.5 0
    PositionX 0
    OffsetLeft 0
-   PositionY -180
-   OffsetTop -180
-   SizeX 400
-   OffsetRight -400
-   SizeY 64
-   OffsetBottom -64
-   Alignment 0.5 1
+   PositionY 22
+   OffsetTop 22
+   SizeX 320
+   OffsetRight -320
+   SizeY 48
+   OffsetBottom -48
+   Alignment 0.5 0
   }
   {
    ImageWidgetClass "{B4436094AFF62FE6}" {
@@ -766,13 +689,13 @@ FrameWidgetClass "{FAA367E7E90BBDBA}" {
      OffsetLeft 0
      PositionY 0
      OffsetTop 0
-     SizeX 400
-     OffsetRight -400
-     SizeY 64
-     OffsetBottom -64
+     SizeX 320
+     OffsetRight -320
+     SizeY 48
+     OffsetBottom -48
     }
     Color 0 0 0 0.5
-    Size 400 64
+    Size 320 48
    }
    TextWidgetClass "{11855C7707C43ED2}" {
     Name "CaptureTitle"
@@ -782,42 +705,18 @@ FrameWidgetClass "{FAA367E7E90BBDBA}" {
      OffsetLeft 16
      PositionY 4
      OffsetTop 4
-     SizeX 270
-     OffsetRight -270
-     SizeY 30
-     OffsetBottom -30
+     SizeX 288
+     OffsetRight -288
+     SizeY 27
+     OffsetBottom -27
     }
     Color 0.949 0.949 0.933 1
     Text "Захват точки"
     "Font Size" 20
     "Min Font Size" 20
+    "Horizontal Alignment" Center
     "Vertical Alignment" Center
     FontProperties FontProperties "{4847E436D858AA37}" {
-     Font "{D3E75BCBECEB273E}UI/Fonts/NotoSans/NotoSans-Enhanced-Regular-JP-KOR-SC-LAT.fnt"
-     ShadowSize 16
-     ShadowColor 0 0 0 0.45
-     ShadowOffset 0 0
-    }
-   }
-   TextWidgetClass "{7B935C3257EA6367}" {
-    Name "CaptureTime"
-    Slot FrameWidgetSlot "{897E36472140083B}" {
-     Anchor 0 0 0 0
-     PositionX 290
-     OffsetLeft 290
-     PositionY 4
-     OffsetTop 4
-     SizeX 100
-     OffsetRight -100
-     SizeY 30
-     OffsetBottom -30
-    }
-    Color 0.839 0.839 0.812 1
-    Text "0 / 60 с"
-    "Font Size" 18
-    "Min Font Size" 18
-    "Vertical Alignment" Center
-    FontProperties FontProperties "{594215D5E228F620}" {
      Font "{D3E75BCBECEB273E}UI/Fonts/NotoSans/NotoSans-Enhanced-Regular-JP-KOR-SC-LAT.fnt"
      ShadowSize 16
      ShadowColor 0 0 0 0.45
@@ -830,15 +729,15 @@ FrameWidgetClass "{FAA367E7E90BBDBA}" {
      Anchor 0 0 0 0
      PositionX 16
      OffsetLeft 16
-     PositionY 42
-     OffsetTop 42
-     SizeX 368
-     OffsetRight -368
-     SizeY 8
-     OffsetBottom -8
+     PositionY 34
+     OffsetTop 34
+     SizeX 288
+     OffsetRight -288
+     SizeY 6
+     OffsetBottom -6
     }
     Color 1 1 1 0.18
-    Size 368 8
+    Size 288 6
    }
    ImageWidgetClass "{F7AA4F0896F48BA9}" {
     Name "CaptureFill"
@@ -846,15 +745,15 @@ FrameWidgetClass "{FAA367E7E90BBDBA}" {
      Anchor 0 0 0 0
      PositionX 16
      OffsetLeft 16
-     PositionY 42
-     OffsetTop 42
+     PositionY 34
+     OffsetTop 34
      SizeX 0
      OffsetRight 0
-     SizeY 8
-     OffsetBottom -8
+     SizeY 6
+     OffsetBottom -6
     }
     Color 0.91 0.471 0.125 1
-    Size 0 8
+    Size 0 6
    }
   }
  }

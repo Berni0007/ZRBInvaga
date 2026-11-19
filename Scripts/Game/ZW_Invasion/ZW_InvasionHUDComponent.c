@@ -2,8 +2,9 @@
 // Вешается на префаб гейм-мода. Работает только на клиенте: читает реплицированное
 // состояние (тикеты, таймер, точки, прогресс) и показывает каждой стороне своё:
 //   - численность игроков на точке не показывается никому;
-//   - прогресс захвата видит только атака;
+//   - шкалу захвата видит только атака в зоне точки;
 //   - оборона видит только статус «точку захватывают».
+//   - у каждой стороны своя плашка тикетов, цепочка точек и таймер штурма только на карте.
 
 [ComponentEditorProps(category: "ZRB/Invasion", description: "Invasion: HUD (клиент)")]
 class ZW_InvasionHUDComponentClass : SCR_BaseGameModeComponentClass
@@ -15,11 +16,25 @@ class ZW_InvasionHUDComponent : SCR_BaseGameModeComponent
 	[Attribute("{751400A6DCCDBC09}UI/layouts/ZW_Invasion/ZW_InvasionHUD.layout", UIWidgets.ResourceNamePicker, "Layout HUD", "layout", category: "Invasion")]
 	protected ResourceName m_sLayout;
 
+	[Attribute("{24CD148E6AD508A0}UI/Textures/ZW_Tickets_NATO_UI.edds", UIWidgets.ResourceNamePicker, "Плашка тикетов атаки", "edds", category: "Invasion")]
+	protected ResourceName m_rAttackerBadge;
+
+	[Attribute("{7DC217E9672E4562}UI/Textures/ZW_Tickets_RF_UI.edds", UIWidgets.ResourceNamePicker, "Плашка тикетов обороны", "edds", category: "Invasion")]
+	protected ResourceName m_rDefenderBadge;
+
 	protected static const int MAX_POINTS = 7;
 	protected static const int UPDATE_MS = 250;
+	protected static const int MAP_PANEL_WIDTH = 324;
+	protected static const int MAP_POINT_STEP = 42;
 	protected static const float FREEZE_AFTER_MS = 1500;
+	protected static const float CAPTURE_BAR_WIDTH = 288;
+	protected static const float CAPTURE_BAR_HEIGHT = 6;
 
 	protected Widget m_wRoot;
+	protected Widget m_wMapParent;
+	protected bool m_bHUDOnMap;
+	protected bool m_bBadgeInitialized;
+	protected bool m_bBadgeAttacker;
 	protected bool m_bRunning;
 
 	// Для определения направления захвата у атаки (растёт / замер / падает).
@@ -36,24 +51,49 @@ class ZW_InvasionHUDComponent : SCR_BaseGameModeComponent
 		if (System.IsConsoleApp())
 			return;
 
-		if (!m_wRoot)
-			m_wRoot = GetGame().GetWorkspace().CreateWidgets(m_sLayout);
-
-		if (!m_wRoot)
+		if (!CreateHUD(null))
 		{
 			Print("[ZW_Invasion] HUD: не удалось создать layout " + m_sLayout, LogLevel.ERROR);
 			return;
 		}
 
+		m_bRunning = true;
+		UpdateHUD();
+		GetGame().GetCallqueue().CallLater(UpdateHUD, UPDATE_MS, true);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	protected bool CreateHUD(Widget mapParent)
+	{
+		Widget root = GetGame().GetWorkspace().CreateWidgets(m_sLayout, mapParent);
+		if (!root)
+			return false;
+
+		if (m_wRoot)
+			m_wRoot.RemoveFromHierarchy();
+
+		m_wRoot = root;
+		m_wMapParent = mapParent;
+		m_bHUDOnMap = mapParent != null;
+		m_bBadgeInitialized = false;
+		IgnoreCursor(m_wRoot);
 		ApplyLayout();
 		ApplyColors();
-
+		SetVisible("TicketBadge", false);
+		SetVisible("TopBar", false);
+		SetVisible("TimerBar", false);
 		SetVisible("PrepBox", false);
 		SetVisible("CaptureBox", false);
 		SetVisible("DefAlert", false);
+		return true;
+	}
 
-		m_bRunning = true;
-		GetGame().GetCallqueue().CallLater(UpdateHUD, UPDATE_MS, true);
+	//------------------------------------------------------------------------------------------------
+	protected void IgnoreCursor(notnull Widget widget)
+	{
+		widget.SetFlags(WidgetFlags.IGNORE_CURSOR | WidgetFlags.NOFOCUS);
+		for (Widget child = widget.GetChildren(); child; child = child.GetSibling())
+			IgnoreCursor(child);
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -84,6 +124,12 @@ class ZW_InvasionHUDComponent : SCR_BaseGameModeComponent
 			m_wRoot.RemoveFromHierarchy();
 			m_wRoot = null;
 		}
+		m_wMapParent = null;
+		m_bBadgeInitialized = false;
+		m_bHUDOnMap = false;
+		m_iLastProgress = -1;
+		m_iTrend = 0;
+		m_fLastChangeTime = 0;
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -91,49 +137,39 @@ class ZW_InvasionHUDComponent : SCR_BaseGameModeComponent
 	//! якорь и выравнивание — доли (0..1) родителя/виджета.
 	protected void ApplyLayout()
 	{
-		Place("TopBar", 0.5, 0, 0.5, 0, 0, 22, 640, 64);
-		Place("TopBg", 0, 0, 0, 0, 0, 0, 640, 64);
-		Place("AttackSwatch", 0, 0, 0, 0, 16, 22, 30, 20);
-		Place("AttackTickets", 0, 0, 0, 0, 56, 4, 100, 36);
-		Place("AttackLabel", 0, 0, 0, 0, 56, 40, 110, 18);
-		Place("DefendSwatch", 0, 0, 0, 0, 594, 22, 30, 20);
-		Place("DefendTickets", 0, 0, 0, 0, 500, 4, 90, 36);
-		Place("DefendLabel", 0, 0, 0, 0, 500, 40, 90, 18);
-		Place("Pt1Outer", 0, 0, 0, 0, 170, 17, 30, 30);
-		Place("Pt1Inner", 0, 0, 0, 0, 173, 20, 24, 24);
-		Place("Pt1Num", 0, 0, 0, 0, 180, 17, 20, 30);
-		Place("Pt2Outer", 0, 0, 0, 0, 214, 17, 30, 30);
-		Place("Pt2Inner", 0, 0, 0, 0, 217, 20, 24, 24);
-		Place("Pt2Num", 0, 0, 0, 0, 224, 17, 20, 30);
-		Place("Pt3Outer", 0, 0, 0, 0, 258, 17, 30, 30);
-		Place("Pt3Inner", 0, 0, 0, 0, 261, 20, 24, 24);
-		Place("Pt3Num", 0, 0, 0, 0, 268, 17, 20, 30);
-		Place("Pt4Outer", 0, 0, 0, 0, 302, 17, 30, 30);
-		Place("Pt4Inner", 0, 0, 0, 0, 305, 20, 24, 24);
-		Place("Pt4Num", 0, 0, 0, 0, 312, 17, 20, 30);
-		Place("Pt5Outer", 0, 0, 0, 0, 346, 17, 30, 30);
-		Place("Pt5Inner", 0, 0, 0, 0, 349, 20, 24, 24);
-		Place("Pt5Num", 0, 0, 0, 0, 356, 17, 20, 30);
-		Place("Pt6Outer", 0, 0, 0, 0, 390, 17, 30, 30);
-		Place("Pt6Inner", 0, 0, 0, 0, 393, 20, 24, 24);
-		Place("Pt6Num", 0, 0, 0, 0, 400, 17, 20, 30);
-		Place("Pt7Outer", 0, 0, 0, 0, 434, 17, 30, 30);
-		Place("Pt7Inner", 0, 0, 0, 0, 437, 20, 24, 24);
-		Place("Pt7Num", 0, 0, 0, 0, 444, 17, 20, 30);
-		Place("TimerBar", 0.5, 0, 0.5, 0, 0, 92, 260, 30);
-		Place("TimerBg", 0, 0, 0, 0, 0, 0, 260, 30);
-		Place("TimerText", 0, 0, 0, 0, 12, 0, 240, 30);
+		Place("TicketBadge", 1, 0, 1, 0, -24, 22, 232, 44);
+		Place("TicketArtwork", 0, 0, 0, 0, 0, 0, 232, 44);
+		Place("TicketCount", 0, 0, 0, 0, 167, 0, 54, 44);
+		Place("TopBar", 0.5, 0, 0.5, 0, 0, 22, MAP_PANEL_WIDTH, 76);
+		Place("TopBg", 0, 0, 0, 0, 0, 0, MAP_PANEL_WIDTH, 76);
+		Place("TopEdge", 0, 0, 0, 0, 0, 0, MAP_PANEL_WIDTH, 2);
+		Place("TimerBar", 0, 0, 0, 0, 12, 44, MAP_PANEL_WIDTH - 24, 26);
+		Place("TimerDivider", 0, 0, 0, 0, 0, 0, MAP_PANEL_WIDTH - 24, 1);
+		Place("TimerValue", 0, 0, 0, 0, 40, 3, 70, 23);
+		Place("TimerText", 0, 0, 0, 0, 121, 3, 145, 23);
+		for (int order = 1; order <= MAX_POINTS; order++)
+		{
+			string prefix = "Pt" + order.ToString();
+			ImageWidget outer = ImageWidget.Cast(m_wRoot.FindAnyWidget(prefix + "Outer"));
+			ImageWidget inner = ImageWidget.Cast(m_wRoot.FindAnyWidget(prefix + "Inner"));
+			if (outer && inner)
+			{
+				outer.SetPivot(0.5, 0.5);
+				outer.SetRotation(45);
+				inner.SetPivot(0.5, 0.5);
+				inner.SetRotation(45);
+			}
+		}
 		Place("PrepBox", 0.5, 0, 0.5, 0, 0, 140, 380, 124);
 		Place("PrepBg", 0, 0, 0, 0, 0, 0, 380, 124);
 		Place("PrepTitle", 0, 0, 0, 0, 20, 8, 340, 26);
 		Place("PrepTime", 0, 0, 0, 0, 20, 34, 340, 56);
 		Place("PrepHint", 0, 0, 0, 0, 20, 92, 340, 24);
-		Place("CaptureBox", 0.5, 1, 0.5, 1, 0, -180, 400, 64);
-		Place("CaptureBg", 0, 0, 0, 0, 0, 0, 400, 64);
-		Place("CaptureTitle", 0, 0, 0, 0, 16, 4, 270, 30);
-		Place("CaptureTime", 0, 0, 0, 0, 290, 4, 100, 30);
-		Place("CaptureBarBg", 0, 0, 0, 0, 16, 42, 368, 8);
-		Place("CaptureFill", 0, 0, 0, 0, 16, 42, 0, 8);
+		Place("CaptureBox", 0.5, 0, 0.5, 0, 0, 22, 320, 48);
+		Place("CaptureBg", 0, 0, 0, 0, 0, 0, 320, 48);
+		Place("CaptureTitle", 0, 0, 0, 0, 16, 4, CAPTURE_BAR_WIDTH, 27);
+		Place("CaptureBarBg", 0, 0, 0, 0, 16, 34, CAPTURE_BAR_WIDTH, CAPTURE_BAR_HEIGHT);
+		Place("CaptureFill", 0, 0, 0, 0, 16, 34, 0, CAPTURE_BAR_HEIGHT);
 		Place("DefAlert", 0.5, 1, 0.5, 1, 0, -180, 340, 44);
 		Place("DefAlertBg", 0, 0, 0, 0, 0, 0, 340, 44);
 		Place("DefAlertText", 0, 0, 0, 0, 16, 0, 310, 44);
@@ -143,15 +179,16 @@ class ZW_InvasionHUDComponent : SCR_BaseGameModeComponent
 	//! Цвета подложек и полос задаём из скрипта (как и цвета точек) — так они точно применяются.
 	protected void ApplyColors()
 	{
-		SetColor("TopBg", ARGB(122, 0, 0, 0));
-		SetColor("TimerBg", ARGB(107, 0, 0, 0));
+		SetColor("TopBg", ARGB(244, 16, 24, 33));
+		SetColor("TopEdge", ARGB(255, 88, 109, 128));
+		SetColor("PointTrack", ARGB(255, 85, 103, 119));
+		SetColor("TimerDivider", ARGB(62, 165, 190, 210));
+		SetColor("TimerText", ARGB(255, 177, 195, 211));
 		SetColor("PrepBg", ARGB(128, 0, 0, 0));
 		SetColor("CaptureBg", ARGB(128, 0, 0, 0));
 		SetColor("CaptureBarBg", ARGB(46, 255, 255, 255));
 		SetColor("CaptureFill", ARGB(255, 232, 120, 32));
 		SetColor("DefAlertBg", ARGB(158, 120, 28, 20));
-		SetColor("AttackSwatch", ARGB(255, 91, 143, 216));
-		SetColor("DefendSwatch", ARGB(255, 200, 71, 58));
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -174,8 +211,14 @@ class ZW_InvasionHUDComponent : SCR_BaseGameModeComponent
 	//------------------------------------------------------------------------------------------------
 	protected void UpdateHUD()
 	{
-		if (!m_wRoot)
+		Widget mapParent = GetOpenMapRoot();
+		bool mapOpen = mapParent != null;
+		if ((!m_wRoot || m_bHUDOnMap != mapOpen || m_wMapParent != mapParent) && !CreateHUD(mapParent))
+		{
+			if (m_wRoot)
+				m_wRoot.SetVisible(false);
 			return;
+		}
 
 		ZW_ObjectivesComponent objectives = ZW_Invasion.GetObjectives();
 		ZW_TicketsComponent tickets = ZW_Invasion.GetTickets();
@@ -188,42 +231,34 @@ class ZW_InvasionHUDComponent : SCR_BaseGameModeComponent
 		Faction local = SCR_FactionManager.SGetLocalPlayerFaction();
 		bool isAttacker = local && local == attacker;
 		bool isDefender = local && local == defender;
+		bool hasSide = isAttacker || isDefender;
+		bool ended = objectives.IsEnded();
+		SetVisible("TicketBadge", tickets && hasSide && !ended);
 
-		// --- Тикеты
-		if (tickets)
-		{
-			SetText("AttackTickets", tickets.GetAttackerTickets().ToString());
-			SetText("DefendTickets", tickets.GetDefenderTickets().ToString());
-		}
-
-		if (attacker)
-			SetText("AttackLabel", "Атака (" + attacker.GetFactionKey() + ")");
-		if (defender)
-			SetText("DefendLabel", "Оборона (" + defender.GetFactionKey() + ")");
+		if (tickets && hasSide && !ended)
+			UpdateTicketBadge(isAttacker, tickets);
 
 		// --- Таймер и подготовка
-		bool prep = false;
-		if (timer)
+		bool prep = timer && timer.IsPrepPhase();
+		SetVisible("PrepBox", prep && !mapOpen && !ended);
+		SetVisible("TimerBar", timer && mapOpen && hasSide && !ended);
+		if (prep && !mapOpen)
 		{
-			prep = timer.IsPrepPhase();
-			string time = FormatTime(timer.GetRemainingSeconds());
-			SetVisible("PrepBox", prep);
-			SetVisible("TimerBar", !prep);
-
-			if (prep)
-			{
-				SetText("PrepTime", time);
-				if (isAttacker)
-					SetText("PrepHint", "Атака: ждите на главной базе");
-				else if (isDefender)
-					SetText("PrepHint", "Оборона: займите точку 1");
-				else
-					SetText("PrepHint", "");
-			}
+			SetText("PrepTime", FormatTime(timer.GetRemainingSeconds()));
+			if (isAttacker)
+				SetText("PrepHint", "Атака: ждите на главной базе");
+			else if (isDefender)
+				SetText("PrepHint", "Оборона: займите точку 1");
 			else
-			{
-				SetText("TimerText", time + "  до конца штурма");
-			}
+				SetText("PrepHint", "");
+		}
+		else if (timer && mapOpen)
+		{
+			string suffix = "до конца штурма";
+			if (prep)
+				suffix = "до начала штурма";
+			SetText("TimerValue", FormatTime(timer.GetRemainingSeconds()));
+			SetText("TimerText", suffix);
 		}
 
 		// --- Цепочка точек
@@ -232,21 +267,96 @@ class ZW_InvasionHUDComponent : SCR_BaseGameModeComponent
 		if (activeOrder < 1)
 			activeOrder = 1;
 
-		for (int order = 1; order <= MAX_POINTS; order++)
-		{
-			ZW_InvasionPoint point = ZW_ObjectivesComponent.FindPointByOrder(world, order);
-			UpdatePointSlot(order, point, activeOrder, isAttacker, objectives.IsEnded());
-		}
+		SetVisible("TopBar", mapOpen && hasSide && !ended);
+		if (mapOpen && hasSide && !ended)
+			UpdateMapPoints(world, activeOrder, isAttacker, objectives.GetPointCount());
 
 		// --- Захват текущей точки
 		ZW_InvasionPoint active = ZW_ObjectivesComponent.FindPointByOrder(world, activeOrder);
-		UpdateCapture(active, activeOrder, isAttacker, isDefender, prep || objectives.IsEnded());
+		UpdateCapture(active, activeOrder, isAttacker, isDefender, prep || mapOpen || ended);
 	}
 
 	//------------------------------------------------------------------------------------------------
-	protected void UpdatePointSlot(int order, ZW_InvasionPoint point, int activeOrder, bool isAttacker, bool ended)
+	protected Widget GetOpenMapRoot()
 	{
-		string prefix = "Pt" + order.ToString();
+		SCR_MapEntity mapEntity = SCR_MapEntity.GetMapInstance();
+		if (!mapEntity || !mapEntity.IsOpen())
+			return null;
+
+		MapConfiguration mapConfig = mapEntity.GetMapConfig();
+		if (!mapConfig || mapConfig.MapEntityMode != EMapEntityMode.FULLSCREEN)
+			return null;
+
+		Widget mapRoot = mapEntity.GetMapMenuRoot();
+		if (mapRoot)
+			return mapRoot;
+
+		return mapConfig.RootWidgetRef;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	protected void UpdateTicketBadge(bool isAttacker, notnull ZW_TicketsComponent tickets)
+	{
+		int count;
+		if (isAttacker)
+			count = tickets.GetAttackerTickets();
+		else
+			count = tickets.GetDefenderTickets();
+		SetText("TicketCount", count.ToString());
+
+		if (m_bBadgeInitialized && m_bBadgeAttacker == isAttacker)
+			return;
+
+		m_bBadgeInitialized = true;
+		m_bBadgeAttacker = isAttacker;
+		ResourceName texture = m_rDefenderBadge;
+		int countWidth = 50;
+		if (isAttacker)
+		{
+			texture = m_rAttackerBadge;
+			countWidth = 54;
+		}
+
+		Place("TicketCount", 0, 0, 0, 0, 167, 0, countWidth, 44);
+		ImageWidget artwork = ImageWidget.Cast(m_wRoot.FindAnyWidget("TicketArtwork"));
+		if (!artwork)
+			return;
+
+		artwork.SetFlags(WidgetFlags.STRETCH);
+		bool loaded = artwork.LoadImageTexture(0, texture);
+		artwork.SetVisible(loaded);
+		if (!loaded)
+			Print("[ZW_Invasion] HUD: не удалось загрузить плашку тикетов " + texture, LogLevel.ERROR);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	protected void UpdateMapPoints(BaseWorld world, int activeOrder, bool isAttacker, int pointCount)
+	{
+		int visibleCount = Math.Min(pointCount, MAX_POINTS);
+		float trackWidth = (visibleCount - 1) * MAP_POINT_STEP;
+		float start = (MAP_PANEL_WIDTH - trackWidth) * 0.5;
+		SetVisible("PointTrack", visibleCount > 1);
+		if (visibleCount > 1)
+			Place("PointTrack", 0, 0, 0, 0, start, 23, trackWidth, 2);
+
+		for (int order = 1; order <= MAX_POINTS; order++)
+		{
+			ZW_InvasionPoint point = ZW_ObjectivesComponent.FindPointByOrder(world, order);
+			string prefix = "Pt" + order.ToString();
+			if (point)
+			{
+				float center = start + (order - 1) * MAP_POINT_STEP;
+				Place(prefix + "Outer", 0, 0, 0, 0, center - 11, 13, 22, 22);
+				Place(prefix + "Inner", 0, 0, 0, 0, center - 9, 15, 18, 18);
+				Place(prefix + "Num", 0, 0, 0, 0, center - 12, 12, 24, 24);
+			}
+			UpdatePointSlot(prefix, order, point, activeOrder, isAttacker);
+		}
+	}
+
+	//------------------------------------------------------------------------------------------------
+	protected void UpdatePointSlot(string prefix, int order, ZW_InvasionPoint point, int activeOrder, bool isAttacker)
+	{
 		bool exists = point != null;
 		SetVisible(prefix + "Outer", exists);
 		SetVisible(prefix + "Inner", exists);
@@ -254,40 +364,38 @@ class ZW_InvasionHUDComponent : SCR_BaseGameModeComponent
 		if (!exists)
 			return;
 
-		int blue = ARGB(255, 91, 143, 216);
-		int red = ARGB(255, 200, 71, 58);
-		int orange = ARGB(255, 232, 120, 32);
-		int fog = ARGB(140, 255, 255, 255);
-		int dark = ARGB(150, 0, 0, 0);
-
 		int outer;
 		int inner;
 		string label = order.ToString();
+		int textColor = ARGB(255, 235, 242, 248);
 
-		if (order < activeOrder || (ended && order <= activeOrder))
+		if (order < activeOrder)
 		{
-			outer = blue;                // взята атакой
-			inner = blue;
+			outer = ARGB(255, 109, 169, 230);
+			inner = ARGB(255, 41, 81, 120);
 		}
 		else if (order == activeOrder)
 		{
-			outer = orange;              // текущая цель
-			inner = dark;
+			outer = ARGB(255, 255, 185, 79);
+			inner = ARGB(255, 91, 58, 25);
+			textColor = ARGB(255, 255, 224, 179);
 		}
 		else if (isAttacker)
 		{
-			outer = fog;                 // туман войны: атака не видит следующие точки
-			inner = dark;
+			outer = ARGB(255, 104, 122, 139);
+			inner = ARGB(255, 29, 41, 53);
+			textColor = ARGB(255, 177, 195, 211);
 			label = "?";
 		}
 		else
 		{
-			outer = red;                 // у обороны
-			inner = ARGB(90, 200, 71, 58);
+			outer = ARGB(255, 201, 112, 111);
+			inner = ARGB(255, 78, 43, 47);
 		}
 
 		SetColor(prefix + "Outer", outer);
 		SetColor(prefix + "Inner", inner);
+		SetColor(prefix + "Num", textColor);
 		SetText(prefix + "Num", label);
 	}
 
@@ -323,7 +431,7 @@ class ZW_InvasionHUDComponent : SCR_BaseGameModeComponent
 			m_iTrend = 0;
 		}
 
-		// Атака: подробности захвата, только когда игрок в зоне точки.
+		// Атака: шкала захвата, только когда игрок в зоне точки.
 		bool showAttack = isAttacker && IsLocalPlayerInside(point);
 		SetVisible("CaptureBox", showAttack);
 		if (showAttack)
@@ -335,11 +443,10 @@ class ZW_InvasionHUDComponent : SCR_BaseGameModeComponent
 				title = "Точку " + order.ToString() + " отбивают";
 
 			SetText("CaptureTitle", title);
-			SetText("CaptureTime", progress.ToString() + " / " + total.ToString() + " с");
 
 			Widget fill = m_wRoot.FindAnyWidget("CaptureFill");
 			if (fill && total > 0)
-				FrameSlot.SetSize(fill, 368.0 * progress / total, 8);
+				FrameSlot.SetSize(fill, CAPTURE_BAR_WIDTH * progress / total, CAPTURE_BAR_HEIGHT);
 		}
 
 		// Оборона: только статус, без процентов, времени и численности.
