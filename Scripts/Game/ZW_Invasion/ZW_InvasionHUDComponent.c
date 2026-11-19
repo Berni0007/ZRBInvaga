@@ -461,7 +461,7 @@ class ZW_InvasionHUDComponent : SCR_BaseGameModeComponent
 		}
 
 		int progress = point.GetProgress();
-		int total = point.GetCaptureSeconds();
+		int total = point.GetProgressMax();
 
 		// Направление: растёт / падает; без изменений дольше FREEZE_AFTER_MS — замер.
 		float now = GetGame().GetWorld().GetWorldTime();
@@ -488,6 +488,8 @@ class ZW_InvasionHUDComponent : SCR_BaseGameModeComponent
 		if (showAttack)
 		{
 			string title = "Захват точки " + order.ToString();
+			if (progress < ZW_InvasionPoint.PROGRESS_NEUTRAL)
+				title = "Нейтрализация точки " + order.ToString();
 			if (m_iTrend == 0 && progress > 0)
 				title = "Точка " + order.ToString() + " оспаривается";
 			else if (m_iTrend < 0)

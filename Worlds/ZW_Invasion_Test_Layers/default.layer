@@ -45,19 +45,16 @@ SCR_LoadoutManager : "{97EF4C1A41F63DDB}Prefabs/MP/Managers/Loadouts/LoadoutMana
 $grp ZW_InvasionPoint : "{ECE27EF946F651A9}Prefabs/MP/Modes/CaptureAndHold/Areas/ZW_InvasionPoint.et" {
  {
   coords 5789.907 100.9 5930.195
-  m_iCaptureSeconds 20
   m_iMinAttackers 1
  }
  {
   coords 5707.672 105.877 6023.828
   m_iOrder 2
-  m_iCaptureSeconds 20
   m_iMinAttackers 1
  }
  {
   coords 5647.836 113.809 6130.536
   m_iOrder 3
-  m_iCaptureSeconds 20
   m_iMinAttackers 1
  }
 }

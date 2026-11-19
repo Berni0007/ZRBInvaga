@@ -18,14 +18,22 @@ class ZW_InvasionPoint : SCR_CaptureAndHoldArea
 	[Attribute("", UIWidgets.EditBox, "Полоса (например north / south). Пусто — точка общая для всех полос. На старте матча сервер выбирает одну полосу.", category: "Invasion")]
 	protected string m_sLane;
 
-	[Attribute("60", UIWidgets.EditBox, "Время захвата, сек", category: "Invasion")]
-	protected int m_iCaptureSeconds;
-
-	[Attribute("2", UIWidgets.EditBox, "Минимум атакующих на точке для захвата", category: "Invasion")]
+	[Attribute("3", UIWidgets.EditBox, "Минимум игроков стороны в зоне, чтобы двигать захват (и атака, и оборона)", category: "Invasion")]
 	protected int m_iMinAttackers;
 
-	[Attribute("40", UIWidgets.EditBox, "Радиус зоны захвата, м (подсчёт игроков, HUD и сфера в редакторе)", category: "Invasion")]
+	[Attribute("60", UIWidgets.EditBox, "Радиус зоны захвата, м (подсчёт игроков, HUD и сфера в редакторе)", category: "Invasion")]
 	protected float m_fCaptureRadius;
+
+	//! Время захвата по перевесу (как в Squad): порог перевеса → секунд на «отхват» (оборона → нейтральная)
+	//! и секунд на захват (нейтральная → атака). Ступени: берётся наибольший достигнутый порог.
+	protected static const ref array<int> TIER_ADVANTAGE = { 1, 3, 9, 18, 27 };
+	protected static const ref array<float> TIER_NEUTRALIZE = { 210, 182.5, 100, 60, 40 };
+	protected static const ref array<float> TIER_CAPTURE = { 162, 140, 77, 46, 31 };
+
+	//! Прогресс в тысячных: 0..1000 — отхват (точка обороны → нейтральная), 1000..2000 — захват.
+	static const int PROGRESS_NEUTRAL = 1000;
+	static const int PROGRESS_MAX = 2000;
+	protected float m_fProgress;
 
 	// Временные поля для подсчёта игроков в зоне.
 	protected Faction m_CountFaction;
@@ -37,7 +45,7 @@ class ZW_InvasionPoint : SCR_CaptureAndHoldArea
 	//! Взята атакой — больше никогда не меняет владельца.
 	protected bool m_bLocked;
 
-	//! Прогресс захвата, сек (0..m_iCaptureSeconds). Реплицируется для HUD на этапе 3.
+	//! Прогресс захвата для HUD, тысячные (0..PROGRESS_MAX).
 	[RplProp()]
 	protected int m_iProgress;
 
@@ -124,9 +132,9 @@ class ZW_InvasionPoint : SCR_CaptureAndHoldArea
 	}
 
 	//------------------------------------------------------------------------------------------------
-	int GetCaptureSeconds()
+	int GetProgressMax()
 	{
-		return m_iCaptureSeconds;
+		return PROGRESS_MAX;
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -170,7 +178,7 @@ class ZW_InvasionPoint : SCR_CaptureAndHoldArea
 		if (!m_sPointName.IsEmpty())
 			label = label + " " + m_sPointName;
 		// Шрифт отладочного текста не знает кириллицу — подписи латиницей.
-		label = label + string.Format("  [%1s, min %2]", m_iCaptureSeconds, m_iMinAttackers);
+		label = label + string.Format("  [r %1, min %2]", m_fCaptureRadius, m_iMinAttackers);
 		if (!error.IsEmpty())
 			label = label + "  ERROR: " + error;
 
@@ -199,6 +207,7 @@ class ZW_InvasionPoint : SCR_CaptureAndHoldArea
 		m_bActive = false;
 		m_bLocked = false;
 		m_iProgress = 0;
+		m_fProgress = 0;
 		SetOwningFactionInternalAuthority(GetOwningFaction(), defender);
 		EnablePeriodicQueries(false);
 	}
@@ -209,6 +218,7 @@ class ZW_InvasionPoint : SCR_CaptureAndHoldArea
 	{
 		m_bActive = true;
 		m_iProgress = 0;
+		m_fProgress = 0;
 		m_iTickCounter = 0;
 		EnablePeriodicQueries(true);
 	}
@@ -223,13 +233,17 @@ class ZW_InvasionPoint : SCR_CaptureAndHoldArea
 		int attackers = ZW_CountInside(attacker);
 		int defenders = ZW_CountInside(defender);
 		int before = m_iProgress;
+		int advantage = attackers - defenders;
 
-		// Перетягивание: кого в зоне больше, тот и тянет прогресс в свою сторону.
-		if (attackers > defenders && attackers >= m_iMinAttackers)
-			m_iProgress++;                       // перевес атаки — захват идёт
-		else if (defenders > attackers && m_iProgress > 0)
-			m_iProgress--;                       // перевес обороны — прогресс отбивают
-		// равенство сил, пустая точка или атакующих меньше минимума — прогресс замирает
+		// Перетягивание по перевесу. Двигать прогресс может только сторона, у которой в зоне
+		// не меньше m_iMinAttackers игроков. Равенство или мало людей — прогресс замирает.
+		if (advantage > 0 && attackers >= m_iMinAttackers)
+			m_fProgress += StepFor(advantage);
+		else if (advantage < 0 && defenders >= m_iMinAttackers && m_fProgress > 0)
+			m_fProgress -= StepFor(-advantage);
+
+		m_fProgress = Math.Clamp(m_fProgress, 0, PROGRESS_MAX);
+		m_iProgress = Math.Round(m_fProgress);
 
 		// Для HUD: оборона видит только факт захвата, без процентов и численности.
 		bool beingCaptured = m_iProgress > 0;
@@ -241,13 +255,31 @@ class ZW_InvasionPoint : SCR_CaptureAndHoldArea
 
 		m_iTickCounter++;
 		if (m_iTickCounter % 5 == 0)
-			Print(string.Format("[ZW_Invasion] Точка #%1: атака %2, оборона %3, прогресс %4/%5", m_iOrder, attackers, defenders, m_iProgress, m_iCaptureSeconds), LogLevel.NORMAL);
+			Print(string.Format("[ZW_Invasion] Точка #%1: атака %2, оборона %3, прогресс %4/%5", m_iOrder, attackers, defenders, m_iProgress, PROGRESS_MAX), LogLevel.NORMAL);
 
-		if (m_iProgress < m_iCaptureSeconds)
+		if (m_iProgress < PROGRESS_MAX)
 			return false;
 
 		ZW_LockForAttacker(attacker);
 		return true;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Прирост прогресса за 1 секунду при данном перевесе: ступень таблицы и текущая фаза.
+	protected float StepFor(int advantage)
+	{
+		int tier = 0;
+		for (int i = 0; i < TIER_ADVANTAGE.Count(); i++)
+		{
+			if (advantage >= TIER_ADVANTAGE[i])
+				tier = i;
+		}
+
+		float seconds = TIER_CAPTURE[tier];
+		if (m_fProgress < PROGRESS_NEUTRAL)
+			seconds = TIER_NEUTRALIZE[tier];
+
+		return PROGRESS_NEUTRAL / seconds;
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -258,7 +290,8 @@ class ZW_InvasionPoint : SCR_CaptureAndHoldArea
 		m_bLocked = true;
 		m_bActive = false;
 		m_bBeingCaptured = false;
-		m_iProgress = m_iCaptureSeconds;
+		m_iProgress = PROGRESS_MAX;
+		m_fProgress = PROGRESS_MAX;
 		Replication.BumpMe();
 		EnablePeriodicQueries(false);
 		SetOwningFactionInternalAuthority(GetOwningFaction(), attacker);
