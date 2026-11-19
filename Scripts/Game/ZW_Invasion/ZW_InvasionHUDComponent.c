@@ -16,11 +16,14 @@ class ZW_InvasionHUDComponent : SCR_BaseGameModeComponent
 	[Attribute("{751400A6DCCDBC09}UI/layouts/ZW_Invasion/ZW_InvasionHUD.layout", UIWidgets.ResourceNamePicker, "Layout HUD", "layout", category: "Invasion")]
 	protected ResourceName m_sLayout;
 
-	[Attribute("{24CD148E6AD508A0}UI/Textures/ZW_Tickets_NATO_UI.edds", UIWidgets.ResourceNamePicker, "Плашка тикетов атаки", "edds", category: "Invasion")]
-	protected ResourceName m_rAttackerBadge;
+	[Attribute("{24CD148E6AD508A0}UI/Textures/ZW_Tickets_NATO_UI.edds", UIWidgets.ResourceNamePicker, "Плашка тикетов НАТО", "edds", category: "Invasion")]
+	protected ResourceName m_rNatoBadge;
 
-	[Attribute("{7DC217E9672E4562}UI/Textures/ZW_Tickets_RF_UI.edds", UIWidgets.ResourceNamePicker, "Плашка тикетов обороны", "edds", category: "Invasion")]
-	protected ResourceName m_rDefenderBadge;
+	[Attribute("{7DC217E9672E4562}UI/Textures/ZW_Tickets_RF_UI.edds", UIWidgets.ResourceNamePicker, "Плашка тикетов РФ", "edds", category: "Invasion")]
+	protected ResourceName m_rRfBadge;
+
+	[Attribute("USSR,RF,RU,RUS", UIWidgets.EditBox, "Ключи фракций РФ через запятую (остальные получают плашку НАТО)", category: "Invasion")]
+	protected string m_sRfFactionKeys;
 
 	protected static const int MAX_POINTS = 7;
 	protected static const int UPDATE_MS = 250;
@@ -34,7 +37,7 @@ class ZW_InvasionHUDComponent : SCR_BaseGameModeComponent
 	protected Widget m_wMapParent;
 	protected bool m_bHUDOnMap;
 	protected bool m_bBadgeInitialized;
-	protected bool m_bBadgeAttacker;
+	protected string m_sBadgeFactionKey;
 	protected bool m_bRunning;
 
 	// Для определения направления захвата у атаки (растёт / замер / падает).
@@ -236,7 +239,7 @@ class ZW_InvasionHUDComponent : SCR_BaseGameModeComponent
 		SetVisible("TicketBadge", tickets && hasSide && !ended);
 
 		if (tickets && hasSide && !ended)
-			UpdateTicketBadge(isAttacker, tickets);
+			UpdateTicketBadge(isAttacker, local, tickets);
 
 		// --- Таймер и подготовка
 		bool prep = timer && timer.IsPrepPhase();
@@ -295,7 +298,7 @@ class ZW_InvasionHUDComponent : SCR_BaseGameModeComponent
 	}
 
 	//------------------------------------------------------------------------------------------------
-	protected void UpdateTicketBadge(bool isAttacker, notnull ZW_TicketsComponent tickets)
+	protected void UpdateTicketBadge(bool isAttacker, notnull Faction local, notnull ZW_TicketsComponent tickets)
 	{
 		int count;
 		if (isAttacker)
@@ -304,17 +307,20 @@ class ZW_InvasionHUDComponent : SCR_BaseGameModeComponent
 			count = tickets.GetDefenderTickets();
 		SetText("TicketCount", count.ToString());
 
-		if (m_bBadgeInitialized && m_bBadgeAttacker == isAttacker)
+		// Плашка зависит от фракции, а не от роли: РФ может и атаковать, и обороняться.
+		string factionKey = local.GetFactionKey();
+		if (m_bBadgeInitialized && m_sBadgeFactionKey == factionKey)
 			return;
 
 		m_bBadgeInitialized = true;
-		m_bBadgeAttacker = isAttacker;
-		ResourceName texture = m_rDefenderBadge;
-		int countWidth = 50;
-		if (isAttacker)
+		m_sBadgeFactionKey = factionKey;
+		bool isRf = IsRfFaction(factionKey);
+		ResourceName texture = m_rNatoBadge;
+		int countWidth = 54;
+		if (isRf)
 		{
-			texture = m_rAttackerBadge;
-			countWidth = 54;
+			texture = m_rRfBadge;
+			countWidth = 50;
 		}
 
 		Place("TicketCount", 0, 0, 0, 0, 167, 0, countWidth, 44);
@@ -327,6 +333,21 @@ class ZW_InvasionHUDComponent : SCR_BaseGameModeComponent
 		artwork.SetVisible(loaded);
 		if (!loaded)
 			Print("[ZW_Invasion] HUD: не удалось загрузить плашку тикетов " + texture, LogLevel.ERROR);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	protected bool IsRfFaction(string factionKey)
+	{
+		array<string> keys = {};
+		m_sRfFactionKeys.Split(",", keys, true);
+		foreach (string key : keys)
+		{
+			key.TrimInPlace();
+			if (key == factionKey)
+				return true;
+		}
+
+		return false;
 	}
 
 	//------------------------------------------------------------------------------------------------
