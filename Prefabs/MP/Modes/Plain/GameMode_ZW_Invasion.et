@@ -9,6 +9,14 @@ SCR_BaseGameMode : "{1B76F75A3175E85C}Prefabs/MP/Modes/Plain/GameMode_Plain.et" 
    m_SpawnLogic SCR_MenuSpawnLogic "{6AE5D2F7A1C34E68}" {
    }
   }
+  SCR_CampaignBuildingManagerComponent "{6AE5C0A1D2E3F501}" {
+   m_sFreeRoamBuildingClientTrigger "{5E191CEAF4B95816}Prefabs/MP/FreeRoamBuildingClientTrigger.et"
+   m_BudgetType CAMPAIGN
+   m_iCompositionRefundPercentage 100
+   m_OutlineManager SCR_CampaignBuildingCompositionOutlineManager "{6AE5C0A1D2E3F502}" : "{96A8B496A076F1C0}scripts/Game/Building/CampaignBuildingCompositionOutline.conf" {
+   }
+   m_sPrefabsToBuildResource "{D2527D9AA5B4A33E}Configs/Editor/PlaceableEntities/Compositions/Compositions_FreeRoamBuilding.conf"
+  }
   ZW_CommsManagerComponent "{6AE5C0A1D2E3F401}" {
   }
   ZW_InvasionHUDComponent "{6AE5A3C41B7E2D90}" {

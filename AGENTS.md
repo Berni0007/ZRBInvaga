@@ -170,6 +170,8 @@ Worlds/ZW_Invasion_Test.ent + _Layers/default.layer   тестовый мир н
 
 19. Готовые .et штатных префабов (для GUID компонентов и конфигов снабжения) удобно смотреть в публичных модах на GitHub (`gh search code ... --extension et`), например CoalitionArma/Coalition-Reforger-Framework. GUID штатных компонентов в переопределениях модов совпадают с ванильными.
 
+20. **Штатная стройка (Free Roam Building, «Start building» у палатки-КП) вне Conflict:** действие `SCR_CampaignBuildingStartUserAction` → `SCR_CampaignBuildingNetworkComponent` (на контроллере игрока) → сервер ищет `SCR_CampaignBuildingManagerComponent` **на гейм-моде**; если его нет — молча ничего. Режим стройки — это режим редактора (`EEditorMode.BUILDING`, тот же движок, что Game Master). Рабочий пример на Plain — COE2 (`COE_GameMode.et`). Настройки в нашем гейм-моде: клиентский триггер `{5E191CEAF4B95816}Prefabs/MP/FreeRoamBuildingClientTrigger.et`, бюджет CAMPAIGN (припасы), список построек `{D2527D9AA5B4A33E}Configs/Editor/PlaceableEntities/Compositions/Compositions_FreeRoamBuilding.conf`.
+
 ### Известные ошибки, ещё не исправленные
 - `SCR_SupportStationManagerComponent.AddSupportStation`: пустой `m_aSupportStationPriority`. Развёрнутая рация пытается зарегистрироваться как станция снабжения, а менеджер станций в режиме не настроен. Спавн не ломает, но засоряет лог VM-исключениями.
 - `SCR_MapSpawnPoint`: пустой `m_SpawnPoint` при выключении игры (штатный UI карты). Похоже на безвредное, но при одном из тестов экран возрождения замирал — причина до конца не выяснена.
