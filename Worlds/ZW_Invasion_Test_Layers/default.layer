@@ -9,6 +9,7 @@ SCR_BaseGameMode GameMode_ZW_Invasion1 : "{BEECC6DCCEF65323}Prefabs/MP/Modes/Pla
   }
   ZW_RallyManagerComponent "{6AE5B7D2C41A8E37}" {
    m_iSpawnsPerRally 2
+   m_bBlockNearSpawnPoints 0
    m_bDebugSkipBuddy 1
    m_bDebugKillAfterDeploy 1
    m_bDebugKillAfterRallySpawn 1
@@ -25,11 +26,11 @@ SCR_SpawnPoint : "{4FEA25583D0975F7}Prefabs/MP/Spawning/SpawnPoint_USSR.et" {
 SCR_SpawnPoint : "{5A2220DD0C16958B}Prefabs/MP/Spawning/SpawnPoint_US.et" {
  coords 5785 100.5 5935
 }
+GenericEntity : "{6AE5E1B4C7D29F20}Prefabs/Invasion/ZW_RallyRadioCrate.et" {
+ coords 5781 101.375 5940
+}
 SCR_LoadoutManager : "{97EF4C1A41F63DDB}Prefabs/MP/Managers/Loadouts/LoadoutManager_USxUSSR.et" {
  coords 5545.759 99.055 6315.268
-}
-GenericEntity : "{6AE5E1B4C7D29F20}Prefabs/Invasion/ZW_RallyRadioCrate.et" {
- coords 5781 100.5 5933
 }
 $grp ZW_InvasionPoint : "{ECE27EF946F651A9}Prefabs/MP/Modes/CaptureAndHold/Areas/ZW_InvasionPoint.et" {
  {
