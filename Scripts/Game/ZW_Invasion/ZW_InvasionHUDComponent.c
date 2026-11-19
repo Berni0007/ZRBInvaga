@@ -214,7 +214,12 @@ class ZW_InvasionHUDComponent : SCR_BaseGameModeComponent
 	//------------------------------------------------------------------------------------------------
 	protected void UpdateHUD()
 	{
-		Widget mapParent = GetOpenMapRoot();
+		// Пока у игрока нет персонажа (выбор фракции / экран возрождения — это тоже полноэкранная карта),
+		// HUD в меню не встраиваем и не показываем: иначе он мешает мыши в штатном меню.
+		bool hasCharacter = SCR_PlayerController.GetLocalControlledEntity() != null;
+		Widget mapParent = null;
+		if (hasCharacter)
+			mapParent = GetOpenMapRoot();
 		bool mapOpen = mapParent != null;
 		if ((!m_wRoot || m_bHUDOnMap != mapOpen || m_wMapParent != mapParent) && !CreateHUD(mapParent))
 		{
@@ -222,6 +227,10 @@ class ZW_InvasionHUDComponent : SCR_BaseGameModeComponent
 				m_wRoot.SetVisible(false);
 			return;
 		}
+
+		m_wRoot.SetVisible(hasCharacter);
+		if (!hasCharacter)
+			return;
 
 		ZW_ObjectivesComponent objectives = ZW_Invasion.GetObjectives();
 		ZW_TicketsComponent tickets = ZW_Invasion.GetTickets();
@@ -243,12 +252,9 @@ class ZW_InvasionHUDComponent : SCR_BaseGameModeComponent
 
 		// --- Таймер и подготовка
 		bool prep = timer && timer.IsPrepPhase();
-		// Пока у игрока нет персонажа (экран выбора фракции / возрождения), плашку подготовки не рисуем:
-		// она перекрывает штатное меню.
-		bool hasCharacter = SCR_PlayerController.GetLocalControlledEntity() != null;
-		SetVisible("PrepBox", prep && !mapOpen && !ended && hasCharacter);
+		SetVisible("PrepBox", prep && !mapOpen && !ended);
 		SetVisible("TimerBar", timer && mapOpen && hasSide && !ended);
-		if (prep && !mapOpen && hasCharacter)
+		if (prep && !mapOpen)
 		{
 			SetText("PrepTime", FormatTime(timer.GetRemainingSeconds()));
 			if (isAttacker)

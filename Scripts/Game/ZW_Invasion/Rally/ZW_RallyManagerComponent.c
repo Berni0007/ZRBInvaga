@@ -43,6 +43,9 @@ class ZW_RallyManagerComponent : SCR_BaseGameModeComponent
 	[Attribute("0", UIWidgets.CheckBox, "Отладка: убить игрока через 3 с после развёртывания rally (тест спавна)", category: "Invasion Debug")]
 	protected bool m_bDebugKillAfterDeploy;
 
+	[Attribute("0", UIWidgets.CheckBox, "Отладка: убить игрока через 5 с после спавна на rally, пока лимит не исчерпан (тест лимита)", category: "Invasion Debug")]
+	protected bool m_bDebugKillAfterRallySpawn;
+
 	//! Отряды, израсходовавшие rally. Пока отряд здесь — новый rally не развернуть.
 	[RplProp()]
 	protected ref array<int> m_aDepletedGroups = {};
@@ -442,7 +445,12 @@ class ZW_RallyManagerComponent : SCR_BaseGameModeComponent
 		Print(string.Format("[ZW_Invasion] Rally отряда %1: спавн %2/%3", groupId, used, m_iSpawnsPerRally), LogLevel.NORMAL);
 
 		if (used < m_iSpawnsPerRally)
+		{
+			if (m_bDebugKillAfterRallySpawn)
+				GetGame().GetCallqueue().CallLater(DebugKill, 5000, false, entity);
+
 			return;
+		}
 
 		// Лимит исчерпан: rally сворачивается, отряд должен пополнить его у хаба.
 		if (!m_aDepletedGroups.Contains(groupId))
