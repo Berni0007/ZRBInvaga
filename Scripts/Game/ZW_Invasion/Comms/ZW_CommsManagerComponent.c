@@ -40,6 +40,12 @@ class ZW_CommsManagerComponent : SCR_BaseGameModeComponent
 	//! Сервер: игроки-командиры, о которых уже предупредили, что у них один канал.
 	protected ref set<int> m_WarnedSingleChannel = new set<int>();
 
+	//! Сервер: последнее состояние связи игрока для отладочного лога (печатается при изменении).
+	protected ref map<int, string> m_mLastState = new map<int, string>();
+
+	[Attribute("1", UIWidgets.CheckBox, "Писать в лог состояние связи игроков", category: "Отладка")]
+	protected bool m_bDebugLog;
+
 	//------------------------------------------------------------------------------------------------
 	//! Связь Invasion активна в текущем мире (и на клиенте, и на сервере).
 	static bool IsCommsActive()
@@ -85,6 +91,9 @@ class ZW_CommsManagerComponent : SCR_BaseGameModeComponent
 	{
 		super.OnPlayerSpawnFinalize_S(requestComponent, handlerComponent, data, entity);
 
+		if (m_bDebugLog)
+			Print(string.Format("[ZW_Invasion] Связь: спавн %1, выдача рации через 1 с", entity), LogLevel.NORMAL);
+
 		if (!m_bEnabled || !m_bGiveRadio || !entity)
 			return;
 
@@ -116,7 +125,11 @@ class ZW_CommsManagerComponent : SCR_BaseGameModeComponent
 
 		SCR_GadgetManagerComponent gadgets = SCR_GadgetManagerComponent.GetGadgetManager(entity);
 		if (gadgets && gadgets.GetGadgetByType(EGadgetType.RADIO))
+		{
+			if (m_bDebugLog)
+				Print("[ZW_Invasion] Связь: рация уже есть — не выдаём", LogLevel.NORMAL);
 			return;
+		}
 
 		Faction faction = ZW_Invasion.GetEntityFaction(entity);
 		if (!faction)
@@ -228,6 +241,21 @@ class ZW_CommsManagerComponent : SCR_BaseGameModeComponent
 
 				if (transceiver.GetRange() < m_fRadioRange)
 					transceiver.SetRange(m_fRadioRange);
+			}
+		}
+
+		if (m_bDebugLog)
+		{
+			int groupId = -1;
+			if (groupComponent)
+				groupId = groupComponent.GetGroupID();
+
+			string state = string.Format("отряд %1, командир %2, частота отряда %3, командная %4, раций %5, своих каналов %6", groupId, isLeader, squadFreq, commandFreq, radios.Count(), channel);
+			string last;
+			if (!m_mLastState.Find(playerId, last) || last != state)
+			{
+				m_mLastState.Set(playerId, state);
+				Print(string.Format("[ZW_Invasion] Связь: игрок %1 — %2", playerId, state), LogLevel.NORMAL);
 			}
 		}
 
