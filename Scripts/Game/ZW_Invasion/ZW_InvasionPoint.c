@@ -21,7 +21,7 @@ class ZW_InvasionPoint : SCR_CaptureAndHoldArea
 	[Attribute("3", UIWidgets.EditBox, "Минимум игроков стороны в зоне, чтобы двигать захват (и атака, и оборона)", category: "Invasion")]
 	protected int m_iMinAttackers;
 
-	[Attribute("60", UIWidgets.EditBox, "Радиус зоны захвата, м (подсчёт игроков, HUD и сфера в редакторе)", category: "Invasion")]
+	[Attribute("100", UIWidgets.EditBox, "Радиус зоны захвата, м. Как в ванильном Conflict (SCR_SeizingComponent: 100 м, цилиндр — высота не важна)", category: "Invasion")]
 	protected float m_fCaptureRadius;
 
 	//! Время захвата по перевесу (как в Squad): порог перевеса → секунд на «отхват» (оборона → нейтральная)
@@ -116,12 +116,23 @@ class ZW_InvasionPoint : SCR_CaptureAndHoldArea
 	}
 
 	//------------------------------------------------------------------------------------------------
-	//! Живые персонажи фракции в радиусе m_fCaptureRadius.
+	//! Запас по высоте для поиска: зона — цилиндр, как в ванили, сфера только собирает кандидатов.
+	protected static const float HEIGHT_SLACK = 150;
+
+	//------------------------------------------------------------------------------------------------
+	//! Внутри ли зоны: расстояние по земле (XZ), как в ванильном SCR_SeizingComponent.
+	bool IsInsideZone(vector pos)
+	{
+		return vector.DistanceSqXZ(pos, GetOrigin()) <= m_fCaptureRadius * m_fCaptureRadius;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Живые персонажи фракции в зоне захвата.
 	int ZW_CountInside(notnull Faction faction)
 	{
 		m_CountFaction = faction;
 		m_iCountResult = 0;
-		GetWorld().QueryEntitiesBySphere(GetOrigin(), m_fCaptureRadius, ZW_CountCallback, null, EQueryEntitiesFlags.DYNAMIC);
+		GetWorld().QueryEntitiesBySphere(GetOrigin(), m_fCaptureRadius + HEIGHT_SLACK, ZW_CountCallback, null, EQueryEntitiesFlags.DYNAMIC);
 		m_CountFaction = null;
 		return m_iCountResult;
 	}
@@ -130,7 +141,7 @@ class ZW_InvasionPoint : SCR_CaptureAndHoldArea
 	protected bool ZW_CountCallback(IEntity entity)
 	{
 		ChimeraCharacter character = ChimeraCharacter.Cast(entity);
-		if (!character)
+		if (!character || !IsInsideZone(character.GetOrigin()))
 			return true;
 
 		CharacterControllerComponent controller = character.GetCharacterController();
@@ -181,7 +192,7 @@ class ZW_InvasionPoint : SCR_CaptureAndHoldArea
 			color = ARGB(255, 255, 40, 40);   // красный — ошибка расстановки
 
 		// Радиус зоны захвата.
-		Shape.CreateSphere(color, ShapeFlags.ONCE | ShapeFlags.WIREFRAME | ShapeFlags.NOOUTLINE, pos, m_fCaptureRadius);
+		Shape.CreateCylinder(color, ShapeFlags.ONCE | ShapeFlags.WIREFRAME | ShapeFlags.NOOUTLINE, pos, m_fCaptureRadius, 30);
 
 		// Подпись: номер, название, ошибка.
 		string label = string.Format("#%1", m_iOrder);

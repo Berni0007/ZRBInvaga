@@ -116,7 +116,7 @@ Worlds/ZW_Invasion_Test.ent + _Layers/default.layer   тестовый мир н
 - Оранжевый цвет — порядок, красный — ошибка (`duplicate #N`, `missing #N`, `order < 1`). Те же ошибки пишутся в лог при старте.
 
 ### Захват как в Squad ✅
-- Свой подсчёт людей: `ZW_InvasionPoint.ZW_CountInside` через `QueryEntitiesBySphere` по атрибуту `m_fCaptureRadius` (по умолчанию 40 м). Считаются живые `ChimeraCharacter` нужной фракции.
+- Свой подсчёт людей: `ZW_InvasionPoint.ZW_CountInside` по атрибуту `m_fCaptureRadius` (по умолчанию 100 м, как `m_iRadius` в ванильном `SCR_SeizingComponent`); зона — цилиндр: расстояние по XZ, высота не важна (`IsInsideZone`). Считаются живые `ChimeraCharacter` нужной фракции.
 - Перетягивание в обе стороны, пустая точка или равенство — замирает, `m_iMinAttackers` для старта захвата.
 - Реплицируются `m_iProgress` и `m_bBeingCaptured`.
 

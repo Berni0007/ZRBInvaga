@@ -601,7 +601,7 @@ class ZW_InvasionHUDComponent : SCR_BaseGameModeComponent
 		if (!player)
 			return false;
 
-		return vector.Distance(player.GetOrigin(), point.GetOrigin()) <= point.GetCaptureRadius();
+		return point.IsInsideZone(player.GetOrigin());
 	}
 
 	//------------------------------------------------------------------------------------------------
