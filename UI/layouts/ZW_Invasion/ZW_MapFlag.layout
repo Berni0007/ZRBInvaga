@@ -1,0 +1,90 @@
+FrameWidgetClass "{461BD8879D1B2086}" {
+ Name "ZW_MapFlag"
+ Slot FrameWidgetSlot "{A6FF5294243DEE4A}" {
+  Anchor 0 0 0 0
+  PositionX 0
+  OffsetLeft 0
+  PositionY 0
+  OffsetTop 0
+  SizeX 160
+  OffsetRight -160
+  SizeY 58
+  OffsetBottom -58
+  Alignment 0.5 0.24
+ }
+ {
+ ImageWidgetClass "{CF86AF4513358AD1}" {
+  Name "FlagBorder"
+  Slot FrameWidgetSlot "{4B4274C6A238197A}" {
+   Anchor 0 0 0 0
+   PositionX 56
+   OffsetLeft 56
+   PositionY 0
+   OffsetTop 0
+   SizeX 48
+   OffsetRight -48
+   SizeY 30
+   OffsetBottom -30
+  }
+  Color 0.067 0.067 0.067 1
+  Size 48 30
+ }
+ ImageWidgetClass "{F14BFEF68B989ADE}" {
+  Name "FlagFill"
+  Slot FrameWidgetSlot "{536A5ECFFDD76EAD}" {
+   Anchor 0 0 0 0
+   PositionX 58
+   OffsetLeft 58
+   PositionY 2
+   OffsetTop 2
+   SizeX 44
+   OffsetRight -44
+   SizeY 26
+   OffsetBottom -26
+  }
+  Color 0.914 0.914 0.914 1
+  Size 44 26
+ }
+ ImageWidgetClass "{7E024C679B940167}" {
+  Name "FlagImg"
+  Slot FrameWidgetSlot "{D4BC52484963D7FA}" {
+   Anchor 0 0 0 0
+   PositionX 58
+   OffsetLeft 58
+   PositionY 2
+   OffsetTop 2
+   SizeX 44
+   OffsetRight -44
+   SizeY 26
+   OffsetBottom -26
+  }
+  Color 1 1 1 1
+  Size 44 26
+ }
+ TextWidgetClass "{2CF54F77F85282D0}" {
+  Name "FlagText"
+  Slot FrameWidgetSlot "{23266708E5226807}" {
+   Anchor 0 0 0 0
+   PositionX 0
+   OffsetLeft 0
+   PositionY 32
+   OffsetTop 32
+   SizeX 160
+   OffsetRight -160
+   SizeY 24
+   OffsetBottom -24
+  }
+  Color 1 1 1 1
+  Text ""
+  "Font Size" 15
+  "Min Font Size" 15
+  "Horizontal Alignment" Center
+  "Vertical Alignment" Center
+  FontProperties FontProperties "{65C8D7F8FB1825DC}" {
+   Font "{D3E75BCBECEB273E}UI/Fonts/NotoSans/NotoSans-Enhanced-Regular-JP-KOR-SC-LAT.fnt"
+   OutlineSize 2
+   OutlineColor 0 0 0 1
+  }
+ }
+ }
+}
