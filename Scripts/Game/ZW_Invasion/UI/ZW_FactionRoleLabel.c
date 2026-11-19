@@ -40,7 +40,7 @@ modded class SCR_FactionPlayerList
 
 //------------------------------------------------------------------------------------------------
 //! Кнопки фракций в меню возрождения.
-modded class SCR_FactionRequestUIComponent
+modded class SCR_FactionButton
 {
 	override void SetFactionName(string name)
 	{
