@@ -294,6 +294,8 @@ class ZW_ObjectivesComponent : SCR_BaseGameModeComponent
 			point.ZW_InitAuthority(defender);
 		}
 
+		ZW_PointHubComponent.ApplyAll(this);
+
 		// Без таймера штурм начинается сразу; с таймером — после фазы подготовки.
 		if (!ZW_Invasion.GetTimer())
 			StartAssault();
