@@ -140,8 +140,6 @@ class ZW_PointHubComponent : ScriptComponent
 		if (owner != m_Owner)
 		{
 			m_Owner = owner;
-			if (m_SpawnPoint)
-				m_SpawnPoint.SetFactionKey(owner.GetFactionKey());
 
 			if (m_Tent)
 				SCR_EntityHelper.DeleteEntityAndChildren(m_Tent);
@@ -154,10 +152,11 @@ class ZW_PointHubComponent : ScriptComponent
 			Print(string.Format("[ZW_Invasion] Хаб '%1' теперь у %2", m_Point.GetPointName(), owner.GetFactionKey()), LogLevel.NORMAL);
 		}
 
-		bool allowed;
+		// Виден ли хаб на карте возрождения вообще.
+		bool visible;
 		if (owner == attacker)
 		{
-			allowed = true; // атака спавнится на хабах взятых точек
+			visible = true; // атака спавнится на хабах взятых точек
 		}
 		else
 		{
@@ -165,14 +164,22 @@ class ZW_PointHubComponent : ScriptComponent
 			if (activeOrder < 1)
 				activeOrder = 1;
 
-			allowed = m_Point.GetOrder() == activeOrder; // оборона — только на текущей цели
+			visible = m_Point.GetOrder() == activeOrder; // оборона — только на текущей цели
 		}
 
-		if (allowed && IsEnemyNear(owner))
-			allowed = false;
+		// Враг рядом — хаб виден, но неактивен.
+		bool allowed = visible && !IsEnemyNear(owner);
 
 		if (m_SpawnPoint)
+		{
+			// Невидимый хаб снимаем с фракции: штатная карта возрождения показывает
+			// все точки фракции, даже выключенные.
+			string factionKey;
+			if (visible)
+				factionKey = owner.GetFactionKey();
+			m_SpawnPoint.SetFactionKey(factionKey);
 			m_SpawnPoint.ZW_SetState(allowed, m_Point.GetPointName());
+		}
 	}
 
 	//------------------------------------------------------------------------------------------------
