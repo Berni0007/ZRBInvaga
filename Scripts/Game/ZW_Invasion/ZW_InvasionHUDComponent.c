@@ -216,7 +216,7 @@ class ZW_InvasionHUDComponent : SCR_BaseGameModeComponent
 	{
 		// Пока у игрока нет персонажа (выбор фракции / экран возрождения — это тоже полноэкранная карта),
 		// HUD в меню не встраиваем и не показываем: иначе он мешает мыши в штатном меню.
-		bool hasCharacter = SCR_PlayerController.GetLocalControlledEntity() != null;
+		bool hasCharacter = IsLocalCharacterAlive();
 		Widget mapParent = null;
 		if (hasCharacter)
 			mapParent = GetOpenMapRoot();
@@ -286,6 +286,19 @@ class ZW_InvasionHUDComponent : SCR_BaseGameModeComponent
 		// --- Захват текущей точки
 		ZW_InvasionPoint active = ZW_ObjectivesComponent.FindPointByOrder(world, activeOrder);
 		UpdateCapture(active, activeOrder, isAttacker, isDefender, prep || mapOpen || ended);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Есть живой персонаж. После смерти игра ещё какое-то время считает труп управляемым,
+	//! а экран возрождения уже открыт — поэтому проверяем именно «жив».
+	protected bool IsLocalCharacterAlive()
+	{
+		ChimeraCharacter character = ChimeraCharacter.Cast(SCR_PlayerController.GetLocalControlledEntity());
+		if (!character)
+			return false;
+
+		CharacterControllerComponent controller = character.GetCharacterController();
+		return controller && !controller.IsDead();
 	}
 
 	//------------------------------------------------------------------------------------------------
