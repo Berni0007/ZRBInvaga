@@ -459,7 +459,15 @@ class ZW_RallyManagerComponent : SCR_BaseGameModeComponent
 			Replication.BumpMe();
 		}
 
-		rally.Dismantle();
+		// Сворачиваем после завершения спавна: штатный обработчик ещё обращается к этой точке.
+		GetGame().GetCallqueue().CallLater(DismantleRally, 500, false, rally);
 		Print(string.Format("[ZW_Invasion] Rally отряда %1 израсходован", groupId), LogLevel.NORMAL);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	protected void DismantleRally(SCR_RestrictedDeployableSpawnPointComponent rally)
+	{
+		if (rally && rally.IsDeployed())
+			rally.Dismantle();
 	}
 }
