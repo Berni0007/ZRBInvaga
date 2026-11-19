@@ -1,0 +1,29 @@
+Vehicle : "{36BDCC88B17B3BFA}Prefabs/Vehicles/Wheeled/M923A1/M923A1_command.et" {
+ ID "6AE5F2A1B3C40001"
+ components {
+  ActionsManagerComponent "{C97BE5489221AE18}" {
+   ActionContexts {
+    UserActionContext "{6AE5F2A1B3C40002}" {
+     ContextName "zw_kshm"
+     Position PointInfo "{6AE5F2A1B3C40003}" {
+      Offset 0 1.3 -4.2
+     }
+     Radius 2
+    }
+   }
+   additionalActions {
+    ZW_KshmToggleAction "{6AE5F2A1B3C40004}" {
+     ParentContextList {
+      "zw_kshm"
+     }
+     UIInfo UIInfo "{6AE5F2A1B3C40005}" {
+      Name "КШМ"
+     }
+    }
+   }
+  }
+  ZW_KshmComponent "{6AE5F2A1B3C40006}" {
+   m_sFactionKey "US"
+  }
+ }
+}
