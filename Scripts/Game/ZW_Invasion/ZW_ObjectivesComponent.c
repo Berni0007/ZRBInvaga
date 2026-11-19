@@ -434,6 +434,7 @@ class ZW_ObjectivesComponent : SCR_BaseGameModeComponent
 	protected void ActivatePoint(int index)
 	{
 		m_iActiveIndex = index;
+		m_iDebugCounter = 0; // отладочный автозахват отсчитывает заново для каждой новой цели
 		Replication.BumpMe();
 
 		ZW_InvasionPoint point = GetPoint(index);
