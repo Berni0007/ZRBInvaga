@@ -20,7 +20,7 @@ class ZW_CommsManagerComponent : SCR_BaseGameModeComponent
 	[Attribute("30000", UIWidgets.EditBox, "Дальность раций, м (как в Squad — по всей карте)", category: "Связь")]
 	protected float m_fRadioRange;
 
-	[Attribute("1500", UIWidgets.EditBox, "Как часто сервер проверяет частоты, мс", category: "Связь")]
+	[Attribute("1000", UIWidgets.EditBox, "Как часто сервер проверяет частоты, мс", category: "Связь")]
 	protected int m_iCheckMs;
 
 	[Attribute("1", UIWidgets.CheckBox, "Выдавать рацию при спавне, если её нет", category: "Связь")]
@@ -42,6 +42,9 @@ class ZW_CommsManagerComponent : SCR_BaseGameModeComponent
 
 	//! Сервер: последнее состояние связи игрока для отладочного лога (печатается при изменении).
 	protected ref map<int, string> m_mLastState = new map<int, string>();
+
+	//! Сервер: рации, которым уже выставили дальность (повторный SetRange каждую проверку дёргает меню рации).
+	protected ref set<IEntity> m_RangeApplied = new set<IEntity>();
 
 	[Attribute("1", UIWidgets.CheckBox, "Писать в лог состояние связи игроков", category: "Отладка")]
 	protected bool m_bDebugLog;
@@ -94,11 +97,15 @@ class ZW_CommsManagerComponent : SCR_BaseGameModeComponent
 		if (m_bDebugLog)
 			Print(string.Format("[ZW_Invasion] Связь: спавн %1, выдача рации через 1 с", entity), LogLevel.NORMAL);
 
-		if (!m_bEnabled || !m_bGiveRadio || !entity)
+		if (!m_bEnabled || !entity)
 			return;
 
+		// Частоты — сразу после спавна, не дожидаясь общей проверки.
+		GetGame().GetCallqueue().CallLater(EnforceEntity, 300, false, entity);
+
 		// Снаряжение и гаджеты раскладываются не сразу.
-		GetGame().GetCallqueue().CallLater(GiveRadio, 1000, false, entity);
+		if (m_bGiveRadio)
+			GetGame().GetCallqueue().CallLater(GiveRadio, 1000, false, entity);
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -147,9 +154,23 @@ class ZW_CommsManagerComponent : SCR_BaseGameModeComponent
 			return;
 
 		if (inventory.TrySpawnPrefabToStorage(prefab))
+		{
 			Print(string.Format("[ZW_Invasion] Связь: выдана рация (%1)", faction.GetFactionKey()), LogLevel.NORMAL);
+			GetGame().GetCallqueue().CallLater(EnforceEntity, 300, false, entity);
+		}
 		else
 			Print("[ZW_Invasion] Связь: не удалось выдать рацию — нет места в снаряжении", LogLevel.WARNING);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	protected void EnforceEntity(IEntity entity)
+	{
+		if (!entity)
+			return;
+
+		int playerId = GetGame().GetPlayerManager().GetPlayerIdFromControlledEntity(entity);
+		if (playerId > 0)
+			EnforcePlayer(playerId);
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -237,10 +258,24 @@ class ZW_CommsManagerComponent : SCR_BaseGameModeComponent
 
 				wanted = Math.ClampInt(wanted, transceiver.GetMinFrequency(), transceiver.GetMaxFrequency());
 				if (transceiver.GetFrequency() != wanted)
-					transceiver.SetFrequency(wanted);
+				{
+					if (m_bDebugLog)
+						Print(string.Format("[ZW_Invasion] Связь: игрок %1, канал %2: %3 -> %4", playerId, i + 1, transceiver.GetFrequency(), wanted), LogLevel.NORMAL);
 
-				if (transceiver.GetRange() < m_fRadioRange)
-					transceiver.SetRange(m_fRadioRange);
+					transceiver.SetFrequency(wanted);
+				}
+			}
+
+			IEntity radioEntity = gadget.GetOwner();
+			if (!m_RangeApplied.Contains(radioEntity))
+			{
+				m_RangeApplied.Insert(radioEntity);
+				for (int r = 0; r < count; r++)
+				{
+					BaseTransceiver t = radio.GetTransceiver(r);
+					if (t)
+						t.SetRange(m_fRadioRange);
+				}
 			}
 		}
 
