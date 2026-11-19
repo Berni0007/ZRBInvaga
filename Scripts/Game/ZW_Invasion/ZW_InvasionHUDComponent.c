@@ -243,9 +243,12 @@ class ZW_InvasionHUDComponent : SCR_BaseGameModeComponent
 
 		// --- Таймер и подготовка
 		bool prep = timer && timer.IsPrepPhase();
-		SetVisible("PrepBox", prep && !mapOpen && !ended);
+		// Пока у игрока нет персонажа (экран выбора фракции / возрождения), плашку подготовки не рисуем:
+		// она перекрывает штатное меню.
+		bool hasCharacter = SCR_PlayerController.GetLocalControlledEntity() != null;
+		SetVisible("PrepBox", prep && !mapOpen && !ended && hasCharacter);
 		SetVisible("TimerBar", timer && mapOpen && hasSide && !ended);
-		if (prep && !mapOpen)
+		if (prep && !mapOpen && hasCharacter)
 		{
 			SetText("PrepTime", FormatTime(timer.GetRemainingSeconds()));
 			if (isAttacker)
