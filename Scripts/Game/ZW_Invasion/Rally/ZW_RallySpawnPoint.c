@@ -10,4 +10,15 @@ modded class SCR_RestrictedDeployableSpawnPoint
 
 		return "Rally — отряд " + m_iGroupID.ToString();
 	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Израсходованный rally сразу выключается: рация сворачивается позже, когда штатный спавн завершится.
+	override bool IsSpawnPointEnabled()
+	{
+		ZW_RallyManagerComponent manager = ZW_RallyManagerComponent.GetInstance();
+		if (manager && m_iGroupID >= 0 && !manager.IsGroupCharged(m_iGroupID))
+			return false;
+
+		return super.IsSpawnPointEnabled();
+	}
 }

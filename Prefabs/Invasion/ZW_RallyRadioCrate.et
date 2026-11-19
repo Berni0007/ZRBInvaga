@@ -12,12 +12,12 @@ GenericEntity : "{AD92C45B56130D08}PrefabLibrary/DefaultLibrary/Props/Shop/Crate
     }
    }
    additionalActions {
-    ZW_RefillRallyAction "{6AE5E1B4C7D29F05}" {
+    ZW_TakeRallyRadioAction "{6AE5E1B4C7D29F05}" {
      ParentContextList {
       "default"
      }
      UIInfo UIInfo "{6AE5E1B4C7D29F06}" {
-      Name "Пополнить rally"
+      Name "Взять рацию rally"
      }
     }
    }

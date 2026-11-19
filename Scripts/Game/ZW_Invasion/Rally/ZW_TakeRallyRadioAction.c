@@ -1,6 +1,6 @@
-// ZRBinvaga — действие «Пополнить rally». Вешается на хаб и на мейн.
+// ZRBinvaga — действие «Взять рацию rally». Вешается на ящик на мейне (ZW_RallyRadioCrate.et).
 
-class ZW_RefillRallyAction : ScriptedUserAction
+class ZW_TakeRallyRadioAction : ScriptedUserAction
 {
 	//------------------------------------------------------------------------------------------------
 	override bool CanBeShownScript(IEntity user)
@@ -16,13 +16,13 @@ class ZW_RefillRallyAction : ScriptedUserAction
 	override bool CanBePerformedScript(IEntity user)
 	{
 		ZW_RallyManagerComponent manager = ZW_RallyManagerComponent.GetInstance();
-		SCR_AIGroup group;
-		if (!manager || !ZW_RallyManagerComponent.IsSquadLeader(user, group))
+		if (!manager)
 			return false;
 
-		if (manager.IsGroupCharged(group.GetGroupID()))
+		string reason;
+		if (!manager.CanIssueRadio(user, reason))
 		{
-			SetCannotPerformReason("Rally уже готов");
+			SetCannotPerformReason(reason);
 			return false;
 		}
 
@@ -36,10 +36,7 @@ class ZW_RefillRallyAction : ScriptedUserAction
 			return;
 
 		ZW_RallyManagerComponent manager = ZW_RallyManagerComponent.GetInstance();
-		SCR_AIGroup group;
-		if (!manager || !ZW_RallyManagerComponent.IsSquadLeader(pUserEntity, group))
-			return;
-
-		manager.Recharge(group.GetGroupID());
+		if (manager)
+			manager.IssueRadio(pUserEntity, pOwnerEntity);
 	}
 }

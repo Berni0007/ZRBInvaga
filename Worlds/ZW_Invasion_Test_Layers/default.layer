@@ -28,10 +28,7 @@ SCR_SpawnPoint : "{5A2220DD0C16958B}Prefabs/MP/Spawning/SpawnPoint_US.et" {
 SCR_LoadoutManager : "{97EF4C1A41F63DDB}Prefabs/MP/Managers/Loadouts/LoadoutManager_USxUSSR.et" {
  coords 5545.759 99.055 6315.268
 }
-GenericEntity : "{9B6B61BB3FE3DFB0}Prefabs/Items/Equipment/Radios/Radio_ANPRC77.et" {
- coords 5700 108 6040
-}
-GenericEntity : "{6AE5E1B4C7D29F10}Prefabs/Invasion/ZW_RallyRefill.et" {
+GenericEntity : "{6AE5E1B4C7D29F20}Prefabs/Invasion/ZW_RallyRadioCrate.et" {
  coords 5781 100.5 5933
 }
 $grp ZW_InvasionPoint : "{ECE27EF946F651A9}Prefabs/MP/Modes/CaptureAndHold/Areas/ZW_InvasionPoint.et" {
