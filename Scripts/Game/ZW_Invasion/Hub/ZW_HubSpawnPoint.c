@@ -22,6 +22,7 @@ class ZW_HubSpawnPoint : SCR_SpawnPoint
 
 		m_bZWAllowed = allowed;
 		m_sZWName = name;
+		ZW_HideEditorMarker();
 		Replication.BumpMe();
 	}
 
@@ -30,6 +31,14 @@ class ZW_HubSpawnPoint : SCR_SpawnPoint
 	override void EOnInit(IEntity owner)
 	{
 		super.EOnInit(owner);
+		ZW_HideEditorMarker();
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Красный куб — модель точки спавна для редактора. Убираем саму модель (скрытия флагом мало).
+	void ZW_HideEditorMarker()
+	{
+		SetObject(null, string.Empty);
 		ClearFlags(EntityFlags.VISIBLE, true);
 	}
 

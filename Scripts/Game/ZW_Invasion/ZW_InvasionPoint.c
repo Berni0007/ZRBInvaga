@@ -43,7 +43,13 @@ class ZW_InvasionPoint : SCR_CaptureAndHoldArea
 	protected bool m_bActive;
 
 	//! Взята атакой — больше никогда не меняет владельца.
+	[RplProp()]
 	protected bool m_bLocked;
+
+	//! Для HUD: кто двигает прогресс и с какой силой. +1..+5 — атака (ступень перевеса),
+	//! −1..−5 — оборона отбивает, 0 — стоит.
+	[RplProp()]
+	protected int m_iDrive;
 
 	//! Прогресс захвата для HUD, тысячные (0..PROGRESS_MAX).
 	[RplProp()]
@@ -89,6 +95,12 @@ class ZW_InvasionPoint : SCR_CaptureAndHoldArea
 	int GetProgress()
 	{
 		return m_iProgress;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	int GetDrive()
+	{
+		return m_iDrive;
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -234,20 +246,28 @@ class ZW_InvasionPoint : SCR_CaptureAndHoldArea
 		int defenders = ZW_CountInside(defender);
 		int before = m_iProgress;
 		int advantage = attackers - defenders;
+		int driveBefore = m_iDrive;
+		m_iDrive = 0;
 
 		// Перетягивание по перевесу. Двигать прогресс может только сторона, у которой в зоне
 		// не меньше m_iMinAttackers игроков. Равенство или мало людей — прогресс замирает.
 		if (advantage > 0 && attackers >= m_iMinAttackers)
+		{
 			m_fProgress += StepFor(advantage);
+			m_iDrive = TierFor(advantage) + 1;
+		}
 		else if (advantage < 0 && defenders >= m_iMinAttackers && m_fProgress > 0)
+		{
 			m_fProgress -= StepFor(-advantage);
+			m_iDrive = -(TierFor(-advantage) + 1);
+		}
 
 		m_fProgress = Math.Clamp(m_fProgress, 0, PROGRESS_MAX);
 		m_iProgress = Math.Round(m_fProgress);
 
 		// Для HUD: оборона видит только факт захвата, без процентов и численности.
 		bool beingCaptured = m_iProgress > 0;
-		if (m_iProgress != before || beingCaptured != m_bBeingCaptured)
+		if (m_iProgress != before || beingCaptured != m_bBeingCaptured || m_iDrive != driveBefore)
 		{
 			m_bBeingCaptured = beingCaptured;
 			Replication.BumpMe();
@@ -266,7 +286,7 @@ class ZW_InvasionPoint : SCR_CaptureAndHoldArea
 
 	//------------------------------------------------------------------------------------------------
 	//! Прирост прогресса за 1 секунду при данном перевесе: ступень таблицы и текущая фаза.
-	protected float StepFor(int advantage)
+	protected int TierFor(int advantage)
 	{
 		int tier = 0;
 		for (int i = 0; i < TIER_ADVANTAGE.Count(); i++)
@@ -274,6 +294,13 @@ class ZW_InvasionPoint : SCR_CaptureAndHoldArea
 			if (advantage >= TIER_ADVANTAGE[i])
 				tier = i;
 		}
+		return tier;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	protected float StepFor(int advantage)
+	{
+		int tier = TierFor(advantage);
 
 		float seconds = TIER_CAPTURE[tier];
 		if (m_fProgress < PROGRESS_NEUTRAL)
@@ -290,6 +317,7 @@ class ZW_InvasionPoint : SCR_CaptureAndHoldArea
 		m_bLocked = true;
 		m_bActive = false;
 		m_bBeingCaptured = false;
+		m_iDrive = 0;
 		m_iProgress = PROGRESS_MAX;
 		m_fProgress = PROGRESS_MAX;
 		Replication.BumpMe();

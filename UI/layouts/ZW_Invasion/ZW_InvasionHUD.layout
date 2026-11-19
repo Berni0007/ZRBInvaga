@@ -697,6 +697,134 @@ FrameWidgetClass "{FAA367E7E90BBDBA}" {
     Color 0 0 0 0.5
     Size 320 48
    }
+   ImageWidgetClass "{828DE96307C46D7D}" {
+    Name "FlagBorder"
+    Slot FrameWidgetSlot "{481F8F6D7844CA7E}" {
+     Anchor 0 0 0 0
+     PositionX 0
+     OffsetLeft 0
+     PositionY 0
+     OffsetTop 0
+     SizeX 10
+     OffsetRight -10
+     SizeY 10
+     OffsetBottom -10
+    }
+    Color 1 1 1 1
+    Size 10 10
+   }
+   ImageWidgetClass "{BE93A91E35762A6F}" {
+    Name "FlagFill"
+    Slot FrameWidgetSlot "{168FFF0805029B82}" {
+     Anchor 0 0 0 0
+     PositionX 0
+     OffsetLeft 0
+     PositionY 0
+     OffsetTop 0
+     SizeX 10
+     OffsetRight -10
+     SizeY 10
+     OffsetBottom -10
+    }
+    Color 1 1 1 1
+    Size 10 10
+   }
+   ImageWidgetClass "{EF4098814D83EC46}" {
+    Name "FlagImg"
+    Slot FrameWidgetSlot "{6EEA356F012E1192}" {
+     Anchor 0 0 0 0
+     PositionX 0
+     OffsetLeft 0
+     PositionY 0
+     OffsetTop 0
+     SizeX 10
+     OffsetRight -10
+     SizeY 10
+     OffsetBottom -10
+    }
+    Color 1 1 1 1
+    Size 10 10
+   }
+   ImageWidgetClass "{929A8D92466AE4D5}" {
+    Name "LockBg"
+    Slot FrameWidgetSlot "{35063198E0402947}" {
+     Anchor 0 0 0 0
+     PositionX 0
+     OffsetLeft 0
+     PositionY 0
+     OffsetTop 0
+     SizeX 10
+     OffsetRight -10
+     SizeY 10
+     OffsetBottom -10
+    }
+    Color 1 1 1 1
+    Size 10 10
+   }
+   ImageWidgetClass "{2F4EC5288E375775}" {
+    Name "LockShackleL"
+    Slot FrameWidgetSlot "{8F9448FA3447B939}" {
+     Anchor 0 0 0 0
+     PositionX 0
+     OffsetLeft 0
+     PositionY 0
+     OffsetTop 0
+     SizeX 10
+     OffsetRight -10
+     SizeY 10
+     OffsetBottom -10
+    }
+    Color 1 1 1 1
+    Size 10 10
+   }
+   ImageWidgetClass "{FE5F9DCC4108A78C}" {
+    Name "LockShackleR"
+    Slot FrameWidgetSlot "{6B35A29E8A53FD13}" {
+     Anchor 0 0 0 0
+     PositionX 0
+     OffsetLeft 0
+     PositionY 0
+     OffsetTop 0
+     SizeX 10
+     OffsetRight -10
+     SizeY 10
+     OffsetBottom -10
+    }
+    Color 1 1 1 1
+    Size 10 10
+   }
+   ImageWidgetClass "{D7F1DF26250B5527}" {
+    Name "LockShackleTop"
+    Slot FrameWidgetSlot "{0D8CC6A9E19F0A2A}" {
+     Anchor 0 0 0 0
+     PositionX 0
+     OffsetLeft 0
+     PositionY 0
+     OffsetTop 0
+     SizeX 10
+     OffsetRight -10
+     SizeY 10
+     OffsetBottom -10
+    }
+    Color 1 1 1 1
+    Size 10 10
+   }
+   ImageWidgetClass "{EC5B01846570C7DC}" {
+    Name "LockBody"
+    Slot FrameWidgetSlot "{64E659D46B9BB164}" {
+     Anchor 0 0 0 0
+     PositionX 0
+     OffsetLeft 0
+     PositionY 0
+     OffsetTop 0
+     SizeX 10
+     OffsetRight -10
+     SizeY 10
+     OffsetBottom -10
+    }
+    Color 1 1 1 1
+    Size 10 10
+   }
    TextWidgetClass "{11855C7707C43ED2}" {
     Name "CaptureTitle"
     Slot FrameWidgetSlot "{5FB17AD33F0F6D2E}" {
@@ -754,6 +882,32 @@ FrameWidgetClass "{FAA367E7E90BBDBA}" {
     }
     Color 0.91 0.471 0.125 1
     Size 0 6
+   }
+   TextWidgetClass "{7611DABEB367E079}" {
+    Name "CaptureArrows"
+    Slot FrameWidgetSlot "{DA987EA2DF4A6D27}" {
+     Anchor 0 0 0 0
+     PositionX 16
+     OffsetLeft 16
+     PositionY 4
+     OffsetTop 4
+     SizeX 288
+     OffsetRight -288
+     SizeY 27
+     OffsetBottom -27
+    }
+    Color 0.949 0.949 0.933 1
+    Text ""
+    "Font Size" 16
+    "Min Font Size" 16
+    "Horizontal Alignment" Center
+    "Vertical Alignment" Center
+    FontProperties FontProperties "{2828212C0F90EDB8}" {
+     Font "{D3E75BCBECEB273E}UI/Fonts/NotoSans/NotoSans-Enhanced-Regular-JP-KOR-SC-LAT.fnt"
+     ShadowSize 16
+     ShadowColor 0 0 0 0.45
+     ShadowOffset 0 0
+    }
    }
   }
  }

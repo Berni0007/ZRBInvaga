@@ -30,8 +30,14 @@ class ZW_InvasionHUDComponent : SCR_BaseGameModeComponent
 	protected static const int MAP_PANEL_WIDTH = 324;
 	protected static const int MAP_POINT_STEP = 42;
 	protected static const float FREEZE_AFTER_MS = 1500;
-	protected static const float CAPTURE_BAR_WIDTH = 288;
-	protected static const float CAPTURE_BAR_HEIGHT = 6;
+	protected static const float CAPTURE_BOX_WIDTH = 220;
+	protected static const float CAPTURE_BAR_X = 50;
+	protected static const float CAPTURE_BAR_Y = 76;
+	protected static const float CAPTURE_BAR_WIDTH = 120;
+	protected static const float CAPTURE_BAR_HEIGHT = 12;
+
+	//! Какой флаг сейчас загружен в FlagImg — чтобы не грузить текстуру каждый кадр.
+	protected string m_sShownFlag;
 
 	protected Widget m_wRoot;
 	protected Widget m_wMapParent;
@@ -168,11 +174,21 @@ class ZW_InvasionHUDComponent : SCR_BaseGameModeComponent
 		Place("PrepTitle", 0, 0, 0, 0, 20, 8, 340, 26);
 		Place("PrepTime", 0, 0, 0, 0, 20, 34, 340, 56);
 		Place("PrepHint", 0, 0, 0, 0, 20, 92, 340, 24);
-		Place("CaptureBox", 0.5, 0, 0.5, 0, 0, 22, 320, 48);
-		Place("CaptureBg", 0, 0, 0, 0, 0, 0, 320, 48);
-		Place("CaptureTitle", 0, 0, 0, 0, 16, 4, CAPTURE_BAR_WIDTH, 27);
-		Place("CaptureBarBg", 0, 0, 0, 0, 16, 34, CAPTURE_BAR_WIDTH, CAPTURE_BAR_HEIGHT);
-		Place("CaptureFill", 0, 0, 0, 0, 16, 34, 0, CAPTURE_BAR_HEIGHT);
+		// Индикатор точки: флаг владельца (замок — взята навсегда), полоса со стрелками, название места.
+		Place("CaptureBox", 0.5, 0, 0.5, 0, 0, 22, CAPTURE_BOX_WIDTH, 124);
+		Place("CaptureBg", 0, 0, 0, 0, 0, 0, 0, 0);
+		Place("FlagBorder", 0, 0, 0, 0, CAPTURE_BAR_X, 0, CAPTURE_BAR_WIDTH, 70);
+		Place("FlagFill", 0, 0, 0, 0, CAPTURE_BAR_X + 2, 2, CAPTURE_BAR_WIDTH - 4, 66);
+		Place("FlagImg", 0, 0, 0, 0, CAPTURE_BAR_X + 2, 2, CAPTURE_BAR_WIDTH - 4, 66);
+		Place("LockBg", 0, 0, 0, 0, CAPTURE_BAR_X + CAPTURE_BAR_WIDTH - 30, 40, 26, 26);
+		Place("LockShackleL", 0, 0, 0, 0, CAPTURE_BAR_X + CAPTURE_BAR_WIDTH - 23, 44, 3, 9);
+		Place("LockShackleR", 0, 0, 0, 0, CAPTURE_BAR_X + CAPTURE_BAR_WIDTH - 14, 44, 3, 9);
+		Place("LockShackleTop", 0, 0, 0, 0, CAPTURE_BAR_X + CAPTURE_BAR_WIDTH - 23, 44, 12, 3);
+		Place("LockBody", 0, 0, 0, 0, CAPTURE_BAR_X + CAPTURE_BAR_WIDTH - 26, 52, 18, 11);
+		Place("CaptureBarBg", 0, 0, 0, 0, CAPTURE_BAR_X, CAPTURE_BAR_Y, CAPTURE_BAR_WIDTH, CAPTURE_BAR_HEIGHT);
+		Place("CaptureFill", 0, 0, 0, 0, CAPTURE_BAR_X, CAPTURE_BAR_Y, 0, CAPTURE_BAR_HEIGHT);
+		Place("CaptureArrows", 0, 0, 0, 0, CAPTURE_BAR_X, CAPTURE_BAR_Y - 3, CAPTURE_BAR_WIDTH, CAPTURE_BAR_HEIGHT + 6);
+		Place("CaptureTitle", 0, 0, 0, 0, 0, CAPTURE_BAR_Y + CAPTURE_BAR_HEIGHT + 4, CAPTURE_BOX_WIDTH, 30);
 		Place("DefAlert", 0.5, 1, 0.5, 1, 0, -180, 340, 44);
 		Place("DefAlertBg", 0, 0, 0, 0, 0, 0, 340, 44);
 		Place("DefAlertText", 0, 0, 0, 0, 16, 0, 310, 44);
@@ -188,9 +204,15 @@ class ZW_InvasionHUDComponent : SCR_BaseGameModeComponent
 		SetColor("TimerDivider", ARGB(62, 165, 190, 210));
 		SetColor("TimerText", ARGB(255, 177, 195, 211));
 		SetColor("PrepBg", ARGB(128, 0, 0, 0));
-		SetColor("CaptureBg", ARGB(128, 0, 0, 0));
-		SetColor("CaptureBarBg", ARGB(46, 255, 255, 255));
-		SetColor("CaptureFill", ARGB(255, 232, 120, 32));
+		SetColor("CaptureBg", ARGB(0, 0, 0, 0));
+		SetColor("FlagBorder", ARGB(255, 17, 17, 17));
+		SetColor("FlagFill", ARGB(255, 233, 233, 233));
+		SetColor("LockBg", ARGB(255, 240, 240, 240));
+		SetColor("LockShackleL", ARGB(255, 17, 17, 17));
+		SetColor("LockShackleR", ARGB(255, 17, 17, 17));
+		SetColor("LockShackleTop", ARGB(255, 17, 17, 17));
+		SetColor("LockBody", ARGB(255, 17, 17, 17));
+		SetColor("CaptureBarBg", ARGB(255, 154, 154, 154));
 		SetColor("DefAlertBg", ARGB(158, 120, 28, 20));
 	}
 
@@ -285,7 +307,7 @@ class ZW_InvasionHUDComponent : SCR_BaseGameModeComponent
 
 		// --- Захват текущей точки
 		ZW_InvasionPoint active = ZW_ObjectivesComponent.FindPointByOrder(world, activeOrder);
-		UpdateCapture(active, activeOrder, isAttacker, isDefender, prep || mapOpen || ended);
+		UpdateCapture(active, activeOrder, isAttacker, isDefender, prep || mapOpen || ended, attacker, defender);
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -451,7 +473,7 @@ class ZW_InvasionHUDComponent : SCR_BaseGameModeComponent
 	}
 
 	//------------------------------------------------------------------------------------------------
-	protected void UpdateCapture(ZW_InvasionPoint point, int order, bool isAttacker, bool isDefender, bool hidden)
+	protected void UpdateCapture(ZW_InvasionPoint point, int order, bool isAttacker, bool isDefender, bool hidden, Faction attacker, Faction defender)
 	{
 		if (!point || hidden)
 		{
@@ -461,52 +483,111 @@ class ZW_InvasionHUDComponent : SCR_BaseGameModeComponent
 		}
 
 		int progress = point.GetProgress();
-		int total = point.GetProgressMax();
+		int neutral = ZW_InvasionPoint.PROGRESS_NEUTRAL;
+		bool locked = point.IsLocked();
 
-		// Направление: растёт / падает; без изменений дольше FREEZE_AFTER_MS — замер.
-		float now = GetGame().GetWorld().GetWorldTime();
-		if (progress != m_iLastProgress)
+		// Индикатор видят обе стороны, когда игрок стоит в зоне точки.
+		bool inside = (isAttacker || isDefender) && IsLocalPlayerInside(point);
+		SetVisible("CaptureBox", inside);
+		if (inside)
 		{
-			if (m_iLastProgress >= 0)
+			// Флаг: оборона → белый (нейтральная) → атака с замком.
+			Faction holder = defender;
+			if (locked)
+				holder = attacker;
+			else if (progress >= neutral)
+				holder = null;
+			ShowFlag(holder);
+
+			SetVisible("LockBg", locked);
+			SetVisible("LockShackleL", locked);
+			SetVisible("LockShackleR", locked);
+			SetVisible("LockShackleTop", locked);
+			SetVisible("LockBody", locked);
+
+			// Полоса: до нейтрали — «здоровье» флага обороны, после — заполнение флагом атаки.
+			float share;
+			Faction barSide;
+			if (progress < neutral && !locked)
 			{
-				if (progress > m_iLastProgress)
-					m_iTrend = 1;
-				else
-					m_iTrend = -1;
+				share = (neutral - progress) * 1.0 / neutral;
+				barSide = defender;
 			}
-			m_iLastProgress = progress;
-			m_fLastChangeTime = now;
-		}
-		else if (now - m_fLastChangeTime > FREEZE_AFTER_MS)
-		{
-			m_iTrend = 0;
-		}
-
-		// Атака: шкала захвата, только когда игрок в зоне точки.
-		bool showAttack = isAttacker && IsLocalPlayerInside(point);
-		SetVisible("CaptureBox", showAttack);
-		if (showAttack)
-		{
-			string title = "Захват точки " + order.ToString();
-			if (progress < ZW_InvasionPoint.PROGRESS_NEUTRAL)
-				title = "Нейтрализация точки " + order.ToString();
-			if (m_iTrend == 0 && progress > 0)
-				title = "Точка " + order.ToString() + " оспаривается";
-			else if (m_iTrend < 0)
-				title = "Точку " + order.ToString() + " отбивают";
-
-			SetText("CaptureTitle", title);
+			else
+			{
+				share = (progress - neutral) * 1.0 / neutral;
+				barSide = attacker;
+			}
 
 			Widget fill = m_wRoot.FindAnyWidget("CaptureFill");
-			if (fill && total > 0)
-				FrameSlot.SetSize(fill, CAPTURE_BAR_WIDTH * progress / total, CAPTURE_BAR_HEIGHT);
+			if (fill)
+				FrameSlot.SetSize(fill, CAPTURE_BAR_WIDTH * Math.Clamp(share, 0, 1), CAPTURE_BAR_HEIGHT);
+			SetColor("CaptureFill", SideColor(barSide));
+
+			// Стрелки: направо — давит атака, налево — отбивает оборона; число = ступень перевеса.
+			int drive = point.GetDrive();
+			string arrow = "›";
+			Faction pusher = attacker;
+			if (drive < 0)
+			{
+				arrow = "‹";
+				pusher = defender;
+			}
+			string arrows;
+			for (int a = 0; a < Math.AbsInt(drive); a++)
+			{
+				if (a > 0)
+					arrows += " ";
+				arrows += arrow;
+			}
+			SetColor("CaptureArrows", SideColor(pusher));
+			SetText("CaptureArrows", arrows);
+
+			SetText("CaptureTitle", point.GetPointName());
 		}
 
-		// Оборона: только статус, без процентов, времени и численности.
-		bool showDefend = isDefender && point.IsBeingCaptured();
+		// Обороне вне зоны — короткое предупреждение, без процентов и численности.
+		bool showDefend = isDefender && !inside && point.IsBeingCaptured();
 		SetVisible("DefAlert", showDefend);
 		if (showDefend)
-			SetText("DefAlertText", "Точку " + order.ToString() + " захватывают");
+			SetText("DefAlertText", point.GetPointName() + ": точку захватывают");
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Флаг стороны; null — белый нейтральный.
+	protected void ShowFlag(Faction faction)
+	{
+		ImageWidget flag = ImageWidget.Cast(m_wRoot.FindAnyWidget("FlagImg"));
+		if (!flag)
+			return;
+
+		SCR_Faction scrFaction = SCR_Faction.Cast(faction);
+		ResourceName texture;
+		if (scrFaction)
+			texture = scrFaction.GetFactionFlag();
+
+		if (texture.IsEmpty())
+		{
+			flag.SetVisible(false);
+			m_sShownFlag = string.Empty;
+			return;
+		}
+
+		if (texture != m_sShownFlag)
+		{
+			flag.LoadImageTexture(0, texture, false, false);
+			flag.SetImage(0);
+			m_sShownFlag = texture;
+		}
+		flag.SetVisible(true);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	protected int SideColor(Faction faction)
+	{
+		if (faction && IsRfFaction(faction.GetFactionKey()))
+			return ARGB(255, 196, 32, 32);
+		return ARGB(255, 47, 95, 208);
 	}
 
 	//------------------------------------------------------------------------------------------------
