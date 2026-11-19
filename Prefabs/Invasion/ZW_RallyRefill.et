@@ -1,0 +1,28 @@
+GenericEntity : "{AD92C45B56130D08}PrefabLibrary/DefaultLibrary/Props/Shop/Crate_01/Crate_01_brown.et" {
+ ID "6AE5E1B4C7D29F01"
+ components {
+  ActionsManagerComponent "{6AE5E1B4C7D29F02}" {
+   ActionContexts {
+    UserActionContext "{6AE5E1B4C7D29F03}" {
+     ContextName "default"
+     Position PointInfo "{6AE5E1B4C7D29F04}" {
+      Offset 0 0.6 0
+     }
+     Radius 1.5
+    }
+   }
+   additionalActions {
+    ZW_RefillRallyAction "{6AE5E1B4C7D29F05}" {
+     ParentContextList {
+      "default"
+     }
+     UIInfo UIInfo "{6AE5E1B4C7D29F06}" {
+      Name "Пополнить rally"
+     }
+    }
+   }
+  }
+  RplComponent "{6AE5E1B4C7D29F07}" {
+  }
+ }
+}
