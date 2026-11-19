@@ -281,7 +281,7 @@ class ZW_InvasionHUDComponent : SCR_BaseGameModeComponent
 
 		SetVisible("TopBar", mapOpen && hasSide && !ended);
 		if (mapOpen && hasSide && !ended)
-			UpdateMapPoints(world, activeOrder, isAttacker, objectives.GetPointCount());
+			UpdateMapPoints(world, activeOrder, isAttacker, objectives.GetPointCount(), attacker && IsRfFaction(attacker.GetFactionKey()), defender && IsRfFaction(defender.GetFactionKey()));
 
 		// --- Захват текущей точки
 		ZW_InvasionPoint active = ZW_ObjectivesComponent.FindPointByOrder(world, activeOrder);
@@ -373,7 +373,7 @@ class ZW_InvasionHUDComponent : SCR_BaseGameModeComponent
 	}
 
 	//------------------------------------------------------------------------------------------------
-	protected void UpdateMapPoints(BaseWorld world, int activeOrder, bool isAttacker, int pointCount)
+	protected void UpdateMapPoints(BaseWorld world, int activeOrder, bool isAttacker, int pointCount, bool attackerRf, bool defenderRf)
 	{
 		int visibleCount = Math.Min(pointCount, MAX_POINTS);
 		float trackWidth = (visibleCount - 1) * MAP_POINT_STEP;
@@ -393,12 +393,13 @@ class ZW_InvasionHUDComponent : SCR_BaseGameModeComponent
 				Place(prefix + "Inner", 0, 0, 0, 0, center - 9, 15, 18, 18);
 				Place(prefix + "Num", 0, 0, 0, 0, center - 12, 12, 24, 24);
 			}
-			UpdatePointSlot(prefix, order, point, activeOrder, isAttacker);
+			UpdatePointSlot(prefix, order, point, activeOrder, isAttacker, attackerRf, defenderRf);
 		}
 	}
 
 	//------------------------------------------------------------------------------------------------
-	protected void UpdatePointSlot(string prefix, int order, ZW_InvasionPoint point, int activeOrder, bool isAttacker)
+	//! Цвета как у меток на карте: точка в цвете стороны, которая её держит (НАТО — синий, РФ — красный).
+	protected void UpdatePointSlot(string prefix, int order, ZW_InvasionPoint point, int activeOrder, bool isAttacker, bool attackerRf, bool defenderRf)
 	{
 		bool exists = point != null;
 		SetVisible(prefix + "Outer", exists);
@@ -412,28 +413,35 @@ class ZW_InvasionHUDComponent : SCR_BaseGameModeComponent
 		string label = order.ToString();
 		int textColor = ARGB(255, 235, 242, 248);
 
+		// Держатель точки: взятые — у атаки, остальные — у обороны.
+		bool holderRf = defenderRf;
 		if (order < activeOrder)
+			holderRf = attackerRf;
+
+		if (holderRf)
+		{
+			outer = ARGB(255, 214, 92, 88);
+			inner = ARGB(255, 92, 36, 38);
+		}
+		else
 		{
 			outer = ARGB(255, 109, 169, 230);
 			inner = ARGB(255, 41, 81, 120);
 		}
-		else if (order == activeOrder)
+
+		if (order == activeOrder)
 		{
+			// Текущая цель — оранжевая обводка поверх цвета держателя.
 			outer = ARGB(255, 255, 185, 79);
-			inner = ARGB(255, 91, 58, 25);
 			textColor = ARGB(255, 255, 224, 179);
 		}
-		else if (isAttacker)
+		else if (order > activeOrder && isAttacker)
 		{
+			// Атака не знает дальние точки.
 			outer = ARGB(255, 104, 122, 139);
 			inner = ARGB(255, 29, 41, 53);
 			textColor = ARGB(255, 177, 195, 211);
 			label = "?";
-		}
-		else
-		{
-			outer = ARGB(255, 201, 112, 111);
-			inner = ARGB(255, 78, 43, 47);
 		}
 
 		SetColor(prefix + "Outer", outer);

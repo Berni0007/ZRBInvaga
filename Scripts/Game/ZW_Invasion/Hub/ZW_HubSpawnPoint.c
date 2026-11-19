@@ -26,6 +26,14 @@ class ZW_HubSpawnPoint : SCR_SpawnPoint
 	}
 
 	//------------------------------------------------------------------------------------------------
+	//! Префаб точки спавна несёт красную метку редактора; у созданной в игре её надо скрыть.
+	override void EOnInit(IEntity owner)
+	{
+		super.EOnInit(owner);
+		ClearFlags(EntityFlags.VISIBLE, true);
+	}
+
+	//------------------------------------------------------------------------------------------------
 	override string GetSpawnPointName()
 	{
 		if (m_sZWName.IsEmpty())
