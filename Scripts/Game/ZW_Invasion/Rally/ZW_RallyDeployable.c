@@ -115,5 +115,7 @@ modded class SCR_RestrictedDeployableSpawnPointComponent
 		m_bZWInDeploy = false;
 
 		Print(string.Format("[ZW_Invasion] Rally после Deploy: развёрнута=%1, отряд=%2", IsDeployed(), GetGroupID()), LogLevel.NORMAL);
+		if (IsDeployed())
+			manager.OnRallyDeployed(userEntity);
 	}
 }

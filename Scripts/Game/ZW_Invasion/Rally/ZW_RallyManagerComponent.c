@@ -40,6 +40,9 @@ class ZW_RallyManagerComponent : SCR_BaseGameModeComponent
 	protected IEntity m_DebugUser;
 	protected SCR_RestrictedDeployableSpawnPointComponent m_DebugRadio;
 
+	[Attribute("0", UIWidgets.CheckBox, "Отладка: убить игрока через 3 с после развёртывания rally (тест спавна)", category: "Invasion Debug")]
+	protected bool m_bDebugKillAfterDeploy;
+
 	//! Отряды, израсходовавшие rally. Пока отряд здесь — новый rally не развернуть.
 	[RplProp()]
 	protected ref array<int> m_aDepletedGroups = {};
@@ -225,6 +228,29 @@ class ZW_RallyManagerComponent : SCR_BaseGameModeComponent
 		}
 
 		return false;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Вызывается рацией после успешного развёртывания.
+	void OnRallyDeployed(IEntity user)
+	{
+		if (m_bDebugKillAfterDeploy && user)
+			GetGame().GetCallqueue().CallLater(DebugKill, 3000, false, user);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	protected void DebugKill(IEntity user)
+	{
+		ChimeraCharacter character = ChimeraCharacter.Cast(user);
+		if (!character)
+			return;
+
+		CharacterControllerComponent controller = character.GetCharacterController();
+		if (controller)
+		{
+			Print("[ZW_Invasion][DBG] Убиваю игрока для теста спавна на rally", LogLevel.WARNING);
+			controller.ForceDeath();
+		}
 	}
 
 	//------------------------------------------------------------------------------------------------
