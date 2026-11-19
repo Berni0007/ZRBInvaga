@@ -64,10 +64,12 @@ class ZW_PointMarkersComponent : SCR_BaseGameModeComponent
 		m_sLastState = state;
 		ClearMarkers();
 
+		BaseWorld world = GetOwner().GetWorld();
+		AddMainMarkers(markers, world, objectives);
+
 		if (!isAttacker && !isDefender)
 			return;
 
-		BaseWorld world = GetOwner().GetWorld();
 		int count = objectives.GetPointCount();
 		for (int order = 1; order <= count; order++)
 		{
@@ -99,6 +101,34 @@ class ZW_PointMarkersComponent : SCR_BaseGameModeComponent
 				identity = EMilitarySymbolIdentity.OPFOR;
 
 			AddMarker(markers, point.GetOrigin(), identity, text);
+		}
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Метки мейнов: видны всем, цвет фракции, которой мейн принадлежит в этом матче.
+	protected void AddMainMarkers(SCR_MapMarkerManagerComponent markers, BaseWorld world, ZW_ObjectivesComponent objectives)
+	{
+		foreach (ZW_MainRoleComponent role : ZW_MainRoleComponent.GetAll())
+		{
+			if (!role || !role.HasMapMarker() || !role.GetOwner() || role.GetOwner().GetWorld() != world)
+				continue;
+
+			Faction faction = objectives.GetDefenderFaction();
+			if (role.GetRole() == ZW_EMainRole.ATTACK)
+				faction = objectives.GetAttackerFaction();
+
+			if (!faction)
+				continue;
+
+			EMilitarySymbolIdentity identity = EMilitarySymbolIdentity.BLUFOR;
+			string text = "Мейн НАТО";
+			if (IsRfFaction(faction.GetFactionKey()))
+			{
+				identity = EMilitarySymbolIdentity.OPFOR;
+				text = "Мейн РФ";
+			}
+
+			AddMarker(markers, role.GetOwner().GetOrigin(), identity, text);
 		}
 	}
 

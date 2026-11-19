@@ -15,6 +15,9 @@ class ZW_InvasionPoint : SCR_CaptureAndHoldArea
 	[Attribute("", UIWidgets.EditBox, "Название точки для HUD и логов", category: "Invasion")]
 	protected string m_sPointName;
 
+	[Attribute("", UIWidgets.EditBox, "Полоса (например north / south). Пусто — точка общая для всех полос. На старте матча сервер выбирает одну полосу.", category: "Invasion")]
+	protected string m_sLane;
+
 	[Attribute("60", UIWidgets.EditBox, "Время захвата, сек", category: "Invasion")]
 	protected int m_iCaptureSeconds;
 
@@ -54,6 +57,12 @@ class ZW_InvasionPoint : SCR_CaptureAndHoldArea
 	string GetPointName()
 	{
 		return m_sPointName;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	string GetLane()
+	{
+		return m_sLane;
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -156,6 +165,8 @@ class ZW_InvasionPoint : SCR_CaptureAndHoldArea
 
 		// Подпись: номер, название, ошибка.
 		string label = string.Format("#%1", m_iOrder);
+		if (!m_sLane.IsEmpty())
+			label = label + " [" + m_sLane + "]";
 		if (!m_sPointName.IsEmpty())
 			label = label + " " + m_sPointName;
 		// Шрифт отладочного текста не знает кириллицу — подписи латиницей.
@@ -166,9 +177,12 @@ class ZW_InvasionPoint : SCR_CaptureAndHoldArea
 		DebugTextWorldSpace.Create(world, label, DebugTextFlags.ONCE | DebugTextFlags.CENTER | DebugTextFlags.FACE_CAMERA, pos[0], pos[1] + 6, pos[2], 20.0, color);
 
 		// Стрелка к следующей точке цепочки.
-		ZW_InvasionPoint next = ZW_ObjectivesComponent.FindPointByOrder(world, m_iOrder + 1, this);
-		if (next)
+		array<ZW_InvasionPoint> nextPoints = {};
+		ZW_ObjectivesComponent.FindLanePoints(world, m_iOrder + 1, m_sLane, this, nextPoints);
+		foreach (ZW_InvasionPoint next : nextPoints)
+		{
 			Shape.CreateArrow(pos + up, next.GetOrigin() + up, 4.0, color, ShapeFlags.ONCE | ShapeFlags.NOZBUFFER);
+		}
 	}
 #endif
 

@@ -4,8 +4,9 @@ SCR_FactionManager FactionManager_USxUSSR1 : "{589540B35EBA8CDC}Prefabs/MP/Manag
 SCR_BaseGameMode GameMode_ZW_Invasion1 : "{BEECC6DCCEF65323}Prefabs/MP/Modes/Plain/GameMode_ZW_Invasion.et" {
  components {
   ZW_ObjectivesComponent "{6AE53027676CF91B}" {
-   m_sAttackerFactionKey "US"
-   m_sDefenderFactionKey "USSR"
+   m_sStartAttackerKey "US"
+   m_sStartDefenderKey "USSR"
+   m_bSwapSides 0
   }
   ZW_RallyManagerComponent "{6AE5B7D2C41A8E37}" {
    m_iSpawnsPerRally 2
