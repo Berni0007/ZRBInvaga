@@ -1,6 +1,7 @@
 // ZRBinvaga — точки Invasion на игровой карте (как в Squad).
-//   - Оборона видит все точки: свои (ещё не взятые) — синим, потерянные — красным.
-//   - Атака видит только текущую цель — красным. До начала штурма — первую цель.
+//   - Оборона видит все точки, атака — только текущую цель (до начала штурма — первую).
+//   - Цвет точки — цвет стороны, которая её держит (как метка её мейна): НАТО — синий, РФ — красный.
+//     Невзятые точки — цвет обороны, взятые атакой — цвет атаки.
 // Метки локальные (у каждого игрока свои), пересобираются при смене стороны или текущей цели.
 
 [ComponentEditorProps(category: "ZRB/Invasion", description: "Invasion: метки точек на карте по сторонам")]
@@ -11,6 +12,9 @@ class ZW_PointMarkersComponentClass : SCR_BaseGameModeComponentClass
 class ZW_PointMarkersComponent : SCR_BaseGameModeComponent
 {
 	protected const int UPDATE_MS = 1000;
+
+	[Attribute("USSR,RF,RU,RUS", UIWidgets.EditBox, "Ключи фракций РФ (красный цвет), остальные — синий")]
+	protected string m_sRfFactionKeys;
 
 	protected ref array<ref SCR_MapMarkerBase> m_aMarkers = {};
 	protected string m_sLastState;
@@ -53,7 +57,7 @@ class ZW_PointMarkersComponent : SCR_BaseGameModeComponent
 		if (activeOrder < 1)
 			activeOrder = 1;
 
-		string state = string.Format("%1|%2|%3|%4", isAttacker, isDefender, activeOrder, objectives.GetPointCount());
+		string state = string.Format("%1|%2|%3|%4|%5", isAttacker, isDefender, activeOrder, objectives.GetPointCount(), objectives.GetAttackerFaction());
 		if (state == m_sLastState)
 			return;
 
@@ -71,34 +75,46 @@ class ZW_PointMarkersComponent : SCR_BaseGameModeComponent
 			if (!point)
 				continue;
 
-			EMilitarySymbolIdentity identity;
 			string text = string.Format("%1. %2", order, point.GetPointName());
+			bool lost = order < activeOrder;
 
 			if (isAttacker)
 			{
 				if (order != activeOrder)
 					continue;
 
-				identity = EMilitarySymbolIdentity.OPFOR;
 				text = text + " — цель";
 			}
-			else
-			{
-				if (order < activeOrder)
-				{
-					identity = EMilitarySymbolIdentity.OPFOR;
-					text = text + " — потеряна";
-				}
-				else
-				{
-					identity = EMilitarySymbolIdentity.BLUFOR;
-					if (order == activeOrder)
-						text = text + " — под атакой";
-				}
-			}
+			else if (lost)
+				text = text + " — потеряна";
+			else if (order == activeOrder)
+				text = text + " — под атакой";
+
+			Faction holder = objectives.GetDefenderFaction();
+			if (lost)
+				holder = objectives.GetAttackerFaction();
+
+			EMilitarySymbolIdentity identity = EMilitarySymbolIdentity.BLUFOR;
+			if (holder && IsRfFaction(holder.GetFactionKey()))
+				identity = EMilitarySymbolIdentity.OPFOR;
 
 			AddMarker(markers, point.GetOrigin(), identity, text);
 		}
+	}
+
+	//------------------------------------------------------------------------------------------------
+	protected bool IsRfFaction(string factionKey)
+	{
+		array<string> keys = {};
+		m_sRfFactionKeys.Split(",", keys, true);
+		foreach (string key : keys)
+		{
+			key.Trim();
+			if (key == factionKey)
+				return true;
+		}
+
+		return false;
 	}
 
 	//------------------------------------------------------------------------------------------------
