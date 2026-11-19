@@ -249,7 +249,37 @@ class ZW_RallyManagerComponent : SCR_BaseGameModeComponent
 		if (controller)
 		{
 			Print("[ZW_Invasion][DBG] Убиваю игрока для теста спавна на rally", LogLevel.WARNING);
+			int playerId = GetPlayerId(user);
 			controller.ForceDeath();
+			GetGame().GetCallqueue().CallLater(DebugReportRallyPoints, 2000, false, playerId);
+		}
+	}
+
+	//------------------------------------------------------------------------------------------------
+	protected void DebugReportRallyPoints(int playerId)
+	{
+		SCR_AIGroup group = GetPlayerGroup(playerId);
+		int groupId = -1;
+		if (group)
+			groupId = group.GetGroupID();
+
+		array<SCR_SpawnPoint> points = SCR_SpawnPoint.GetSpawnPoints();
+		foreach (SCR_SpawnPoint point : points)
+		{
+			SCR_RestrictedDeployableSpawnPoint rally = SCR_RestrictedDeployableSpawnPoint.Cast(point);
+			if (!rally)
+				continue;
+
+			SCR_ESpawnResult result;
+			bool canReserve = rally.CanReserveFor_S(playerId, result);
+			Print(string.Format("[ZW_Invasion][DBG] Rally-точка: включена=%1, видна игроку=%2, фракция='%3', отряд рации=%4, отряд игрока=%5, резерв=%6 (%7), остаток=%8/%9",
+				rally.IsSpawnPointEnabled(), rally.IsSpawnPointVisibleForPlayer(playerId), rally.GetFactionKey(), SCR_RestrictedDeployableSpawnPointComponent.Cast(rally.GetDeployableSpawnPointComponent()).GetGroupID(), groupId,
+				canReserve, typename.EnumToString(SCR_ESpawnResult, result), rally.GetRespawnCount(), rally.GetMaxRespawns()), LogLevel.WARNING);
+		}
+
+		for (int i = 0; i < 6; i++)
+		{
+			Print(string.Format("[ZW_Invasion][DBG] SCR_ESpawnPointBudgetType %1 = %2", i, typename.EnumToString(SCR_ESpawnPointBudgetType, i)), LogLevel.WARNING);
 		}
 	}
 
