@@ -9,6 +9,8 @@ SCR_BaseGameMode : "{1B76F75A3175E85C}Prefabs/MP/Modes/Plain/GameMode_Plain.et" 
    m_SpawnLogic SCR_MenuSpawnLogic "{6AE5D2F7A1C34E68}" {
    }
   }
+  ZW_CommsManagerComponent "{6AE5C0A1D2E3F401}" {
+  }
   ZW_InvasionHUDComponent "{6AE5A3C41B7E2D90}" {
   }
   ZW_ObjectivesComponent "{6AE53027676CF91B}" {
