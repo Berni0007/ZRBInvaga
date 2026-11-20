@@ -127,6 +127,22 @@ FrameWidgetClass "{FAA367E7E90BBDBA}" {
     Color 0 0 0 0.6
     Size 24 24
    }
+   ImageWidgetClass "{FAB4A5492641FABB}" {
+    Name "Pt1Flag"
+    Slot FrameWidgetSlot "{7FFD3DDB4A09F818}" {
+     Anchor 0 0 0 0
+     PositionX 0
+     OffsetLeft 0
+     PositionY 0
+     OffsetTop 0
+     SizeX 10
+     OffsetRight -10
+     SizeY 10
+     OffsetBottom -10
+    }
+    Color 1 1 1 1
+    Size 10 10
+   }
    TextWidgetClass "{07DB644023849B78}" {
     Name "Pt1Num"
     Slot FrameWidgetSlot "{A0B9B9A59A9E4278}" {
@@ -184,6 +200,22 @@ FrameWidgetClass "{FAA367E7E90BBDBA}" {
     }
     Color 0 0 0 0.6
     Size 24 24
+   }
+   ImageWidgetClass "{8C87BACF6651A2A7}" {
+    Name "Pt2Flag"
+    Slot FrameWidgetSlot "{6F6A3DD0117952E6}" {
+     Anchor 0 0 0 0
+     PositionX 0
+     OffsetLeft 0
+     PositionY 0
+     OffsetTop 0
+     SizeX 10
+     OffsetRight -10
+     SizeY 10
+     OffsetBottom -10
+    }
+    Color 1 1 1 1
+    Size 10 10
    }
    TextWidgetClass "{775607CB202F09C3}" {
     Name "Pt2Num"
@@ -243,6 +275,22 @@ FrameWidgetClass "{FAA367E7E90BBDBA}" {
     Color 0 0 0 0.6
     Size 24 24
    }
+   ImageWidgetClass "{AD6FE75D6C29DCC3}" {
+    Name "Pt3Flag"
+    Slot FrameWidgetSlot "{843DB8E8FFE12D26}" {
+     Anchor 0 0 0 0
+     PositionX 0
+     OffsetLeft 0
+     PositionY 0
+     OffsetTop 0
+     SizeX 10
+     OffsetRight -10
+     SizeY 10
+     OffsetBottom -10
+    }
+    Color 1 1 1 1
+    Size 10 10
+   }
    TextWidgetClass "{AFFD7B305F9736EB}" {
     Name "Pt3Num"
     Slot FrameWidgetSlot "{CAB6B0F5A2D7C41E}" {
@@ -300,6 +348,22 @@ FrameWidgetClass "{FAA367E7E90BBDBA}" {
     }
     Color 0 0 0 0.6
     Size 24 24
+   }
+   ImageWidgetClass "{1BEBD7CEA200D2A5}" {
+    Name "Pt4Flag"
+    Slot FrameWidgetSlot "{429B434A6A4A20FD}" {
+     Anchor 0 0 0 0
+     PositionX 0
+     OffsetLeft 0
+     PositionY 0
+     OffsetTop 0
+     SizeX 10
+     OffsetRight -10
+     SizeY 10
+     OffsetBottom -10
+    }
+    Color 1 1 1 1
+    Size 10 10
    }
    TextWidgetClass "{36748979C18F917D}" {
     Name "Pt4Num"
@@ -359,6 +423,22 @@ FrameWidgetClass "{FAA367E7E90BBDBA}" {
     Color 0 0 0 0.6
     Size 24 24
    }
+   ImageWidgetClass "{FD1E1824054170A0}" {
+    Name "Pt5Flag"
+    Slot FrameWidgetSlot "{FCD8103F5AACC867}" {
+     Anchor 0 0 0 0
+     PositionX 0
+     OffsetLeft 0
+     PositionY 0
+     OffsetTop 0
+     SizeX 10
+     OffsetRight -10
+     SizeY 10
+     OffsetBottom -10
+    }
+    Color 1 1 1 1
+    Size 10 10
+   }
    TextWidgetClass "{3B714A4E27EC8E52}" {
     Name "Pt5Num"
     Slot FrameWidgetSlot "{BD55107488C31259}" {
@@ -417,6 +497,22 @@ FrameWidgetClass "{FAA367E7E90BBDBA}" {
     Color 0 0 0 0.6
     Size 24 24
    }
+   ImageWidgetClass "{1B56123A15822FA8}" {
+    Name "Pt6Flag"
+    Slot FrameWidgetSlot "{1F4B6B4CFEC33984}" {
+     Anchor 0 0 0 0
+     PositionX 0
+     OffsetLeft 0
+     PositionY 0
+     OffsetTop 0
+     SizeX 10
+     OffsetRight -10
+     SizeY 10
+     OffsetBottom -10
+    }
+    Color 1 1 1 1
+    Size 10 10
+   }
    TextWidgetClass "{724F1E035F2329DA}" {
     Name "Pt6Num"
     Slot FrameWidgetSlot "{6F6275CA987E5BA8}" {
@@ -474,6 +570,22 @@ FrameWidgetClass "{FAA367E7E90BBDBA}" {
     }
     Color 0 0 0 0.6
     Size 24 24
+   }
+   ImageWidgetClass "{6E3A887632A0318B}" {
+    Name "Pt7Flag"
+    Slot FrameWidgetSlot "{6D53CB93539ABD2A}" {
+     Anchor 0 0 0 0
+     PositionX 0
+     OffsetLeft 0
+     PositionY 0
+     OffsetTop 0
+     SizeX 10
+     OffsetRight -10
+     SizeY 10
+     OffsetBottom -10
+    }
+    Color 1 1 1 1
+    Size 10 10
    }
    TextWidgetClass "{6A3C58A38D4B4E12}" {
     Name "Pt7Num"

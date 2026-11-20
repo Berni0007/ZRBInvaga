@@ -39,6 +39,9 @@ class ZW_InvasionHUDComponent : SCR_BaseGameModeComponent
 	//! Какой флаг сейчас загружен в FlagImg — чтобы не грузить текстуру каждый кадр.
 	protected string m_sShownFlag;
 
+	//! Флаги, загруженные в слоты цепочки (имя виджета → текстура).
+	protected ref map<string, string> m_mSlotFlags = new map<string, string>();
+
 	protected Widget m_wRoot;
 	protected Widget m_wMapParent;
 	protected bool m_bHUDOnMap;
@@ -80,6 +83,10 @@ class ZW_InvasionHUDComponent : SCR_BaseGameModeComponent
 
 		if (m_wRoot)
 			m_wRoot.RemoveFromHierarchy();
+
+		// Новые виджеты — флаги в них ещё не загружены.
+		m_mSlotFlags.Clear();
+		m_sShownFlag = string.Empty;
 
 		m_wRoot = root;
 		m_wMapParent = mapParent;
@@ -137,6 +144,8 @@ class ZW_InvasionHUDComponent : SCR_BaseGameModeComponent
 		m_bBadgeInitialized = false;
 		m_bHUDOnMap = false;
 		m_iLastProgress = -1;
+		m_mSlotFlags.Clear();
+		m_sShownFlag = string.Empty;
 		m_iTrend = 0;
 		m_fLastChangeTime = 0;
 	}
@@ -156,19 +165,6 @@ class ZW_InvasionHUDComponent : SCR_BaseGameModeComponent
 		Place("TimerDivider", 0, 0, 0, 0, 0, 0, MAP_PANEL_WIDTH - 24, 1);
 		Place("TimerValue", 0, 0, 0, 0, 40, 3, 70, 23);
 		Place("TimerText", 0, 0, 0, 0, 121, 3, 145, 23);
-		for (int order = 1; order <= MAX_POINTS; order++)
-		{
-			string prefix = "Pt" + order.ToString();
-			ImageWidget outer = ImageWidget.Cast(m_wRoot.FindAnyWidget(prefix + "Outer"));
-			ImageWidget inner = ImageWidget.Cast(m_wRoot.FindAnyWidget(prefix + "Inner"));
-			if (outer && inner)
-			{
-				outer.SetPivot(0.5, 0.5);
-				outer.SetRotation(45);
-				inner.SetPivot(0.5, 0.5);
-				inner.SetRotation(45);
-			}
-		}
 		Place("PrepBox", 0.5, 0, 0.5, 0, 0, 140, 380, 124);
 		Place("PrepBg", 0, 0, 0, 0, 0, 0, 380, 124);
 		Place("PrepTitle", 0, 0, 0, 0, 20, 8, 340, 26);
@@ -303,7 +299,7 @@ class ZW_InvasionHUDComponent : SCR_BaseGameModeComponent
 
 		SetVisible("TopBar", mapOpen && hasSide && !ended);
 		if (mapOpen && hasSide && !ended)
-			UpdateMapPoints(world, activeOrder, isAttacker, objectives.GetPointCount(), attacker && IsRfFaction(attacker.GetFactionKey()), defender && IsRfFaction(defender.GetFactionKey()));
+			UpdateMapPoints(world, activeOrder, isAttacker, objectives.GetPointCount(), attacker, defender);
 
 		// --- Захват текущей точки
 		ZW_InvasionPoint active = ZW_ObjectivesComponent.FindPointByOrder(world, activeOrder);
@@ -395,14 +391,14 @@ class ZW_InvasionHUDComponent : SCR_BaseGameModeComponent
 	}
 
 	//------------------------------------------------------------------------------------------------
-	protected void UpdateMapPoints(BaseWorld world, int activeOrder, bool isAttacker, int pointCount, bool attackerRf, bool defenderRf)
+	protected void UpdateMapPoints(BaseWorld world, int activeOrder, bool isAttacker, int pointCount, Faction attacker, Faction defender)
 	{
 		int visibleCount = Math.Min(pointCount, MAX_POINTS);
 		float trackWidth = (visibleCount - 1) * MAP_POINT_STEP;
 		float start = (MAP_PANEL_WIDTH - trackWidth) * 0.5;
 		SetVisible("PointTrack", visibleCount > 1);
 		if (visibleCount > 1)
-			Place("PointTrack", 0, 0, 0, 0, start, 23, trackWidth, 2);
+			Place("PointTrack", 0, 0, 0, 0, start, 17, trackWidth, 2);
 
 		for (int order = 1; order <= MAX_POINTS; order++)
 		{
@@ -410,66 +406,95 @@ class ZW_InvasionHUDComponent : SCR_BaseGameModeComponent
 			string prefix = "Pt" + order.ToString();
 			if (point)
 			{
+				// Флажок 32x20 с рамкой, номер под ним.
 				float center = start + (order - 1) * MAP_POINT_STEP;
-				Place(prefix + "Outer", 0, 0, 0, 0, center - 11, 13, 22, 22);
-				Place(prefix + "Inner", 0, 0, 0, 0, center - 9, 15, 18, 18);
-				Place(prefix + "Num", 0, 0, 0, 0, center - 12, 12, 24, 24);
+				Place(prefix + "Outer", 0, 0, 0, 0, center - 18, 6, 36, 24);
+				Place(prefix + "Inner", 0, 0, 0, 0, center - 16, 8, 32, 20);
+				Place(prefix + "Flag", 0, 0, 0, 0, center - 16, 8, 32, 20);
+				Place(prefix + "Num", 0, 0, 0, 0, center - 16, 28, 32, 16);
 			}
-			UpdatePointSlot(prefix, order, point, activeOrder, isAttacker, attackerRf, defenderRf);
+			UpdatePointSlot(prefix, order, point, activeOrder, isAttacker, attacker, defender);
 		}
 	}
 
 	//------------------------------------------------------------------------------------------------
-	//! Цвета как у меток на карте: точка в цвете стороны, которая её держит (НАТО — синий, РФ — красный).
-	protected void UpdatePointSlot(string prefix, int order, ZW_InvasionPoint point, int activeOrder, bool isAttacker, bool attackerRf, bool defenderRf)
+	//! Флаг стороны, которая держит точку: взятые — флаг атаки, остальные — флаг обороны,
+	//! нейтральная — белый. Текущая цель — оранжевая рамка. Атака дальние точки не знает — «?».
+	protected void UpdatePointSlot(string prefix, int order, ZW_InvasionPoint point, int activeOrder, bool isAttacker, Faction attacker, Faction defender)
 	{
 		bool exists = point != null;
 		SetVisible(prefix + "Outer", exists);
 		SetVisible(prefix + "Inner", exists);
+		SetVisible(prefix + "Flag", exists);
 		SetVisible(prefix + "Num", exists);
 		if (!exists)
 			return;
 
-		int outer;
-		int inner;
-		string label = order.ToString();
+		bool captured = point.IsLocked() || order < activeOrder;
+		bool current = order == activeOrder && !captured;
+		bool unknown = isAttacker && !captured && !current;
+
+		Faction holder = defender;
+		if (captured)
+			holder = attacker;
+		else if (current && point.GetProgress() >= ZW_InvasionPoint.PROGRESS_NEUTRAL)
+			holder = null;
+
+		int outer = ARGB(255, 17, 17, 17);
 		int textColor = ARGB(255, 235, 242, 248);
-
-		// Держатель точки: взятые — у атаки, остальные — у обороны.
-		bool holderRf = defenderRf;
-		if (order < activeOrder)
-			holderRf = attackerRf;
-
-		if (holderRf)
+		if (current)
 		{
-			outer = ARGB(255, 214, 92, 88);
-			inner = ARGB(255, 92, 36, 38);
-		}
-		else
-		{
-			outer = ARGB(255, 109, 169, 230);
-			inner = ARGB(255, 41, 81, 120);
-		}
-
-		if (order == activeOrder)
-		{
-			// Текущая цель — оранжевая обводка поверх цвета держателя.
 			outer = ARGB(255, 255, 185, 79);
 			textColor = ARGB(255, 255, 224, 179);
 		}
-		else if (order > activeOrder && isAttacker)
+
+		string label = order.ToString();
+		if (unknown)
 		{
-			// Атака не знает дальние точки.
-			outer = ARGB(255, 104, 122, 139);
-			inner = ARGB(255, 29, 41, 53);
-			textColor = ARGB(255, 177, 195, 211);
 			label = "?";
+			textColor = ARGB(255, 177, 195, 211);
+			SetColor(prefix + "Inner", ARGB(255, 29, 41, 53));
+			SetVisible(prefix + "Flag", false);
+		}
+		else
+		{
+			SetColor(prefix + "Inner", ARGB(255, 233, 233, 233)); // белый — нейтральная
+			ShowSlotFlag(prefix + "Flag", holder);
 		}
 
 		SetColor(prefix + "Outer", outer);
-		SetColor(prefix + "Inner", inner);
 		SetColor(prefix + "Num", textColor);
 		SetText(prefix + "Num", label);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Загружает флаг фракции в виджет (только при смене); null — скрыть (виден белый фон).
+	protected void ShowSlotFlag(string widgetName, Faction faction)
+	{
+		ImageWidget flag = ImageWidget.Cast(m_wRoot.FindAnyWidget(widgetName));
+		if (!flag)
+			return;
+
+		SCR_Faction scrFaction = SCR_Faction.Cast(faction);
+		ResourceName texture;
+		if (scrFaction)
+			texture = scrFaction.GetFactionFlag();
+
+		if (texture.IsEmpty())
+		{
+			flag.SetVisible(false);
+			return;
+		}
+
+		string loaded;
+		m_mSlotFlags.Find(widgetName, loaded);
+		if (loaded != texture)
+		{
+			flag.LoadImageTexture(0, texture, false, false);
+			flag.SetImage(0);
+			m_mSlotFlags.Set(widgetName, texture);
+		}
+		flag.SetVisible(true);
 	}
 
 	//------------------------------------------------------------------------------------------------
