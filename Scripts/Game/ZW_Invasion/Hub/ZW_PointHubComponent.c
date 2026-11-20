@@ -45,7 +45,7 @@ class ZW_PointHubComponent : ScriptComponent
 	[Attribute("10", UIWidgets.EditBox, "Свободный радиус вокруг хаба, м", category: "Хаб")]
 	protected float m_fClearRadius;
 
-	[Attribute("45", UIWidgets.EditBox, "Как далеко от метки искать место, м (не дальше зоны захвата)", category: "Хаб")]
+	[Attribute("30", UIWidgets.EditBox, "Как далеко от метки искать место, м (не дальше зоны захвата)", category: "Хаб")]
 	protected float m_fSearchRadius;
 
 	[Attribute("50", UIWidgets.EditBox, "Враг ближе — спавн на хабе выключен, м", category: "Хаб")]

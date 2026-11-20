@@ -21,7 +21,7 @@ class ZW_InvasionPoint : SCR_CaptureAndHoldArea
 	[Attribute("3", UIWidgets.EditBox, "Минимум игроков стороны в зоне, чтобы двигать захват (и атака, и оборона)", category: "Invasion")]
 	protected int m_iMinAttackers;
 
-	[Attribute("100", UIWidgets.EditBox, "Радиус зоны захвата, м. Как в ванильном Conflict (SCR_SeizingComponent: 100 м, цилиндр — высота не важна)", category: "Invasion")]
+	[Attribute("50", UIWidgets.EditBox, "Радиус зоны захвата, м (цилиндр — высота не важна, как в ванильном SCR_SeizingComponent)", category: "Invasion")]
 	protected float m_fCaptureRadius;
 
 	//! Время захвата по перевесу (как в Squad): порог перевеса → секунд на «отхват» (оборона → нейтральная)
