@@ -217,6 +217,38 @@ class ZW_InvasionPoint : SCR_CaptureAndHoldArea
 	// ИНСТРУМЕНТЫ РЕДАКТОРА: в World Editor у каждой точки видны радиус, номер, название
 	// и стрелка к следующей точке цепочки. Ошибки расстановки подсвечиваются красным.
 	//------------------------------------------------------------------------------------------------
+	//! Отладочный шрифт не знает кириллицу — переводим название в латиницу для подписи.
+	protected string ZW_Translit(string text)
+	{
+		string FROM = "абвгдеёжзийклмнопрстуфхцчшщъыьэюяієїґАБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯІЄЇҐ";
+		array<string> to = {"a","b","v","g","d","e","e","zh","z","i","y","k","l","m","n","o","p","r","s","t","u","f","h","ts","ch","sh","sch","","y","","e","yu","ya","i","ye","yi","g",
+			"A","B","V","G","D","E","E","Zh","Z","I","Y","K","L","M","N","O","P","R","S","T","U","F","H","Ts","Ch","Sh","Sch","","Y","","E","Yu","Ya","I","Ye","Yi","G"};
+
+		// Строки — байты UTF-8: каждая кириллическая буква занимает 2 байта.
+		string result;
+		int count = text.Length();
+		int i = 0;
+		while (i < count)
+		{
+			if (i + 1 < count)
+			{
+				int index = FROM.IndexOf(text.Substring(i, 2));
+				if (index >= 0 && index % 2 == 0)
+				{
+					result += to[index / 2];
+					i += 2;
+					continue;
+				}
+			}
+
+			result += text.Substring(i, 1);
+			i++;
+		}
+
+		return result;
+	}
+
+	//------------------------------------------------------------------------------------------------
 	override int _WB_GetAfterWorldUpdateSpecs(IEntitySource src)
 	{
 		return EEntityFrameUpdateSpecs.CALL_WHEN_ENTITY_VISIBLE;
@@ -248,7 +280,7 @@ class ZW_InvasionPoint : SCR_CaptureAndHoldArea
 		if (!m_sLane.IsEmpty())
 			label = label + " [" + m_sLane + "]";
 		if (!m_sPointName.IsEmpty())
-			label = label + " " + m_sPointName;
+			label = label + " " + ZW_Translit(m_sPointName);
 		// Шрифт отладочного текста не знает кириллицу — подписи латиницей.
 		label = label + string.Format("  [r %1, min %2]", m_fCaptureRadius, m_iMinAttackers);
 		if (!error.IsEmpty())
