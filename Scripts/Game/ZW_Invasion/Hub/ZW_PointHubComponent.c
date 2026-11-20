@@ -39,6 +39,15 @@ class ZW_PointHubComponent : ScriptComponent
 	[Attribute("0 0 5", UIWidgets.EditBox, "Склад относительно метки, м", category: "Хаб")]
 	protected vector m_vSupplyOffset;
 
+	[Attribute("1", UIWidgets.CheckBox, "Искать свободное ровное место рядом с меткой (палатку не ставить в стены и дома)", category: "Хаб")]
+	protected bool m_bFindOpenSpot;
+
+	[Attribute("10", UIWidgets.EditBox, "Свободный радиус вокруг хаба, м", category: "Хаб")]
+	protected float m_fClearRadius;
+
+	[Attribute("45", UIWidgets.EditBox, "Как далеко от метки искать место, м (не дальше зоны захвата)", category: "Хаб")]
+	protected float m_fSearchRadius;
+
 	[Attribute("50", UIWidgets.EditBox, "Враг ближе — спавн на хабе выключен, м", category: "Хаб")]
 	protected float m_fEnemyBlockRadius;
 
@@ -52,6 +61,12 @@ class ZW_PointHubComponent : ScriptComponent
 	protected IEntity m_Tent;
 	protected IEntity m_Supply;
 	protected Faction m_Owner;
+
+	//! Центр хаба (метка или найденное свободное место).
+	protected vector m_vBase;
+
+	// Временные поля для поиска свободного места.
+	protected bool m_bSpotBlocked;
 
 	// Временные поля для поиска врага.
 	protected Faction m_EnemyCheckFaction;
@@ -112,6 +127,10 @@ class ZW_PointHubComponent : ScriptComponent
 
 		if (!m_Point)
 			return false;
+
+		m_vBase = GetOwner().GetOrigin();
+		if (m_bFindOpenSpot)
+			m_vBase = FindOpenSpot(m_vBase);
 
 		m_Supply = SpawnAt(m_sSupplyPrefab, m_vSupplyOffset);
 		m_SpawnPoint = ZW_HubSpawnPoint.Cast(SpawnAt(m_sSpawnPointPrefab, m_vSpawnOffset));
@@ -230,6 +249,86 @@ class ZW_PointHubComponent : ScriptComponent
 
 	//------------------------------------------------------------------------------------------------
 	//! Сервер: префаб на земле рядом с меткой (смещение в осях метки), с её поворотом.
+	//! Свободное ровное место рядом с меткой: в радиусе m_fClearRadius нет домов, стен, деревьев,
+	//! перепад высоты небольшой, и место внутри зоны захвата. Не нашлось — метка как есть.
+	protected vector FindOpenSpot(vector origin)
+	{
+		BaseWorld world = GetOwner().GetWorld();
+		float zoneLimit = m_Point.GetCaptureRadius() - m_fClearRadius;
+
+		for (float ring = 0; ring <= m_fSearchRadius; ring += 7.5)
+		{
+			int steps = 1;
+			if (ring > 0)
+				steps = 12;
+
+			for (int i = 0; i < steps; i++)
+			{
+				float angle = Math.PI2 * i / steps;
+				vector candidate = origin;
+				candidate[0] = origin[0] + Math.Cos(angle) * ring;
+				candidate[2] = origin[2] + Math.Sin(angle) * ring;
+				candidate[1] = world.GetSurfaceY(candidate[0], candidate[2]);
+
+				if (vector.DistanceXZ(candidate, m_Point.GetOrigin()) > zoneLimit)
+					continue;
+
+				if (IsSpotFree(world, candidate))
+				{
+					if (ring > 0)
+						Print(string.Format("[ZW_Invasion] Хаб '%1': метка занята, поставлен в %2 м от неё", m_Point.GetPointName(), ring), LogLevel.NORMAL);
+					return candidate;
+				}
+			}
+		}
+
+		Print(string.Format("[ZW_Invasion] Хаб '%1': свободного места рядом нет, ставлю на метку — передвиньте метку в редакторе", m_Point.GetPointName()), LogLevel.WARNING);
+		return origin;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	protected bool IsSpotFree(BaseWorld world, vector center)
+	{
+		// Ровность: перепад высот по краям площадки.
+		float minY = center[1];
+		float maxY = center[1];
+		for (int i = 0; i < 8; i++)
+		{
+			float angle = Math.PI2 * i / 8;
+			float y = world.GetSurfaceY(center[0] + Math.Cos(angle) * m_fClearRadius * 0.7, center[2] + Math.Sin(angle) * m_fClearRadius * 0.7);
+			minY = Math.Min(minY, y);
+			maxY = Math.Max(maxY, y);
+		}
+
+		if (maxY - minY > 1.5)
+			return false;
+
+		m_bSpotBlocked = false;
+		world.QueryEntitiesBySphere(center, m_fClearRadius, SpotCallback, null, EQueryEntitiesFlags.STATIC);
+		return !m_bSpotBlocked;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Мешает всё, что выше 1 м: дома, стены, заборы, деревья. Мелкий мусор и трава — нет.
+	protected bool SpotCallback(IEntity entity)
+	{
+		if (entity == GetOwner() || !entity.GetVObject())
+			return true;
+
+		vector mins, maxs;
+		entity.GetWorldBounds(mins, maxs);
+		if (maxs[1] - mins[1] < 1.0)
+			return true;
+
+		// Земля, дороги, линии электропередачи и прочее огромное — не препятствие.
+		if (maxs[0] - mins[0] > 150 || maxs[2] - mins[2] > 150 || GenericTerrainEntity.Cast(entity))
+			return true;
+
+		m_bSpotBlocked = true;
+		return false; // дальше можно не искать
+	}
+
+	//------------------------------------------------------------------------------------------------
 	protected IEntity SpawnAt(ResourceName prefab, vector offset)
 	{
 		if (prefab.IsEmpty())
@@ -245,7 +344,7 @@ class ZW_PointHubComponent : ScriptComponent
 		EntitySpawnParams params = new EntitySpawnParams();
 		params.TransformMode = ETransformMode.WORLD;
 		GetOwner().GetWorldTransform(params.Transform);
-		vector pos = GetOwner().CoordToParent(offset);
+		vector pos = m_vBase + params.Transform[0] * offset[0] + params.Transform[2] * offset[2];
 		pos[1] = GetOwner().GetWorld().GetSurfaceY(pos[0], pos[2]);
 		params.Transform[3] = pos;
 		return GetGame().SpawnEntityPrefab(resource, GetOwner().GetWorld(), params);

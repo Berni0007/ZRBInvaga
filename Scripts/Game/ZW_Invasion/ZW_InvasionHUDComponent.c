@@ -30,11 +30,12 @@ class ZW_InvasionHUDComponent : SCR_BaseGameModeComponent
 	protected static const int MAP_PANEL_WIDTH = 324;
 	protected static const int MAP_POINT_STEP = 42;
 	protected static const float FREEZE_AFTER_MS = 1500;
-	protected static const float CAPTURE_BOX_WIDTH = 220;
-	protected static const float CAPTURE_BAR_X = 50;
-	protected static const float CAPTURE_BAR_Y = 76;
-	protected static const float CAPTURE_BAR_WIDTH = 120;
-	protected static const float CAPTURE_BAR_HEIGHT = 12;
+	protected static const float CAPTURE_BOX_WIDTH = 320;
+	protected static const float CAPTURE_BAR_X = 70;
+	protected static const float CAPTURE_FLAG_HEIGHT = 104;
+	protected static const float CAPTURE_BAR_Y = 112;
+	protected static const float CAPTURE_BAR_WIDTH = 180;
+	protected static const float CAPTURE_BAR_HEIGHT = 18;
 
 	//! Какой флаг сейчас загружен в FlagImg — чтобы не грузить текстуру каждый кадр.
 	protected string m_sShownFlag;
@@ -171,20 +172,27 @@ class ZW_InvasionHUDComponent : SCR_BaseGameModeComponent
 		Place("PrepTime", 0, 0, 0, 0, 20, 34, 340, 56);
 		Place("PrepHint", 0, 0, 0, 0, 20, 92, 340, 24);
 		// Индикатор точки: флаг владельца (замок — взята навсегда), полоса со стрелками, название места.
-		Place("CaptureBox", 0.5, 0, 0.5, 0, 0, 22, CAPTURE_BOX_WIDTH, 124);
+		Place("CaptureBox", 0.5, 0, 0.5, 0, 0, 22, CAPTURE_BOX_WIDTH, 180);
 		Place("CaptureBg", 0, 0, 0, 0, 0, 0, 0, 0);
-		Place("FlagBorder", 0, 0, 0, 0, CAPTURE_BAR_X, 0, CAPTURE_BAR_WIDTH, 70);
-		Place("FlagFill", 0, 0, 0, 0, CAPTURE_BAR_X + 2, 2, CAPTURE_BAR_WIDTH - 4, 66);
-		Place("FlagImg", 0, 0, 0, 0, CAPTURE_BAR_X + 2, 2, CAPTURE_BAR_WIDTH - 4, 66);
-		Place("LockBg", 0, 0, 0, 0, CAPTURE_BAR_X + CAPTURE_BAR_WIDTH - 30, 40, 26, 26);
-		Place("LockShackleL", 0, 0, 0, 0, CAPTURE_BAR_X + CAPTURE_BAR_WIDTH - 23, 44, 3, 9);
-		Place("LockShackleR", 0, 0, 0, 0, CAPTURE_BAR_X + CAPTURE_BAR_WIDTH - 14, 44, 3, 9);
-		Place("LockShackleTop", 0, 0, 0, 0, CAPTURE_BAR_X + CAPTURE_BAR_WIDTH - 23, 44, 12, 3);
-		Place("LockBody", 0, 0, 0, 0, CAPTURE_BAR_X + CAPTURE_BAR_WIDTH - 26, 52, 18, 11);
+		Place("FlagBorder", 0, 0, 0, 0, CAPTURE_BAR_X, 0, CAPTURE_BAR_WIDTH, CAPTURE_FLAG_HEIGHT);
+		Place("FlagFill", 0, 0, 0, 0, CAPTURE_BAR_X + 3, 3, CAPTURE_BAR_WIDTH - 6, CAPTURE_FLAG_HEIGHT - 6);
+		Place("FlagImg", 0, 0, 0, 0, CAPTURE_BAR_X + 3, 3, CAPTURE_BAR_WIDTH - 6, CAPTURE_FLAG_HEIGHT - 6);
+		float lockX = CAPTURE_BAR_X + CAPTURE_BAR_WIDTH - 44;
+		Place("LockBg", 0, 0, 0, 0, lockX, 58, 38, 38);
+		Place("LockShackleL", 0, 0, 0, 0, lockX + 11, 63, 4, 13);
+		Place("LockShackleR", 0, 0, 0, 0, lockX + 23, 63, 4, 13);
+		Place("LockShackleTop", 0, 0, 0, 0, lockX + 11, 63, 16, 4);
+		Place("LockBody", 0, 0, 0, 0, lockX + 7, 75, 24, 16);
 		Place("CaptureBarBg", 0, 0, 0, 0, CAPTURE_BAR_X, CAPTURE_BAR_Y, CAPTURE_BAR_WIDTH, CAPTURE_BAR_HEIGHT);
 		Place("CaptureFill", 0, 0, 0, 0, CAPTURE_BAR_X, CAPTURE_BAR_Y, 0, CAPTURE_BAR_HEIGHT);
-		Place("CaptureArrows", 0, 0, 0, 0, CAPTURE_BAR_X, CAPTURE_BAR_Y - 3, CAPTURE_BAR_WIDTH, CAPTURE_BAR_HEIGHT + 6);
-		Place("CaptureTitle", 0, 0, 0, 0, 0, CAPTURE_BAR_Y + CAPTURE_BAR_HEIGHT + 4, CAPTURE_BOX_WIDTH, 30);
+		Place("CaptureArrows", 0, 0, 0, 0, CAPTURE_BAR_X, CAPTURE_BAR_Y - 4, CAPTURE_BAR_WIDTH, CAPTURE_BAR_HEIGHT + 8);
+		Place("CaptureTitle", 0, 0, 0, 0, 0, CAPTURE_BAR_Y + CAPTURE_BAR_HEIGHT + 6, CAPTURE_BOX_WIDTH, 36);
+		TextWidget title = TextWidget.Cast(m_wRoot.FindAnyWidget("CaptureTitle"));
+		if (title)
+			title.SetExactFontSize(28);
+		TextWidget arrows = TextWidget.Cast(m_wRoot.FindAnyWidget("CaptureArrows"));
+		if (arrows)
+			arrows.SetExactFontSize(22);
 		Place("DefAlert", 0.5, 1, 0.5, 1, 0, -180, 340, 44);
 		Place("DefAlertBg", 0, 0, 0, 0, 0, 0, 340, 44);
 		Place("DefAlertText", 0, 0, 0, 0, 16, 0, 310, 44);

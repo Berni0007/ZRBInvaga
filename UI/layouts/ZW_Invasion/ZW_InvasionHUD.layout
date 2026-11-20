@@ -952,8 +952,8 @@ FrameWidgetClass "{FAA367E7E90BBDBA}" {
     }
     Color 0.949 0.949 0.933 1
     Text "Захват точки"
-    "Font Size" 20
-    "Min Font Size" 20
+    "Font Size" 28
+    "Min Font Size" 28
     "Horizontal Alignment" Center
     "Vertical Alignment" Center
     FontProperties FontProperties "{4847E436D858AA37}" {
@@ -1010,8 +1010,8 @@ FrameWidgetClass "{FAA367E7E90BBDBA}" {
     }
     Color 0.949 0.949 0.933 1
     Text ""
-    "Font Size" 16
-    "Min Font Size" 16
+    "Font Size" 22
+    "Min Font Size" 22
     "Horizontal Alignment" Center
     "Vertical Alignment" Center
     FontProperties FontProperties "{2828212C0F90EDB8}" {
