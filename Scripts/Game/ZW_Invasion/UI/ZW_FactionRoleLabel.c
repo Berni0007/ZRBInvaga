@@ -1,5 +1,5 @@
 // ZRBinvaga — на экране выбора фракции к названию добавляем роль в этом матче:
-// «US Army — АТАКА» / «Soviet Army — ОБОРОНА». Стороны меняются каждый матч, без подписи игроки не поймут.
+// «US Army — ATTACK» / «Soviet Army — DEFENSE». Стороны меняются каждый матч, без подписи игроки не поймут.
 // Faction.GetFactionName() — proto, его не переопределить, поэтому правим сами виджеты меню.
 
 class ZW_FactionRoleLabel
@@ -16,10 +16,10 @@ class ZW_FactionRoleLabel
 			return name;
 
 		if (faction == objectives.GetAttackerFaction())
-			return name + " — АТАКА";
+			return name + " — ATTACK";
 
 		if (faction == objectives.GetDefenderFaction())
-			return name + " — ОБОРОНА";
+			return name + " — DEFENSE";
 
 		return name;
 	}

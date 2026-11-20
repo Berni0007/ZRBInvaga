@@ -62,6 +62,31 @@ class ZW_InvasionPoint : SCR_CaptureAndHoldArea
 	protected bool m_bBeingCaptured;
 
 	//------------------------------------------------------------------------------------------------
+	//! Штатная метка Capture & Hold на карте (буква «A» в скобках) не нужна: точки рисует
+	//! ZW_PointMarkersComponent флагами и только тем, кому их положено видеть.
+	override protected void InitializeMapDescriptor(SCR_MapDescriptorComponent target)
+	{
+		HideMapDescriptor(target);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	override protected void UpdateMapDescriptor(SCR_MapDescriptorComponent target)
+	{
+		HideMapDescriptor(target);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	protected void HideMapDescriptor(SCR_MapDescriptorComponent target)
+	{
+		if (!target)
+			return;
+
+		MapItem item = target.Item();
+		if (item)
+			item.SetVisible(false);
+	}
+
+	//------------------------------------------------------------------------------------------------
 	int GetOrder()
 	{
 		return m_iOrder;

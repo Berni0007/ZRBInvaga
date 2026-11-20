@@ -241,6 +241,8 @@ class ZW_PointMarkersComponent : SCR_BaseGameModeComponent
 				}
 			}
 		}
+
+		Print(string.Format("[ZW_Invasion] Флаги на карте: %1 шт., слой %2 в '%3'", m_aFlagWidgets.Count(), m_wFlagsRoot != null, m_wFlagsParent.GetName()), LogLevel.NORMAL);
 	}
 
 	//------------------------------------------------------------------------------------------------
