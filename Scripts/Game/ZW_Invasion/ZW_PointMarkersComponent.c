@@ -182,6 +182,12 @@ class ZW_PointMarkersComponent : SCR_BaseGameModeComponent
 			if (!m_wFlagsRoot)
 				return;
 
+			// Слой растянут на весь экран, иначе координаты флагов уезжают.
+			FrameSlot.SetAnchorMin(m_wFlagsRoot, 0, 0);
+			FrameSlot.SetAnchorMax(m_wFlagsRoot, 1, 1);
+			FrameSlot.SetOffsets(m_wFlagsRoot, 0, 0, 0, 0);
+			m_wFlagsRoot.SetZOrder(60);
+
 			m_wFlagsParent = parent;
 			m_bFlagsDirty = true;
 		}
@@ -222,6 +228,16 @@ class ZW_PointMarkersComponent : SCR_BaseGameModeComponent
 			if (!w)
 				continue;
 
+			// Размеры, позиции и цвета — из скрипта: значения из .layout не применяются (грабля 10).
+			FrameSlot.SetAnchorMin(w, 0, 0);
+			FrameSlot.SetAnchorMax(w, 0, 0);
+			FrameSlot.SetAlignment(w, 0.5, 0.24);
+			FrameSlot.SetSize(w, 160, 58);
+			PlaceChild(w, "FlagBorder", 56, 0, 48, 30, ARGB(255, 17, 17, 17));
+			PlaceChild(w, "FlagFill", 58, 2, 44, 26, ARGB(255, 233, 233, 233));
+			PlaceChild(w, "FlagImg", 58, 2, 44, 26, ARGB(255, 255, 255, 255));
+			PlaceChild(w, "FlagText", 0, 32, 160, 24, ARGB(255, 255, 255, 255));
+
 			TextWidget text = TextWidget.Cast(w.FindAnyWidget("FlagText"));
 			if (text)
 				text.SetText(m_aFlagTexts[i]);
@@ -243,6 +259,21 @@ class ZW_PointMarkersComponent : SCR_BaseGameModeComponent
 		}
 
 		Print(string.Format("[ZW_Invasion] Флаги на карте: %1 шт., слой %2 в '%3'", m_aFlagWidgets.Count(), m_wFlagsRoot != null, m_wFlagsParent.GetName()), LogLevel.NORMAL);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	protected void PlaceChild(Widget parent, string name, float x, float y, float w, float h, int color)
+	{
+		Widget child = parent.FindAnyWidget(name);
+		if (!child)
+			return;
+
+		FrameSlot.SetAnchorMin(child, 0, 0);
+		FrameSlot.SetAnchorMax(child, 0, 0);
+		FrameSlot.SetAlignment(child, 0, 0);
+		FrameSlot.SetPos(child, x, y);
+		FrameSlot.SetSize(child, w, h);
+		child.SetColor(Color.FromInt(color));
 	}
 
 	//------------------------------------------------------------------------------------------------
