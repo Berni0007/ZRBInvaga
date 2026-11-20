@@ -15,6 +15,13 @@ class ZW_FactionRoleLabel
 		if (!objectives)
 			return name;
 
+		// Имя стороны: NATO / RF Group вместо штатных «US Army» / «Soviet Army».
+		string key = faction.GetFactionKey();
+		if (ZW_FactionFlags.RF_KEYS.Contains(key))
+			name = "RF Group";
+		else if (ZW_FactionFlags.NATO_KEYS.Contains(key))
+			name = "NATO";
+
 		if (faction == objectives.GetAttackerFaction())
 			return name + " — ATTACK";
 

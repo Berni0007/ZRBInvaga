@@ -51,6 +51,10 @@ class ZW_InvasionPoint : SCR_CaptureAndHoldArea
 	[RplProp()]
 	protected int m_iDrive;
 
+	//! Для HUD: атака в зоне есть и её больше, но меньше минимума — захват не идёт.
+	[RplProp()]
+	protected bool m_bShortHanded;
+
 	//! Прогресс захвата для HUD, тысячные (0..PROGRESS_MAX).
 	[RplProp()]
 	protected int m_iProgress;
@@ -126,6 +130,22 @@ class ZW_InvasionPoint : SCR_CaptureAndHoldArea
 	int GetDrive()
 	{
 		return m_iDrive;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	bool IsShortHanded()
+	{
+		return m_bShortHanded;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	int GetMinPlayers()
+	{
+		ZW_ObjectivesComponent objectives = ZW_Invasion.GetObjectives();
+		if (objectives && objectives.GetDebugMinPlayers() > 0)
+			return objectives.GetDebugMinPlayers();
+
+		return m_iMinAttackers;
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -207,6 +227,10 @@ class ZW_InvasionPoint : SCR_CaptureAndHoldArea
 	{
 		super._WB_AfterWorldUpdate(timeSlice);
 
+		// Только в редакторе: в режиме Play фигуры рисовались бы поверх игры (красная «стена»).
+		if (GetGame().InPlayMode())
+			return;
+
 		BaseWorld world = GetWorld();
 		vector pos = GetOrigin();
 		vector up = "0 3 0";
@@ -287,12 +311,16 @@ class ZW_InvasionPoint : SCR_CaptureAndHoldArea
 
 		// Перетягивание по перевесу. Двигать прогресс может только сторона, у которой в зоне
 		// не меньше m_iMinAttackers игроков. Равенство или мало людей — прогресс замирает.
-		if (advantage > 0 && attackers >= m_iMinAttackers)
+		int minPlayers = GetMinPlayers();
+		bool shortBefore = m_bShortHanded;
+		m_bShortHanded = advantage > 0 && attackers < minPlayers;
+
+		if (advantage > 0 && attackers >= minPlayers)
 		{
 			m_fProgress += StepFor(advantage);
 			m_iDrive = TierFor(advantage) + 1;
 		}
-		else if (advantage < 0 && defenders >= m_iMinAttackers && m_fProgress > 0)
+		else if (advantage < 0 && defenders >= minPlayers && m_fProgress > 0)
 		{
 			m_fProgress -= StepFor(-advantage);
 			m_iDrive = -(TierFor(-advantage) + 1);
@@ -303,7 +331,7 @@ class ZW_InvasionPoint : SCR_CaptureAndHoldArea
 
 		// Для HUD: оборона видит только факт захвата, без процентов и численности.
 		bool beingCaptured = m_iProgress > 0;
-		if (m_iProgress != before || beingCaptured != m_bBeingCaptured || m_iDrive != driveBefore)
+		if (m_iProgress != before || beingCaptured != m_bBeingCaptured || m_iDrive != driveBefore || m_bShortHanded != shortBefore)
 		{
 			m_bBeingCaptured = beingCaptured;
 			Replication.BumpMe();

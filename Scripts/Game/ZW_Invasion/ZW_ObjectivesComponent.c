@@ -52,6 +52,15 @@ class ZW_ObjectivesComponent : SCR_BaseGameModeComponent
 	[Attribute("0", UIWidgets.EditBox, "ОТЛАДКА: авто-захват текущей точки каждые N сек (0 = выкл). Только для тестов, на сервере держать 0!", category: "Invasion Debug")]
 	protected int m_iDebugAutoCaptureSeconds;
 
+	[Attribute("0", UIWidgets.EditBox, "ОТЛАДКА: минимум игроков в зоне для захвата вместо значения точки (0 — как у точки). Для одиночных тестов — 1. Перед сервером 0!", category: "Invasion Debug")]
+	protected int m_iDebugMinPlayers;
+
+	//------------------------------------------------------------------------------------------------
+	int GetDebugMinPlayers()
+	{
+		return m_iDebugMinPlayers;
+	}
+
 	protected int m_iDebugCounter;
 
 	//------------------------------------------------------------------------------------------------

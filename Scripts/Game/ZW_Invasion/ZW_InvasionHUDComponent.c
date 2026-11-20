@@ -574,6 +574,13 @@ class ZW_InvasionHUDComponent : SCR_BaseGameModeComponent
 				arrows += arrow;
 			}
 			SetColor("CaptureArrows", SideColor(pusher));
+
+			// Атаки больше, но меньше минимума — подсказываем, почему захват стоит.
+			if (drive == 0 && point.IsShortHanded() && !locked)
+			{
+				arrows = string.Format("нужно %1+ бойца", point.GetMinPlayers());
+				SetColor("CaptureArrows", ARGB(255, 255, 255, 255));
+			}
 			SetText("CaptureArrows", arrows);
 
 			SetText("CaptureTitle", point.GetPointName());
