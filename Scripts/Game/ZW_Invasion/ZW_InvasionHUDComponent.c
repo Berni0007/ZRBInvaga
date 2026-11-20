@@ -30,12 +30,14 @@ class ZW_InvasionHUDComponent : SCR_BaseGameModeComponent
 	protected static const int MAP_PANEL_WIDTH = 324;
 	protected static const int MAP_POINT_STEP = 42;
 	protected static const float FREEZE_AFTER_MS = 1500;
-	protected static const float CAPTURE_BOX_WIDTH = 320;
-	protected static const float CAPTURE_BAR_X = 70;
+	protected static const float CAPTURE_BOX_WIDTH = 340;
+	protected static const float CAPTURE_FLAG_X = 80;
+	protected static const float CAPTURE_FLAG_WIDTH = 180;
 	protected static const float CAPTURE_FLAG_HEIGHT = 104;
-	protected static const float CAPTURE_BAR_Y = 112;
-	protected static const float CAPTURE_BAR_WIDTH = 180;
-	protected static const float CAPTURE_BAR_HEIGHT = 18;
+	protected static const float CAPTURE_BAR_X = 30;
+	protected static const float CAPTURE_BAR_Y = 116;
+	protected static const float CAPTURE_BAR_WIDTH = 280;
+	protected static const float CAPTURE_BAR_HEIGHT = 28;
 
 	//! Какой флаг сейчас загружен в FlagImg — чтобы не грузить текстуру каждый кадр.
 	protected string m_sShownFlag;
@@ -172,27 +174,28 @@ class ZW_InvasionHUDComponent : SCR_BaseGameModeComponent
 		Place("PrepTime", 0, 0, 0, 0, 20, 34, 340, 56);
 		Place("PrepHint", 0, 0, 0, 0, 20, 92, 340, 24);
 		// Индикатор точки: флаг владельца (замок — взята навсегда), полоса со стрелками, название места.
-		Place("CaptureBox", 0.5, 0, 0.5, 0, 0, 22, CAPTURE_BOX_WIDTH, 180);
-		Place("CaptureBg", 0, 0, 0, 0, 0, 0, 0, 0);
-		Place("FlagBorder", 0, 0, 0, 0, CAPTURE_BAR_X, 0, CAPTURE_BAR_WIDTH, CAPTURE_FLAG_HEIGHT);
-		Place("FlagFill", 0, 0, 0, 0, CAPTURE_BAR_X + 3, 3, CAPTURE_BAR_WIDTH - 6, CAPTURE_FLAG_HEIGHT - 6);
-		Place("FlagImg", 0, 0, 0, 0, CAPTURE_BAR_X + 3, 3, CAPTURE_BAR_WIDTH - 6, CAPTURE_FLAG_HEIGHT - 6);
-		float lockX = CAPTURE_BAR_X + CAPTURE_BAR_WIDTH - 44;
+		Place("CaptureBox", 0.5, 0, 0.5, 0, 0, 22, CAPTURE_BOX_WIDTH, 190);
+		Place("FlagBorder", 0, 0, 0, 0, CAPTURE_FLAG_X, 0, CAPTURE_FLAG_WIDTH, CAPTURE_FLAG_HEIGHT);
+		Place("FlagFill", 0, 0, 0, 0, CAPTURE_FLAG_X + 3, 3, CAPTURE_FLAG_WIDTH - 6, CAPTURE_FLAG_HEIGHT - 6);
+		Place("FlagImg", 0, 0, 0, 0, CAPTURE_FLAG_X + 3, 3, CAPTURE_FLAG_WIDTH - 6, CAPTURE_FLAG_HEIGHT - 6);
+		float lockX = CAPTURE_FLAG_X + CAPTURE_FLAG_WIDTH - 44;
 		Place("LockBg", 0, 0, 0, 0, lockX, 58, 38, 38);
 		Place("LockShackleL", 0, 0, 0, 0, lockX + 11, 63, 4, 13);
 		Place("LockShackleR", 0, 0, 0, 0, lockX + 23, 63, 4, 13);
 		Place("LockShackleTop", 0, 0, 0, 0, lockX + 11, 63, 16, 4);
 		Place("LockBody", 0, 0, 0, 0, lockX + 7, 75, 24, 16);
+		// Полоса: чёрная рамка 3 px, тёмная подложка, яркая заливка, крупные белые стрелки поверх.
+		Place("CaptureBg", 0, 0, 0, 0, CAPTURE_BAR_X - 3, CAPTURE_BAR_Y - 3, CAPTURE_BAR_WIDTH + 6, CAPTURE_BAR_HEIGHT + 6);
 		Place("CaptureBarBg", 0, 0, 0, 0, CAPTURE_BAR_X, CAPTURE_BAR_Y, CAPTURE_BAR_WIDTH, CAPTURE_BAR_HEIGHT);
 		Place("CaptureFill", 0, 0, 0, 0, CAPTURE_BAR_X, CAPTURE_BAR_Y, 0, CAPTURE_BAR_HEIGHT);
-		Place("CaptureArrows", 0, 0, 0, 0, CAPTURE_BAR_X, CAPTURE_BAR_Y - 4, CAPTURE_BAR_WIDTH, CAPTURE_BAR_HEIGHT + 8);
-		Place("CaptureTitle", 0, 0, 0, 0, 0, CAPTURE_BAR_Y + CAPTURE_BAR_HEIGHT + 6, CAPTURE_BOX_WIDTH, 36);
+		Place("CaptureArrows", 0, 0, 0, 0, CAPTURE_BAR_X, CAPTURE_BAR_Y - 2, CAPTURE_BAR_WIDTH, CAPTURE_BAR_HEIGHT + 4);
+		Place("CaptureTitle", 0, 0, 0, 0, 0, CAPTURE_BAR_Y + CAPTURE_BAR_HEIGHT + 8, CAPTURE_BOX_WIDTH, 38);
 		TextWidget title = TextWidget.Cast(m_wRoot.FindAnyWidget("CaptureTitle"));
 		if (title)
-			title.SetExactFontSize(28);
+			title.SetExactFontSize(30);
 		TextWidget arrows = TextWidget.Cast(m_wRoot.FindAnyWidget("CaptureArrows"));
 		if (arrows)
-			arrows.SetExactFontSize(22);
+			arrows.SetExactFontSize(28);
 		Place("DefAlert", 0.5, 1, 0.5, 1, 0, -180, 340, 44);
 		Place("DefAlertBg", 0, 0, 0, 0, 0, 0, 340, 44);
 		Place("DefAlertText", 0, 0, 0, 0, 16, 0, 310, 44);
@@ -208,7 +211,7 @@ class ZW_InvasionHUDComponent : SCR_BaseGameModeComponent
 		SetColor("TimerDivider", ARGB(62, 165, 190, 210));
 		SetColor("TimerText", ARGB(255, 177, 195, 211));
 		SetColor("PrepBg", ARGB(128, 0, 0, 0));
-		SetColor("CaptureBg", ARGB(0, 0, 0, 0));
+		SetColor("CaptureBg", ARGB(230, 0, 0, 0));
 		SetColor("FlagBorder", ARGB(255, 17, 17, 17));
 		SetColor("FlagFill", ARGB(255, 233, 233, 233));
 		SetColor("LockBg", ARGB(255, 240, 240, 240));
@@ -216,7 +219,7 @@ class ZW_InvasionHUDComponent : SCR_BaseGameModeComponent
 		SetColor("LockShackleR", ARGB(255, 17, 17, 17));
 		SetColor("LockShackleTop", ARGB(255, 17, 17, 17));
 		SetColor("LockBody", ARGB(255, 17, 17, 17));
-		SetColor("CaptureBarBg", ARGB(255, 154, 154, 154));
+		SetColor("CaptureBarBg", ARGB(220, 40, 44, 48));
 		SetColor("DefAlertBg", ARGB(158, 120, 28, 20));
 	}
 
@@ -560,12 +563,8 @@ class ZW_InvasionHUDComponent : SCR_BaseGameModeComponent
 			// Стрелки: направо — давит атака, налево — отбивает оборона; число = ступень перевеса.
 			int drive = point.GetDrive();
 			string arrow = "›";
-			Faction pusher = attacker;
 			if (drive < 0)
-			{
 				arrow = "‹";
-				pusher = defender;
-			}
 			string arrows;
 			for (int a = 0; a < Math.AbsInt(drive); a++)
 			{
@@ -573,13 +572,12 @@ class ZW_InvasionHUDComponent : SCR_BaseGameModeComponent
 					arrows += " ";
 				arrows += arrow;
 			}
-			SetColor("CaptureArrows", SideColor(pusher));
+			SetColor("CaptureArrows", ARGB(255, 255, 255, 255));
 
 			// Атаки больше, но меньше минимума — подсказываем, почему захват стоит.
 			if (drive == 0 && point.IsShortHanded() && !locked)
 			{
 				arrows = string.Format("нужно %1+ бойца", point.GetMinPlayers());
-				SetColor("CaptureArrows", ARGB(255, 255, 255, 255));
 			}
 			SetText("CaptureArrows", arrows);
 
@@ -626,8 +624,8 @@ class ZW_InvasionHUDComponent : SCR_BaseGameModeComponent
 	protected int SideColor(Faction faction)
 	{
 		if (faction && IsRfFaction(faction.GetFactionKey()))
-			return ARGB(255, 196, 32, 32);
-		return ARGB(255, 47, 95, 208);
+			return ARGB(255, 230, 40, 40);
+		return ARGB(255, 40, 120, 255);
 	}
 
 	//------------------------------------------------------------------------------------------------

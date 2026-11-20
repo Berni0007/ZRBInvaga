@@ -228,7 +228,7 @@ class ZW_InvasionPoint : SCR_CaptureAndHoldArea
 		super._WB_AfterWorldUpdate(timeSlice);
 
 		// Только в редакторе: в режиме Play фигуры рисовались бы поверх игры (красная «стена»).
-		if (GetGame().InPlayMode())
+		if (!GetWorld() || !GetWorld().IsEditMode() || GetGame().InPlayMode())
 			return;
 
 		BaseWorld world = GetWorld();
