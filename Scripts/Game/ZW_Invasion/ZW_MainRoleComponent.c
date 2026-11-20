@@ -131,6 +131,10 @@ class ZW_MainRoleComponent : ScriptComponent
 		EntitySpawnParams params = new EntitySpawnParams();
 		params.TransformMode = ETransformMode.WORLD;
 		GetOwner().GetWorldTransform(params.Transform);
+		// Ставим на землю: метки в слое карты могут быть ниже или выше рельефа.
+		vector pos = params.Transform[3];
+		pos[1] = GetOwner().GetWorld().GetSurfaceY(pos[0], pos[2]);
+		params.Transform[3] = pos;
 		m_Spawned = GetGame().SpawnEntityPrefab(resource, GetOwner().GetWorld(), params);
 	}
 }
