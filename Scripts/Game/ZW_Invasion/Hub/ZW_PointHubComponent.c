@@ -42,7 +42,7 @@ class ZW_PointHubComponent : ScriptComponent
 	[Attribute("1", UIWidgets.CheckBox, "Искать свободное ровное место рядом с меткой (палатку не ставить в стены и дома)", category: "Хаб")]
 	protected bool m_bFindOpenSpot;
 
-	[Attribute("10", UIWidgets.EditBox, "Свободный радиус вокруг хаба, м", category: "Хаб")]
+	[Attribute("7", UIWidgets.EditBox, "Половина стороны свободной площадки под хаб, м", category: "Хаб")]
 	protected float m_fClearRadius;
 
 	[Attribute("30", UIWidgets.EditBox, "Как далеко от метки искать место, м (не дальше зоны захвата)", category: "Хаб")]
@@ -65,8 +65,6 @@ class ZW_PointHubComponent : ScriptComponent
 	//! Центр хаба (метка или найденное свободное место).
 	protected vector m_vBase;
 
-	// Временные поля для поиска свободного места.
-	protected bool m_bSpotBlocked;
 
 	// Временные поля для поиска врага.
 	protected Faction m_EnemyCheckFaction;
@@ -249,83 +247,120 @@ class ZW_PointHubComponent : ScriptComponent
 
 	//------------------------------------------------------------------------------------------------
 	//! Сервер: префаб на земле рядом с меткой (смещение в осях метки), с её поворотом.
-	//! Свободное ровное место рядом с меткой: в радиусе m_fClearRadius нет домов, стен, деревьев,
-	//! перепад высоты небольшой, и место внутри зоны захвата. Не нашлось — метка как есть.
+	//! Свободное ровное место рядом с меткой внутри зоны захвата. Площадка проверяется лучами
+	//! (дома, стены, заборы, деревья, техника). Сначала ищем площадку m_fClearRadius, потом поменьше;
+	//! если чистой нет — ставим туда, где препятствий меньше всего.
 	protected vector FindOpenSpot(vector origin)
 	{
 		BaseWorld world = GetOwner().GetWorld();
-		float zoneLimit = m_Point.GetCaptureRadius() - m_fClearRadius;
+		array<float> sizes = {m_fClearRadius, m_fClearRadius * 0.7};
+		vector best = origin;
+		int bestHits = int.MAX;
+		float bestRing;
 
-		for (float ring = 0; ring <= m_fSearchRadius; ring += 7.5)
+		foreach (float half : sizes)
 		{
-			int steps = 1;
-			if (ring > 0)
-				steps = 12;
-
-			for (int i = 0; i < steps; i++)
+			float maxRing = Math.Min(m_fSearchRadius, m_Point.GetCaptureRadius() - half);
+			for (float ring = 0; ring <= maxRing; ring += 4)
 			{
-				float angle = Math.PI2 * i / steps;
-				vector candidate = origin;
-				candidate[0] = origin[0] + Math.Cos(angle) * ring;
-				candidate[2] = origin[2] + Math.Sin(angle) * ring;
-				candidate[1] = world.GetSurfaceY(candidate[0], candidate[2]);
+				int steps = 1;
+				if (ring > 0)
+					steps = 16;
 
-				if (vector.DistanceXZ(candidate, m_Point.GetOrigin()) > zoneLimit)
-					continue;
-
-				if (IsSpotFree(world, candidate))
+				for (int i = 0; i < steps; i++)
 				{
-					if (ring > 0)
-						Print(string.Format("[ZW_Invasion] Хаб '%1': метка занята, поставлен в %2 м от неё", m_Point.GetPointName(), ring), LogLevel.NORMAL);
-					return candidate;
+					float angle = Math.PI2 * i / steps;
+					vector candidate = origin;
+					candidate[0] = origin[0] + Math.Cos(angle) * ring;
+					candidate[2] = origin[2] + Math.Sin(angle) * ring;
+					candidate[1] = world.GetSurfaceY(candidate[0], candidate[2]);
+
+					if (vector.DistanceXZ(candidate, m_Point.GetOrigin()) > m_Point.GetCaptureRadius() - half)
+						continue;
+
+					int hits = CountObstacles(world, candidate, half);
+					if (hits == 0)
+					{
+						Print(string.Format("[ZW_Invasion] Хаб '%1': свободная площадка %2 м в %3 м от метки", m_Point.GetPointName(), half * 2, ring), LogLevel.NORMAL);
+						return candidate;
+					}
+
+					if (hits < bestHits)
+					{
+						bestHits = hits;
+						best = candidate;
+						bestRing = ring;
+					}
 				}
 			}
 		}
 
-		Print(string.Format("[ZW_Invasion] Хаб '%1': свободного места рядом нет, ставлю на метку — передвиньте метку в редакторе", m_Point.GetPointName()), LogLevel.WARNING);
-		return origin;
+		Print(string.Format("[ZW_Invasion] Хаб '%1': чистой площадки нет, поставлен в %2 м от метки (препятствий: %3) — лучше передвинуть метку в редакторе", m_Point.GetPointName(), bestRing, bestHits), LogLevel.WARNING);
+		return best;
 	}
 
 	//------------------------------------------------------------------------------------------------
-	protected bool IsSpotFree(BaseWorld world, vector center)
+	//! Сколько лучей по площадке во что-то упёрлось. Горизонтальные лучи на высоте 1 м ловят стены
+	//! и заборы, вертикальные сверху — дома, крыши, кроны. Крутой склон — сразу «занято».
+	protected int CountObstacles(BaseWorld world, vector center, float half)
 	{
-		// Ровность: перепад высот по краям площадки.
 		float minY = center[1];
 		float maxY = center[1];
 		for (int i = 0; i < 8; i++)
 		{
 			float angle = Math.PI2 * i / 8;
-			float y = world.GetSurfaceY(center[0] + Math.Cos(angle) * m_fClearRadius * 0.7, center[2] + Math.Sin(angle) * m_fClearRadius * 0.7);
+			float y = world.GetSurfaceY(center[0] + Math.Cos(angle) * half, center[2] + Math.Sin(angle) * half);
 			minY = Math.Min(minY, y);
 			maxY = Math.Max(maxY, y);
 		}
 
 		if (maxY - minY > 1.5)
-			return false;
+			return 1000;
 
-		m_bSpotBlocked = false;
-		world.QueryEntitiesBySphere(center, m_fClearRadius, SpotCallback, null, EQueryEntitiesFlags.STATIC);
-		return !m_bSpotBlocked;
+		int hits;
+		float step = 2;
+
+		// Горизонтальные лучи вдоль X и вдоль Z.
+		for (float d = -half; d <= half; d += step)
+		{
+			if (TraceBlocked(world, center[0] - half, center[2] + d, center[0] + half, center[2] + d, 1.0, 1.0))
+				hits++;
+			if (TraceBlocked(world, center[0] + d, center[2] - half, center[0] + d, center[2] + half, 1.0, 1.0))
+				hits++;
+		}
+
+		// Вертикальные лучи сверху вниз до 0.5 м над землёй.
+		for (float x = -half; x <= half; x += step * 2)
+		{
+			for (float z = -half; z <= half; z += step * 2)
+			{
+				float px = center[0] + x;
+				float pz = center[2] + z;
+				float ground = world.GetSurfaceY(px, pz);
+				TraceParam param = new TraceParam();
+				param.Start = Vector(px, ground + 10, pz);
+				param.End = Vector(px, ground + 0.5, pz);
+				param.Flags = TraceFlags.ENTS;
+				param.LayerMask = EPhysicsLayerPresets.Projectile;
+				param.Exclude = GetOwner();
+				if (world.TraceMove(param, null) < 1)
+					hits++;
+			}
+		}
+
+		return hits;
 	}
 
 	//------------------------------------------------------------------------------------------------
-	//! Мешает всё, что выше 1 м: дома, стены, заборы, деревья. Мелкий мусор и трава — нет.
-	protected bool SpotCallback(IEntity entity)
+	protected bool TraceBlocked(BaseWorld world, float x1, float z1, float x2, float z2, float height1, float height2)
 	{
-		if (entity == GetOwner() || !entity.GetVObject())
-			return true;
-
-		vector mins, maxs;
-		entity.GetWorldBounds(mins, maxs);
-		if (maxs[1] - mins[1] < 1.0)
-			return true;
-
-		// Земля, дороги, линии электропередачи и прочее огромное — не препятствие.
-		if (maxs[0] - mins[0] > 150 || maxs[2] - mins[2] > 150 || GenericTerrainEntity.Cast(entity))
-			return true;
-
-		m_bSpotBlocked = true;
-		return false; // дальше можно не искать
+		TraceParam param = new TraceParam();
+		param.Start = Vector(x1, world.GetSurfaceY(x1, z1) + height1, z1);
+		param.End = Vector(x2, world.GetSurfaceY(x2, z2) + height2, z2);
+		param.Flags = TraceFlags.ENTS;
+		param.LayerMask = EPhysicsLayerPresets.Projectile;
+		param.Exclude = GetOwner();
+		return world.TraceMove(param, null) < 1;
 	}
 
 	//------------------------------------------------------------------------------------------------
