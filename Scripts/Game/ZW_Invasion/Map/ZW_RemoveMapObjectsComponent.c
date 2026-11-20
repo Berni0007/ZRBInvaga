@@ -26,7 +26,8 @@ class ZW_RemoveMapObjectsComponent : ScriptComponent
 
 	protected ref array<IEntity> m_aToDelete = {};
 	protected ref map<string, int> m_mLargeCounts = new map<string, int>();
-	protected ref map<string, vector> m_mLargeSample = new map<string, vector>();
+	protected ref map<string, vector> m_mLargeMin = new map<string, vector>();
+	protected ref map<string, vector> m_mLargeMax = new map<string, vector>();
 
 	//------------------------------------------------------------------------------------------------
 	override void OnPostInit(IEntity owner)
@@ -93,13 +94,28 @@ class ZW_RemoveMapObjectsComponent : ScriptComponent
 		{
 			vector mins, maxs;
 			entity.GetWorldBounds(mins, maxs);
-			if (maxs[1] - mins[1] >= m_fLargeHeight && maxs[0] - mins[0] < 200)
+			// Деревья и кусты не интересны — ищем постройки и камни.
+			if (maxs[1] - mins[1] >= m_fLargeHeight && maxs[0] - mins[0] < 200 && !lower.Contains("vegetation"))
 			{
 				int count;
 				m_mLargeCounts.Find(prefab, count);
 				m_mLargeCounts.Set(prefab, count + 1);
-				if (count == 0)
-					m_mLargeSample.Set(prefab, entity.GetOrigin());
+
+				// Где стоят: общий прямоугольник по всем объектам этого префаба.
+				vector pos = entity.GetOrigin();
+				vector lo = pos;
+				vector hi = pos;
+				if (count > 0)
+				{
+					lo = m_mLargeMin.Get(prefab);
+					hi = m_mLargeMax.Get(prefab);
+					lo[0] = Math.Min(lo[0], pos[0]);
+					lo[2] = Math.Min(lo[2], pos[2]);
+					hi[0] = Math.Max(hi[0], pos[0]);
+					hi[2] = Math.Max(hi[2], pos[2]);
+				}
+				m_mLargeMin.Set(prefab, lo);
+				m_mLargeMax.Set(prefab, hi);
 			}
 		}
 
@@ -110,7 +126,7 @@ class ZW_RemoveMapObjectsComponent : ScriptComponent
 	//! 15 самых частых крупных префабов.
 	protected void LogLarge()
 	{
-		Print("[ZW_Invasion] Крупные объекты карты (префаб — штук — пример координат):", LogLevel.WARNING);
+		Print("[ZW_Invasion] Крупные объекты карты без растительности (префаб — штук — X от..до — Z от..до):", LogLevel.WARNING);
 		for (int n = 0; n < 15 && !m_mLargeCounts.IsEmpty(); n++)
 		{
 			string best;
@@ -124,7 +140,9 @@ class ZW_RemoveMapObjectsComponent : ScriptComponent
 				}
 			}
 
-			Print(string.Format("[ZW_Invasion]   %1 — %2 — %3", best, bestCount, m_mLargeSample.Get(best)), LogLevel.WARNING);
+			vector lo = m_mLargeMin.Get(best);
+			vector hi = m_mLargeMax.Get(best);
+			Print(string.Format("[ZW_Invasion]   %1 — %2 — X %3..%4 — Z %5..%6", best, bestCount, Math.Round(lo[0]), Math.Round(hi[0]), Math.Round(lo[2]), Math.Round(hi[2])), LogLevel.WARNING);
 			m_mLargeCounts.Remove(best);
 		}
 	}
