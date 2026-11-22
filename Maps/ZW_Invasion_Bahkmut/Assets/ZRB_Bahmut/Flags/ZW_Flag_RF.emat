@@ -1,0 +1,7 @@
+MatPBRBasic {
+ Cull none
+ BCRMap "{A4C8D02EB9F130E3}Assets/ZRB_Bahmut/Flags/ZW_Flag_RF_BCR.edds"
+ GlobalMapsUVTransform MatUVTransform "{A4C8D02EB9F130F3}" {
+  OffsetU 0.109
+ }
+}

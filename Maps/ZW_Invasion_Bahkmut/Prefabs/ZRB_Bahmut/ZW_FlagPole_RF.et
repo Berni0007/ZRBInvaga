@@ -1,0 +1,7 @@
+GenericEntity : "{651E545B53BBD034}Prefabs/Structures/Military/Flags/FlagPole_02/FlagPole_02_V1_USSR.et" {
+ components {
+  ZW_MainFlagComponent "{A4C8D02EB9F130D3}" {
+   m_sDefaultMaterial "{A4C8D02EB9F130B3}Assets/ZRB_Bahmut/Flags/ZW_Flag_RF.emat"
+  }
+ }
+}
