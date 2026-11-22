@@ -36,6 +36,7 @@ class ZW_PointMarkersComponent : SCR_BaseGameModeComponent
 	protected Widget m_wFlagsParent;
 	protected ref array<Widget> m_aFlagWidgets = {};
 	protected bool m_bFlagsDirty;
+	protected bool m_bEditorMap;
 	protected string m_sFlagsSignature;
 
 	//------------------------------------------------------------------------------------------------
@@ -68,22 +69,21 @@ class ZW_PointMarkersComponent : SCR_BaseGameModeComponent
 
 		ZW_ObjectivesComponent objectives = ZW_Invasion.GetObjectives();
 		SCR_MapMarkerManagerComponent markers = SCR_MapMarkerManagerComponent.GetInstance();
-		if (!objectives || !markers)
+		if (!objectives)
 			return;
 
 		Faction local = SCR_FactionManager.SGetLocalPlayerFaction();
 		bool isAttacker = local && local == objectives.GetAttackerFaction();
 		bool isDefender = local && local == objectives.GetDefenderFaction();
 
-		int activeOrder = objectives.GetActiveIndex() + 1; // 0 — штурм ещё не начался
-		if (activeOrder < 1)
-			activeOrder = 1;
-
 		Faction attacker = objectives.GetAttackerFaction();
 		Faction defender = objectives.GetDefenderFaction();
 
 		// Список флагов пересобираем каждую секунду: владелец текущей точки меняется по ходу захвата.
-		CollectFlags(objectives, isAttacker, isDefender, activeOrder, attacker, defender);
+		CollectFlags(objectives, isAttacker, isDefender, attacker, defender);
+
+		if (!markers)
+			return;
 
 		string state = string.Format("%1|%2|%3", isAttacker, isDefender, attacker);
 		if (state == m_sLastState)
@@ -96,23 +96,20 @@ class ZW_PointMarkersComponent : SCR_BaseGameModeComponent
 
 	//------------------------------------------------------------------------------------------------
 	//! Взятые точки видят все (флаг захвативших). Невзятые: оборона — все, атака — только текущую цель.
-	protected void CollectFlags(ZW_ObjectivesComponent objectives, bool isAttacker, bool isDefender, int activeOrder, Faction attacker, Faction defender)
+	protected void CollectFlags(ZW_ObjectivesComponent objectives, bool isAttacker, bool isDefender, Faction attacker, Faction defender)
 	{
 		m_aFlagPoints.Clear();
 		m_aFlagHolders.Clear();
 		m_aFlagTexts.Clear();
 
-		BaseWorld world = GetOwner().GetWorld();
-		int count = objectives.GetPointCount();
-		for (int order = 1; order <= count && (isAttacker || isDefender); order++)
+		array<ZW_InvasionPoint> chain = objectives.GetChain();
+		int activeIndex = Math.Max(0, objectives.GetActiveIndex());
+		for (int index = 0; index < chain.Count() && (m_bEditorMap || isAttacker || isDefender); index++)
 		{
-			ZW_InvasionPoint point = ZW_ObjectivesComponent.FindPointByOrder(world, order);
-			if (!point)
-				continue;
-
-			bool captured = point.IsLocked() || order < activeOrder;
-			bool current = order == activeOrder && !captured;
-			if (!captured && isAttacker && !current)
+			ZW_InvasionPoint point = chain[index];
+			bool captured = point.IsLocked() || index < activeIndex;
+			bool current = index == activeIndex && !captured;
+			if (!m_bEditorMap && !captured && isAttacker && !current)
 				continue; // атака не знает дальние точки
 
 			Faction holder = defender;
@@ -121,14 +118,11 @@ class ZW_PointMarkersComponent : SCR_BaseGameModeComponent
 			else if (current && point.GetProgress() >= ZW_InvasionPoint.PROGRESS_NEUTRAL)
 				holder = null; // нейтральная — белый флаг
 
-			string text = string.Format("%1. %2", order, point.GetPointName());
+			string text = string.Format("%1. %2", index + 1, point.GetPointName());
 			if (current)
-			{
-				if (isAttacker)
-					text = text + " — цель";
-				else
-					text = text + " — под атакой";
-			}
+				text = text + " — цель";
+			else if (m_bEditorMap && !captured)
+				text = text + " — закрыта";
 
 			m_aFlagPoints.Insert(point);
 			m_aFlagHolders.Insert(holder);
@@ -158,11 +152,13 @@ class ZW_PointMarkersComponent : SCR_BaseGameModeComponent
 	{
 		SCR_MapEntity mapEntity = SCR_MapEntity.GetMapInstance();
 		Widget parent;
+		bool isEditorMap;
 		if (mapEntity && mapEntity.IsOpen())
 		{
 			MapConfiguration config = mapEntity.GetMapConfig();
-			if (config && (config.MapEntityMode == EMapEntityMode.FULLSCREEN || config.MapEntityMode == EMapEntityMode.SPAWNSCREEN))
+			if (config && (config.MapEntityMode == EMapEntityMode.FULLSCREEN || config.MapEntityMode == EMapEntityMode.SPAWNSCREEN || config.MapEntityMode == EMapEntityMode.EDITOR))
 			{
+				isEditorMap = config.MapEntityMode == EMapEntityMode.EDITOR;
 				parent = mapEntity.GetMapMenuRoot();
 				if (!parent)
 					parent = config.RootWidgetRef;
@@ -173,6 +169,12 @@ class ZW_PointMarkersComponent : SCR_BaseGameModeComponent
 		{
 			DestroyFlags();
 			return;
+		}
+
+		if (isEditorMap != m_bEditorMap)
+		{
+			m_bEditorMap = isEditorMap;
+			UpdateMarkers();
 		}
 
 		if (parent != m_wFlagsParent || !m_wFlagsRoot)
@@ -221,6 +223,11 @@ class ZW_PointMarkersComponent : SCR_BaseGameModeComponent
 		}
 		m_aFlagWidgets.Clear();
 
+		ZW_ObjectivesComponent objectives = ZW_Invasion.GetObjectives();
+		ZW_InvasionPoint active;
+		if (objectives)
+			active = objectives.GetPoint(Math.Max(0, objectives.GetActiveIndex()));
+
 		for (int i = 0; i < m_aFlagPoints.Count(); i++)
 		{
 			Widget w = GetGame().GetWorkspace().CreateWidgets(m_sFlagLayout, m_wFlagsRoot);
@@ -237,6 +244,12 @@ class ZW_PointMarkersComponent : SCR_BaseGameModeComponent
 			PlaceChild(w, "FlagFill", 58, 2, 44, 26, ARGB(255, 233, 233, 233));
 			PlaceChild(w, "FlagImg", 58, 2, 44, 26, ARGB(255, 255, 255, 255));
 			PlaceChild(w, "FlagText", 0, 32, 160, 24, ARGB(255, 255, 255, 255));
+
+			if (active && m_aFlagPoints[i] == active && !active.IsLocked())
+			{
+				w.SetZOrder(1);
+				PlaceChild(w, "FlagBorder", 56, 0, 48, 30, ARGB(255, 255, 185, 79));
+			}
 
 			TextWidget text = TextWidget.Cast(w.FindAnyWidget("FlagText"));
 			if (text)

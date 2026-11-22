@@ -1,0 +1,7 @@
+GenericEntity ZW_MapDump {
+ components {
+  ZW_MapDumpComponent "{6AE5D0A1B2C30001}" {
+  }
+ }
+ coords 0 0 0
+}

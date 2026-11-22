@@ -112,7 +112,19 @@ class ZW_MainRoleComponent : ScriptComponent
 
 		SCR_SpawnPoint spawnPoint = SCR_SpawnPoint.Cast(GetOwner());
 		if (spawnPoint)
+		{
+			vector spawnPos = spawnPoint.GetOrigin();
+			float surfaceY = spawnPoint.GetWorld().GetSurfaceY(spawnPos[0], spawnPos[2]);
+			float initialY = spawnPos[1];
+			if (initialY < surfaceY)
+			{
+				spawnPos[1] = surfaceY;
+				spawnPoint.SetOrigin(spawnPos);
+			}
+
 			spawnPoint.SetFactionKey(faction.GetFactionKey());
+			Print(string.Format("[ZW_Invasion] Мейн '%1': высота %2 → %3, поверхность %4", spawnPoint.GetSpawnPointName(), initialY, spawnPos[1], surfaceY), LogLevel.NORMAL);
+		}
 
 		ResourceName prefab = m_sNatoPrefab;
 		if (IsRfFaction(faction))

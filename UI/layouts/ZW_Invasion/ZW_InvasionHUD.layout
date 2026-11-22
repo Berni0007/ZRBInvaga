@@ -1016,6 +1016,8 @@ FrameWidgetClass "{FAA367E7E90BBDBA}" {
     "Vertical Alignment" Center
     FontProperties FontProperties "{2828212C0F90EDB8}" {
      Font "{D3E75BCBECEB273E}UI/Fonts/NotoSans/NotoSans-Enhanced-Regular-JP-KOR-SC-LAT.fnt"
+     OutlineSize 2
+     OutlineColor 0 0 0 1
      ShadowSize 16
      ShadowColor 0 0 0 0.45
      ShadowOffset 0 0

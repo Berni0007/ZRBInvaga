@@ -30,14 +30,14 @@ class ZW_InvasionHUDComponent : SCR_BaseGameModeComponent
 	protected static const int MAP_PANEL_WIDTH = 324;
 	protected static const int MAP_POINT_STEP = 42;
 	protected static const float FREEZE_AFTER_MS = 1500;
-	protected static const float CAPTURE_BOX_WIDTH = 340;
-	protected static const float CAPTURE_FLAG_X = 80;
-	protected static const float CAPTURE_FLAG_WIDTH = 180;
-	protected static const float CAPTURE_FLAG_HEIGHT = 104;
-	protected static const float CAPTURE_BAR_X = 30;
-	protected static const float CAPTURE_BAR_Y = 116;
-	protected static const float CAPTURE_BAR_WIDTH = 280;
-	protected static const float CAPTURE_BAR_HEIGHT = 28;
+	protected static const float CAPTURE_BOX_WIDTH = 170;
+	protected static const float CAPTURE_FLAG_X = 40;
+	protected static const float CAPTURE_FLAG_WIDTH = 90;
+	protected static const float CAPTURE_FLAG_HEIGHT = 52;
+	protected static const float CAPTURE_BAR_X = 15;
+	protected static const float CAPTURE_BAR_Y = 58;
+	protected static const float CAPTURE_BAR_WIDTH = 140;
+	protected static const float CAPTURE_BAR_HEIGHT = 18;
 
 	//! Какой флаг сейчас загружен в FlagImg — чтобы не грузить текстуру каждый кадр.
 	protected string m_sShownFlag;
@@ -174,28 +174,28 @@ class ZW_InvasionHUDComponent : SCR_BaseGameModeComponent
 		Place("PrepTime", 0, 0, 0, 0, 20, 34, 340, 56);
 		Place("PrepHint", 0, 0, 0, 0, 20, 92, 340, 24);
 		// Индикатор точки: флаг владельца (замок — взята навсегда), полоса со стрелками, название места.
-		Place("CaptureBox", 0.5, 0, 0.5, 0, 0, 22, CAPTURE_BOX_WIDTH, 190);
+		Place("CaptureBox", 0.5, 0, 0.5, 0, 0, 22, CAPTURE_BOX_WIDTH, 99);
 		Place("FlagBorder", 0, 0, 0, 0, CAPTURE_FLAG_X, 0, CAPTURE_FLAG_WIDTH, CAPTURE_FLAG_HEIGHT);
-		Place("FlagFill", 0, 0, 0, 0, CAPTURE_FLAG_X + 3, 3, CAPTURE_FLAG_WIDTH - 6, CAPTURE_FLAG_HEIGHT - 6);
-		Place("FlagImg", 0, 0, 0, 0, CAPTURE_FLAG_X + 3, 3, CAPTURE_FLAG_WIDTH - 6, CAPTURE_FLAG_HEIGHT - 6);
-		float lockX = CAPTURE_FLAG_X + CAPTURE_FLAG_WIDTH - 44;
-		Place("LockBg", 0, 0, 0, 0, lockX, 58, 38, 38);
-		Place("LockShackleL", 0, 0, 0, 0, lockX + 11, 63, 4, 13);
-		Place("LockShackleR", 0, 0, 0, 0, lockX + 23, 63, 4, 13);
-		Place("LockShackleTop", 0, 0, 0, 0, lockX + 11, 63, 16, 4);
-		Place("LockBody", 0, 0, 0, 0, lockX + 7, 75, 24, 16);
-		// Полоса: чёрная рамка 3 px, тёмная подложка, яркая заливка, крупные белые стрелки поверх.
-		Place("CaptureBg", 0, 0, 0, 0, CAPTURE_BAR_X - 3, CAPTURE_BAR_Y - 3, CAPTURE_BAR_WIDTH + 6, CAPTURE_BAR_HEIGHT + 6);
+		Place("FlagFill", 0, 0, 0, 0, CAPTURE_FLAG_X + 1.5, 1.5, CAPTURE_FLAG_WIDTH - 3, CAPTURE_FLAG_HEIGHT - 3);
+		Place("FlagImg", 0, 0, 0, 0, CAPTURE_FLAG_X + 1.5, 1.5, CAPTURE_FLAG_WIDTH - 3, CAPTURE_FLAG_HEIGHT - 3);
+		float lockX = CAPTURE_FLAG_X + CAPTURE_FLAG_WIDTH - 22;
+		Place("LockBg", 0, 0, 0, 0, lockX, 29, 19, 19);
+		Place("LockShackleL", 0, 0, 0, 0, lockX + 5.5, 31.5, 2, 6.5);
+		Place("LockShackleR", 0, 0, 0, 0, lockX + 11.5, 31.5, 2, 6.5);
+		Place("LockShackleTop", 0, 0, 0, 0, lockX + 5.5, 31.5, 8, 2);
+		Place("LockBody", 0, 0, 0, 0, lockX + 3.5, 37.5, 12, 8);
+		// Полоса: чёрная рамка 1,5 px, тёмная подложка, яркая заливка, крупные белые стрелки поверх.
+		Place("CaptureBg", 0, 0, 0, 0, CAPTURE_BAR_X - 1.5, CAPTURE_BAR_Y - 1.5, CAPTURE_BAR_WIDTH + 3, CAPTURE_BAR_HEIGHT + 3);
 		Place("CaptureBarBg", 0, 0, 0, 0, CAPTURE_BAR_X, CAPTURE_BAR_Y, CAPTURE_BAR_WIDTH, CAPTURE_BAR_HEIGHT);
 		Place("CaptureFill", 0, 0, 0, 0, CAPTURE_BAR_X, CAPTURE_BAR_Y, 0, CAPTURE_BAR_HEIGHT);
-		Place("CaptureArrows", 0, 0, 0, 0, CAPTURE_BAR_X, CAPTURE_BAR_Y - 2, CAPTURE_BAR_WIDTH, CAPTURE_BAR_HEIGHT + 4);
-		Place("CaptureTitle", 0, 0, 0, 0, 0, CAPTURE_BAR_Y + CAPTURE_BAR_HEIGHT + 8, CAPTURE_BOX_WIDTH, 38);
+		Place("CaptureArrows", 0, 0, 0, 0, CAPTURE_BAR_X, CAPTURE_BAR_Y - 1, CAPTURE_BAR_WIDTH, CAPTURE_BAR_HEIGHT + 2);
+		Place("CaptureTitle", 0, 0, 0, 0, 0, CAPTURE_BAR_Y + CAPTURE_BAR_HEIGHT + 4, CAPTURE_BOX_WIDTH, 19);
 		TextWidget title = TextWidget.Cast(m_wRoot.FindAnyWidget("CaptureTitle"));
 		if (title)
-			title.SetExactFontSize(30);
+			title.SetExactFontSize(15);
 		TextWidget arrows = TextWidget.Cast(m_wRoot.FindAnyWidget("CaptureArrows"));
 		if (arrows)
-			arrows.SetExactFontSize(28);
+			arrows.SetExactFontSize(20);
 		Place("DefAlert", 0.5, 1, 0.5, 1, 0, -180, 340, 44);
 		Place("DefAlertBg", 0, 0, 0, 0, 0, 0, 340, 44);
 		Place("DefAlertText", 0, 0, 0, 0, 16, 0, 310, 44);
@@ -303,17 +303,16 @@ class ZW_InvasionHUDComponent : SCR_BaseGameModeComponent
 		}
 
 		// --- Цепочка точек
-		BaseWorld world = GetGame().GetWorld();
 		int activeOrder = objectives.GetActiveIndex() + 1;   // 0 — штурм ещё не начался
 		if (activeOrder < 1)
 			activeOrder = 1;
 
 		SetVisible("TopBar", mapOpen && hasSide && !ended);
 		if (mapOpen && hasSide && !ended)
-			UpdateMapPoints(world, activeOrder, isAttacker, objectives.GetPointCount(), attacker, defender);
+			UpdateMapPoints(objectives, activeOrder, isAttacker, attacker, defender);
 
 		// --- Захват текущей точки
-		ZW_InvasionPoint active = ZW_ObjectivesComponent.FindPointByOrder(world, activeOrder);
+		ZW_InvasionPoint active = objectives.GetPoint(activeOrder - 1);
 		UpdateCapture(active, activeOrder, isAttacker, isDefender, prep || mapOpen || ended, attacker, defender);
 	}
 
@@ -402,9 +401,9 @@ class ZW_InvasionHUDComponent : SCR_BaseGameModeComponent
 	}
 
 	//------------------------------------------------------------------------------------------------
-	protected void UpdateMapPoints(BaseWorld world, int activeOrder, bool isAttacker, int pointCount, Faction attacker, Faction defender)
+	protected void UpdateMapPoints(ZW_ObjectivesComponent objectives, int activeOrder, bool isAttacker, Faction attacker, Faction defender)
 	{
-		int visibleCount = Math.Min(pointCount, MAX_POINTS);
+		int visibleCount = Math.Min(objectives.GetPointCount(), MAX_POINTS);
 		float trackWidth = (visibleCount - 1) * MAP_POINT_STEP;
 		float start = (MAP_PANEL_WIDTH - trackWidth) * 0.5;
 		SetVisible("PointTrack", visibleCount > 1);
@@ -413,7 +412,7 @@ class ZW_InvasionHUDComponent : SCR_BaseGameModeComponent
 
 		for (int order = 1; order <= MAX_POINTS; order++)
 		{
-			ZW_InvasionPoint point = ZW_ObjectivesComponent.FindPointByOrder(world, order);
+			ZW_InvasionPoint point = objectives.GetPoint(order - 1);
 			string prefix = "Pt" + order.ToString();
 			if (point)
 			{
@@ -462,7 +461,6 @@ class ZW_InvasionHUDComponent : SCR_BaseGameModeComponent
 		string label = order.ToString();
 		if (unknown)
 		{
-			label = "?";
 			textColor = ARGB(255, 177, 195, 211);
 			SetColor(prefix + "Inner", ARGB(255, 29, 41, 53));
 			SetVisible(prefix + "Flag", false);
@@ -522,10 +520,12 @@ class ZW_InvasionHUDComponent : SCR_BaseGameModeComponent
 		int neutral = ZW_InvasionPoint.PROGRESS_NEUTRAL;
 		bool locked = point.IsLocked();
 
-		// Индикатор видят обе стороны, когда игрок стоит в зоне точки.
+		// Атака видит индикатор в зоне, оборона — только пока атака двигает прогресс.
 		bool inside = (isAttacker || isDefender) && IsLocalPlayerInside(point);
-		SetVisible("CaptureBox", inside);
-		if (inside)
+		bool attackCapturing = point.GetDrive() > 0;
+		bool showCapture = inside && (isAttacker || (isDefender && attackCapturing));
+		SetVisible("CaptureBox", showCapture);
+		if (showCapture)
 		{
 			// Флаг: оборона → белый (нейтральная) → атака с замком.
 			Faction holder = defender;
@@ -562,9 +562,9 @@ class ZW_InvasionHUDComponent : SCR_BaseGameModeComponent
 
 			// Стрелки: направо — давит атака, налево — отбивает оборона; число = ступень перевеса.
 			int drive = point.GetDrive();
-			string arrow = "›";
+			string arrow = ">";
 			if (drive < 0)
-				arrow = "‹";
+				arrow = "<";
 			string arrows;
 			for (int a = 0; a < Math.AbsInt(drive); a++)
 			{
@@ -579,13 +579,22 @@ class ZW_InvasionHUDComponent : SCR_BaseGameModeComponent
 			{
 				arrows = string.Format("нужно %1+ бойца", point.GetMinPlayers());
 			}
-			SetText("CaptureArrows", arrows);
+			TextWidget arrowText = TextWidget.Cast(m_wRoot.FindAnyWidget("CaptureArrows"));
+			if (arrowText)
+			{
+				int fontSize = 20;
+				if (drive == 0)
+					fontSize = 14;
+
+				arrowText.SetExactFontSize(fontSize);
+				arrowText.SetText(arrows);
+			}
 
 			SetText("CaptureTitle", point.GetPointName());
 		}
 
 		// Обороне вне зоны — короткое предупреждение, без процентов и численности.
-		bool showDefend = isDefender && !inside && point.IsBeingCaptured();
+		bool showDefend = isDefender && !inside && attackCapturing;
 		SetVisible("DefAlert", showDefend);
 		if (showDefend)
 			SetText("DefAlertText", point.GetPointName() + ": точку захватывают");
