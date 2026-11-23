@@ -256,6 +256,7 @@ class ZW_ObjectivesComponent : SCR_BaseGameModeComponent
 	override void OnGameModeStart()
 	{
 		super.OnGameModeStart();
+		ZW_MainRoleComponent.CreateSafeZoneBarriers();
 
 		if (!Replication.IsServer())
 			return;

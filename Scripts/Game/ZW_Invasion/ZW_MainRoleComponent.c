@@ -29,16 +29,117 @@ class ZW_MainRoleComponent : ScriptComponent
 	[Attribute("0", UIWidgets.CheckBox, "Метка мейна на карте", category: "Мейн")]
 	protected bool m_bMapMarker;
 
+	[Attribute("75", UIWidgets.EditBox, "Радиус запрета стрельбы и защиты от вражеских выстрелов, м (0 — выключено)", params: "0 inf", category: "Мейн")]
+	protected float m_fSafeZoneRadius;
+
 	[Attribute("USSR,RF,RU,RUS", UIWidgets.EditBox, "Ключи фракций РФ через запятую", category: "Мейн")]
 	protected string m_sRfFactionKeys;
 
 	protected static ref array<ZW_MainRoleComponent> s_aAll = {};
 	protected IEntity m_Spawned;
+	protected IEntity m_ProjectileBarrier;
+	protected ref Resource m_ProjectileBarrierMaterial;
 
 	//------------------------------------------------------------------------------------------------
 	static array<ZW_MainRoleComponent> GetAll()
 	{
 		return s_aAll;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	static bool IsInMainSafeZone(IEntity entity)
+	{
+		if (!entity || !ZW_Invasion.GetObjectives())
+			return false;
+
+		BaseWorld world = entity.GetWorld();
+		vector position = entity.GetOrigin();
+		foreach (ZW_MainRoleComponent role : s_aAll)
+		{
+			if (!role)
+				continue;
+
+			SCR_SpawnPoint center = role.GetSafeZoneCenter(world);
+			if (!center)
+				continue;
+
+			if (vector.DistanceSqXZ(position, center.GetOrigin()) <= role.m_fSafeZoneRadius * role.m_fSafeZoneRadius)
+				return true;
+		}
+
+		return false;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	protected SCR_SpawnPoint GetSafeZoneCenter(BaseWorld world)
+	{
+		if (!m_bMapMarker || m_fSafeZoneRadius <= 0)
+			return null;
+
+		SCR_SpawnPoint center = SCR_SpawnPoint.Cast(GetOwner());
+		if (!center || center.GetWorld() != world)
+			return null;
+
+		return center;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Коллизия нужна и серверу, и клиентам, поскольку клиент показывает полёт и эффекты попадания.
+	static void CreateSafeZoneBarriers()
+	{
+		const ResourceName materialName = "{258FA8B4D29FC807}Assets/ZW_Invasion/ZW_MainProjectileBarrier.gamemat";
+		Resource material = Resource.Load(materialName);
+		if (!material || !material.IsValid())
+		{
+			Print("[ZW_Invasion] Не загружен материал границы мейна: " + materialName, LogLevel.ERROR);
+			return;
+		}
+
+		BaseWorld world = GetGame().GetWorld();
+		foreach (ZW_MainRoleComponent role : s_aAll)
+		{
+			if (!role || role.m_ProjectileBarrier)
+				continue;
+
+			SCR_SpawnPoint center = role.GetSafeZoneCenter(world);
+			if (center)
+				role.CreateProjectileBarrier(center, materialName, material);
+		}
+	}
+
+	//------------------------------------------------------------------------------------------------
+	protected void CreateProjectileBarrier(notnull SCR_SpawnPoint center, ResourceName materialName, notnull Resource material)
+	{
+		EntitySpawnParams params = new EntitySpawnParams();
+		params.TransformMode = ETransformMode.WORLD;
+		Math3D.MatrixIdentity4(params.Transform);
+		params.Transform[3] = center.GetOrigin() + Vector(0, 50, 0);
+
+		SCR_GenericBoxEntity barrier = SCR_GenericBoxEntity.Cast(GetGame().SpawnEntity(SCR_GenericBoxEntity, center.GetWorld(), params));
+		if (!barrier)
+			return;
+
+		barrier.SetName(center.GetName() + "_ProjectileBarrier");
+		// Движок ищет коллизию по габаритам модели. Сам короб не отображается.
+		float diameter = 2 * m_fSafeZoneRadius;
+		barrier.Generate(Vector(diameter, 200, diameter), "{3C10D749A4E84B38}Common/Materials/Default.emat");
+		barrier.ClearFlags(EntityFlags.VISIBLE, false);
+		barrier.SetFlags(EntityFlags.TRACEABLE, false);
+		ref PhysicsGeomDef geoms[1] = {
+			new PhysicsGeomDef("FireGeometry", PhysicsGeom.CreateCylinder(m_fSafeZoneRadius, 200), materialName, EPhysicsLayerDefs.FireGeometry)
+		};
+		if (!Physics.CreateStaticEx(barrier, geoms))
+		{
+			SCR_EntityHelper.DeleteEntityAndChildren(barrier);
+			Print("[ZW_Invasion] Не создана коллизия границы мейна: " + center.GetName(), LogLevel.ERROR);
+			return;
+		}
+
+		barrier.SetFlags(EntityFlags.UPDATE_LINK, false);
+		barrier.Update();
+		// Коллизия хранит ссылку на поверхность. Удерживаем ресурс до удаления барьера.
+		m_ProjectileBarrierMaterial = material;
+		m_ProjectileBarrier = barrier;
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -82,6 +183,9 @@ class ZW_MainRoleComponent : ScriptComponent
 	//------------------------------------------------------------------------------------------------
 	override void OnDelete(IEntity owner)
 	{
+		if (m_ProjectileBarrier)
+			SCR_EntityHelper.DeleteEntityAndChildren(m_ProjectileBarrier);
+
 		s_aAll.RemoveItem(this);
 		super.OnDelete(owner);
 	}

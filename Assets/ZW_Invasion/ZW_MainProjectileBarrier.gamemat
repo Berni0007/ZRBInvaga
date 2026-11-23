@@ -1,0 +1,14 @@
+GameMaterial {
+ "Physics material" "{290DF77ED4B876EC}Common/Materials/Physics/default.physmat"
+ HitEffectInfo HitEffectInfo "{0D1692702FA46311}" {
+ }
+ BallisticInfo BallisticInfo "{0D1692702FA46312}" {
+  Density 7.86
+  ThicknessOverride Value
+  Thickness 100000
+  KineticPenetrationResistance 1
+  ChemicalPenetrationResistance 1
+  AllowDeflection 0
+  StopExplosionTrace 1
+ }
+}
