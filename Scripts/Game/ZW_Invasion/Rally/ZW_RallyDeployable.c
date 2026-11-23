@@ -74,7 +74,15 @@ modded class SCR_RestrictedDeployableSpawnPointComponent
 		if (!user)
 			return true; // сервер без локального игрока — проверка будет в Deploy
 
-		return manager.CanDeployRally(user, reason);
+		// При попытке в одиночку Deploy покажет причину командиру и отклонит развёртывание.
+		if (manager.CanDeployRally(user, reason))
+			return true;
+
+		if (reason != ZW_RallyManagerComponent.BUDDY_REQUIRED_REASON)
+			return false;
+
+		reason = string.Empty;
+		return true;
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -101,6 +109,14 @@ modded class SCR_RestrictedDeployableSpawnPointComponent
 		if (!manager.CanDeployRally(userEntity, reason))
 		{
 			Print("[ZW_Invasion] Rally не развёрнут: " + reason, LogLevel.NORMAL);
+			if (Replication.IsServer() && reason == ZW_RallyManagerComponent.BUDDY_REQUIRED_REASON)
+			{
+				PlayerManager players = GetGame().GetPlayerManager();
+				int playerId = players.GetPlayerIdFromControlledEntity(userEntity);
+				SCR_PlayerController controller = SCR_PlayerController.Cast(players.GetPlayerController(playerId));
+				if (controller)
+					controller.ZW_ShowRallyBuddyRequired();
+			}
 			return;
 		}
 
@@ -118,5 +134,26 @@ modded class SCR_RestrictedDeployableSpawnPointComponent
 		Print(string.Format("[ZW_Invasion] Rally после Deploy: развёрнута=%1, отряд=%2", IsDeployed(), GetGroupID()), LogLevel.NORMAL);
 		if (IsDeployed())
 			manager.OnRallyDeployed(userEntity);
+	}
+}
+
+modded class SCR_PlayerController
+{
+	//------------------------------------------------------------------------------------------------
+	void ZW_ShowRallyBuddyRequired()
+	{
+		if (this == GetGame().GetPlayerController())
+			ZW_RpcShowRallyBuddyRequired();
+		else
+			Rpc(ZW_RpcShowRallyBuddyRequired);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	[RplRpc(RplChannel.Reliable, RplRcver.Owner)]
+	protected void ZW_RpcShowRallyBuddyRequired()
+	{
+		SCR_PopUpNotification notification = SCR_PopUpNotification.GetInstance();
+		if (notification)
+			notification.PopupMsg("Ралли не развёрнуто", 5, ZW_RallyManagerComponent.BUDDY_REQUIRED_REASON);
 	}
 }

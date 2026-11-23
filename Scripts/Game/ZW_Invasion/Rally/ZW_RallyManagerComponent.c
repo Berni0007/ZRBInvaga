@@ -51,6 +51,8 @@ class ZW_RallyManagerComponent : SCR_BaseGameModeComponent
 	[Attribute("0", UIWidgets.CheckBox, "Отладка: убить игрока через 5 с после спавна на rally, пока лимит не исчерпан (тест лимита)", category: "Invasion Debug")]
 	protected bool m_bDebugKillAfterRallySpawn;
 
+	static const string BUDDY_REQUIRED_REASON = "Нужен ещё один боец твоего отряда рядом";
+
 	protected static const int CHECK_MS = 2000;
 
 	//! Отряды, чей rally израсходован и вот-вот исчезнет (точка спавна сразу выключается).
@@ -195,7 +197,7 @@ class ZW_RallyManagerComponent : SCR_BaseGameModeComponent
 
 		if (!m_bDebugSkipBuddy && !HasBuddyNearby(user, group))
 		{
-			reason = "Нужен ещё один боец отряда рядом";
+			reason = BUDDY_REQUIRED_REASON;
 			return false;
 		}
 
