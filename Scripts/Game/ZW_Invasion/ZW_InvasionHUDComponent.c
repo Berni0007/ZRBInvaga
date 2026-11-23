@@ -168,11 +168,11 @@ class ZW_InvasionHUDComponent : SCR_BaseGameModeComponent
 		Place("TimerDivider", 0, 0, 0, 0, 0, 0, MAP_PANEL_WIDTH - 24, 1);
 		Place("TimerValue", 0, 0, 0, 0, 40, 3, 70, 23);
 		Place("TimerText", 0, 0, 0, 0, 121, 3, 145, 23);
-		Place("PrepBox", 0.5, 0, 0.5, 0, 0, 140, 380, 124);
-		Place("PrepBg", 0, 0, 0, 0, 0, 0, 380, 124);
-		Place("PrepTitle", 0, 0, 0, 0, 20, 8, 340, 26);
-		Place("PrepTime", 0, 0, 0, 0, 20, 34, 340, 56);
-		Place("PrepHint", 0, 0, 0, 0, 20, 92, 340, 24);
+		Place("PrepBox", 0.5, 0, 0.5, 0, 0, 40, 360, 146);
+		Place("PrepTitle", 0.5, 0, 0.5, 0, 0, 0, 360, 28);
+		Place("PrepTime", 0.5, 0, 0.5, 0, 0, 28, 360, 78);
+		Place("PrepHintBg", 0.5, 0, 0.5, 0, 0, 112, 286, 34);
+		Place("PrepHint", 0.5, 0, 0.5, 0, 0, 112, 350, 34);
 		// Индикатор точки: флаг владельца (замок — взята навсегда), полоса со стрелками, название места.
 		Place("CaptureBox", 0.5, 0, 0.5, 0, 0, 22, CAPTURE_BOX_WIDTH, 99);
 		Place("FlagBorder", 0, 0, 0, 0, CAPTURE_FLAG_X, 0, CAPTURE_FLAG_WIDTH, CAPTURE_FLAG_HEIGHT);
@@ -210,7 +210,7 @@ class ZW_InvasionHUDComponent : SCR_BaseGameModeComponent
 		SetColor("PointTrack", ARGB(255, 85, 103, 119));
 		SetColor("TimerDivider", ARGB(62, 165, 190, 210));
 		SetColor("TimerText", ARGB(255, 177, 195, 211));
-		SetColor("PrepBg", ARGB(128, 0, 0, 0));
+		SetColor("PrepHintBg", ARGB(242, 126, 43, 38));
 		SetColor("CaptureBg", ARGB(230, 0, 0, 0));
 		SetColor("FlagBorder", ARGB(255, 17, 17, 17));
 		SetColor("FlagFill", ARGB(255, 233, 233, 233));
@@ -281,22 +281,30 @@ class ZW_InvasionHUDComponent : SCR_BaseGameModeComponent
 
 		// --- Таймер и подготовка
 		bool prep = timer && timer.IsPrepPhase();
-		SetVisible("PrepBox", prep && !mapOpen && !ended);
+		bool showPreparation = prep && !mapOpen && hasSide && !ended;
+		SetVisible("PrepBox", showPreparation);
 		SetVisible("TimerBar", timer && mapOpen && hasSide && !ended);
-		if (prep && !mapOpen)
+		if (showPreparation)
 		{
-			SetText("PrepTime", FormatTime(timer.GetRemainingSeconds()));
+			SetText("PrepTime", FormatTime(timer.GetRemainingSeconds(), true));
+			SetVisible("PrepHintBg", isAttacker);
+			SetVisible("PrepHint", isAttacker);
 			if (isAttacker)
-				SetText("PrepHint", "Атака: ждите на главной базе");
-			else if (isDefender)
-				SetText("PrepHint", "Оборона: займите точку 1");
+			{
+				SetText("PrepTitle", "ПОДГОТОВКА АТАКИ");
+				SetText("PrepHint", "Выход с мейна закрыт");
+			}
 			else
-				SetText("PrepHint", "");
+			{
+				SetText("PrepTitle", "ДО НАЧАЛА БОЯ");
+			}
 		}
 		else if (timer && mapOpen)
 		{
 			string suffix = "до конца штурма";
-			if (prep)
+			if (prep && isDefender)
+				suffix = "до начала боя";
+			else if (prep)
 				suffix = "до начала штурма";
 			SetText("TimerValue", FormatTime(timer.GetRemainingSeconds()));
 			SetText("TimerText", suffix);
@@ -652,7 +660,7 @@ class ZW_InvasionHUDComponent : SCR_BaseGameModeComponent
 	}
 
 	//------------------------------------------------------------------------------------------------
-	protected static string FormatTime(int seconds)
+	protected static string FormatTime(int seconds, bool padMinutes = false)
 	{
 		if (seconds < 0)
 			seconds = 0;
@@ -663,7 +671,11 @@ class ZW_InvasionHUDComponent : SCR_BaseGameModeComponent
 		if (rest < 10)
 			restText = "0" + restText;
 
-		return minutes.ToString() + ":" + restText;
+		string minutesText = minutes.ToString();
+		if (padMinutes && minutes < 10)
+			minutesText = "0" + minutesText;
+
+		return minutesText + ":" + restText;
 	}
 
 	//------------------------------------------------------------------------------------------------

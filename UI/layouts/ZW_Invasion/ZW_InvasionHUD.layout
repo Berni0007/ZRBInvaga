@@ -676,98 +676,97 @@ FrameWidgetClass "{FAA367E7E90BBDBA}" {
    Anchor 0.5 0 0.5 0
    PositionX 0
    OffsetLeft 0
-   PositionY 140
-   OffsetTop 140
-   SizeX 380
-   OffsetRight -380
-   SizeY 124
-   OffsetBottom -124
+   PositionY 40
+   OffsetTop 40
+   SizeX 360
+   OffsetRight -360
+   SizeY 146
+   OffsetBottom -146
    Alignment 0.5 0
   }
   {
    ImageWidgetClass "{2602932382E23714}" {
-    Name "PrepBg"
+    Name "PrepHintBg"
     Slot FrameWidgetSlot "{8EDBF10B80DFA85B}" {
-     Anchor 0 0 0 0
+     Anchor 0.5 0 0.5 0
      PositionX 0
      OffsetLeft 0
-     PositionY 0
-     OffsetTop 0
-     SizeX 380
-     OffsetRight -380
-     SizeY 124
-     OffsetBottom -124
+     PositionY 112
+     OffsetTop 112
+     SizeX 286
+     OffsetRight -286
+     SizeY 34
+     OffsetBottom -34
+     Alignment 0.5 0
     }
-    Color 0 0 0 0.5
-    Size 380 124
+    Color 0.494 0.169 0.149 0.949
+    Size 286 34
    }
    TextWidgetClass "{4289F722BE841B5A}" {
     Name "PrepTitle"
     Slot FrameWidgetSlot "{A4B26CC0309E261F}" {
-     Anchor 0 0 0 0
-     PositionX 20
-     OffsetLeft 20
-     PositionY 8
-     OffsetTop 8
-     SizeX 340
-     OffsetRight -340
-     SizeY 26
-     OffsetBottom -26
+     Anchor 0.5 0 0.5 0
+     SizeX 360
+     OffsetRight -360
+     SizeY 28
+     OffsetBottom -28
+     Alignment 0.5 0
     }
-    Color 0.839 0.839 0.812 1
-    Text "Штурм начнётся через"
-    "Font Size" 18
-    "Min Font Size" 18
+    Color 1 1 1 1
+    Text "ПОДГОТОВКА АТАКИ"
+    "Font Size" 22
+    "Min Font Size" 22
+    "Horizontal Alignment" Center
     "Vertical Alignment" Center
     FontProperties FontProperties "{BA32AD10B7529C67}" {
      Font "{D3E75BCBECEB273E}UI/Fonts/NotoSans/NotoSans-Enhanced-Regular-JP-KOR-SC-LAT.fnt"
      ShadowSize 16
-     ShadowColor 0 0 0 0.45
+     ShadowColor 0 0 0 0.85
      ShadowOffset 0 0
     }
    }
    TextWidgetClass "{1527402B9060C51E}" {
     Name "PrepTime"
     Slot FrameWidgetSlot "{DED57B257749CDB3}" {
-     Anchor 0 0 0 0
-     PositionX 20
-     OffsetLeft 20
-     PositionY 34
-     OffsetTop 34
-     SizeX 340
-     OffsetRight -340
-     SizeY 56
-     OffsetBottom -56
+     Anchor 0.5 0 0.5 0
+     PositionY 28
+     OffsetTop 28
+     SizeX 360
+     OffsetRight -360
+     SizeY 78
+     OffsetBottom -78
+     Alignment 0.5 0
     }
-    Color 0.949 0.949 0.933 1
-    Text "3:00"
-    "Font Size" 52
-    "Min Font Size" 52
+    Color 1 1 1 1
+    Text "10:00"
+    "Font Size" 76
+    "Min Font Size" 76
+    "Horizontal Alignment" Center
     "Vertical Alignment" Center
     FontProperties FontProperties "{7BE4D88A9CB485C1}" {
-     Font "{D3E75BCBECEB273E}UI/Fonts/NotoSans/NotoSans-Enhanced-Regular-JP-KOR-SC-LAT.fnt"
+     Font "{EABA4FE9D014CCEF}UI/Fonts/RobotoCondensed/RobotoCondensed_Bold.fnt"
      ShadowSize 16
-     ShadowColor 0 0 0 0.45
+     ShadowColor 0 0 0 0.85
      ShadowOffset 0 0
     }
    }
    TextWidgetClass "{7D4C0FA4CEA3CAED}" {
     Name "PrepHint"
     Slot FrameWidgetSlot "{92357BE75086DEE1}" {
-     Anchor 0 0 0 0
-     PositionX 20
-     OffsetLeft 20
-     PositionY 92
-     OffsetTop 92
-     SizeX 340
-     OffsetRight -340
-     SizeY 24
-     OffsetBottom -24
+     Anchor 0.5 0 0.5 0
+     PositionY 112
+     OffsetTop 112
+     SizeX 350
+     OffsetRight -350
+     SizeY 34
+     OffsetBottom -34
+     Alignment 0.5 0
     }
-    Color 0.949 0.949 0.933 1
-    Text ""
-    "Font Size" 17
-    "Min Font Size" 17
+    Color 1 1 1 1
+    Text "Выход с мейна закрыт"
+    "Font Size" 23
+    "Min Font Size" 23
+    "Horizontal Alignment" Center
     "Vertical Alignment" Center
     FontProperties FontProperties "{7D79CB16A7FD1948}" {
      Font "{D3E75BCBECEB273E}UI/Fonts/NotoSans/NotoSans-Enhanced-Regular-JP-KOR-SC-LAT.fnt"
