@@ -8,7 +8,7 @@ class ZW_TimerComponentClass : SCR_BaseGameModeComponentClass
 
 class ZW_TimerComponent : SCR_BaseGameModeComponent
 {
-	[Attribute("180", UIWidgets.EditBox, "Фаза подготовки, сек (0 = без подготовки)", category: "Invasion")]
+	[Attribute("600", UIWidgets.EditBox, "Фаза подготовки, сек (0 = без подготовки)", category: "Invasion")]
 	protected int m_iPrepSeconds;
 
 	[Attribute("3600", UIWidgets.EditBox, "Время на штурм, сек", category: "Invasion")]
@@ -20,10 +20,12 @@ class ZW_TimerComponent : SCR_BaseGameModeComponent
 	[RplProp()]
 	protected int m_iRemainingSeconds;
 
-	[RplProp()]
+	[RplProp(onRplName: "SyncMainBarrier")]
 	protected bool m_bPrepPhase;
 
 	protected bool m_bRunning;
+	protected float m_fPrepEndsAt;
+	protected ref ZW_AttackMainBarrier m_MainBarrier;
 
 	//------------------------------------------------------------------------------------------------
 	int GetRemainingSeconds()
@@ -43,15 +45,22 @@ class ZW_TimerComponent : SCR_BaseGameModeComponent
 		super.OnGameModeStart();
 
 		if (!Replication.IsServer())
+		{
+			SyncMainBarrier();
 			return;
+		}
 
 		// Подготовка минимум 1 сек: точки успевают инициализироваться до открытия первой.
 		m_bPrepPhase = true;
 		m_iRemainingSeconds = Math.Max(1, m_iPrepSeconds);
+		BaseWorld world = GetOwner().GetWorld();
+		m_fPrepEndsAt = world.GetWorldTime() + m_iRemainingSeconds * 1000;
 		Replication.BumpMe();
 
 		m_bRunning = true;
 		GetGame().GetCallqueue().CallLater(Tick, 1000, true);
+
+		SyncMainBarrier();
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -82,7 +91,10 @@ class ZW_TimerComponent : SCR_BaseGameModeComponent
 			return;
 		}
 
-		m_iRemainingSeconds--;
+		if (m_bPrepPhase)
+			m_iRemainingSeconds = Math.Ceil((m_fPrepEndsAt - GetOwner().GetWorld().GetWorldTime()) / 1000);
+		else
+			m_iRemainingSeconds--;
 
 		if (m_iRemainingSeconds <= 0)
 		{
@@ -90,6 +102,7 @@ class ZW_TimerComponent : SCR_BaseGameModeComponent
 			{
 				m_bPrepPhase = false;
 				m_iRemainingSeconds = m_iMatchSeconds;
+				SyncMainBarrier();
 				objectives.StartAssault();
 			}
 			else
@@ -106,8 +119,58 @@ class ZW_TimerComponent : SCR_BaseGameModeComponent
 	}
 
 	//------------------------------------------------------------------------------------------------
+	protected void SyncMainBarrier()
+	{
+		GetGame().GetCallqueue().Remove(SyncMainBarrier);
+		if (!m_bPrepPhase || m_iPrepSeconds <= 0)
+		{
+			ClearMainBarrier();
+			return;
+		}
+
+		if (m_MainBarrier)
+			return;
+
+		float radius;
+		SCR_SpawnPoint main = ZW_MainRoleComponent.GetAttackMain(GetOwner().GetWorld(), radius);
+		if (!main)
+		{
+			if (!Replication.IsServer())
+				GetGame().GetCallqueue().CallLater(SyncMainBarrier, 250, false);
+			else
+				Print("[ZW_Invasion] Подготовка: не найден спавн мейна атаки с радиусом зоны", LogLevel.WARNING);
+			return;
+		}
+
+		m_MainBarrier = new ZW_AttackMainBarrier();
+		if (!m_MainBarrier.Create(main, radius))
+		{
+			ClearMainBarrier();
+			Print("[ZW_Invasion] Не создана граница мейна атаки", LogLevel.ERROR);
+			return;
+		}
+
+		if (Replication.IsServer())
+			Print(string.Format("[ZW_Invasion] Физическая граница мейна атаки включена на %1 с", m_iPrepSeconds), LogLevel.NORMAL);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	protected void ClearMainBarrier()
+	{
+		if (!m_MainBarrier)
+			return;
+
+		m_MainBarrier.Clear();
+		m_MainBarrier = null;
+		if (Replication.IsServer() && !m_bPrepPhase)
+			Print("[ZW_Invasion] Мейн атаки открыт", LogLevel.NORMAL);
+	}
+
+	//------------------------------------------------------------------------------------------------
 	protected void Stop()
 	{
+		GetGame().GetCallqueue().Remove(SyncMainBarrier);
+		ClearMainBarrier();
 		if (!m_bRunning)
 			return;
 

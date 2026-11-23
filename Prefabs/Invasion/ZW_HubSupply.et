@@ -1,6 +1,9 @@
 GenericEntity : "{6AE5F2A1B3C400B0}Prefabs/Invasion/ZW_MainSupply.et" {
  ID "6AE7B00100001021"
  components {
+  ZW_MainSupplyComponent "{213784F6E9DA70B2}" {
+   m_bRefill 0
+  }
   SCR_ResourceComponent "{6AE5F2A1B3C400A2}" {
    m_aContainers {
     SCR_ResourceContainer "{6AE5F2A1B3C400A3}" {

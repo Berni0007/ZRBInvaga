@@ -8,7 +8,7 @@ SCR_BaseGameMode GameMode_ZW_Invasion : "{BEECC6DCCEF65323}Prefabs/MP/Modes/Plai
    m_iDebugMinPlayers 1
   }
   ZW_TimerComponent "{6AE530275D000CF0}" {
-   m_iPrepSeconds 10
+   m_iPrepSeconds 600
   }
  }
  coords 5020.381 0 5109.962

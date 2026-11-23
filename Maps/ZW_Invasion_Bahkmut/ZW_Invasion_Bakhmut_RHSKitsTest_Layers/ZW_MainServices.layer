@@ -1,0 +1,142 @@
+$grp GenericEntity {
+ ZW_Main_Attack_Arsenal {
+  components {
+   ZW_MainRoleComponent "{6AE7A0040000A001}" {
+    m_eRole ATTACK
+    m_sNatoPrefab "{1BED8F81D2FA2137}PrefabsEditable/Auto/Compositions/Slotted/SlotFlatSmall/E_AmmoStorage_S_US_01.et"
+    m_sRfPrefab "{CD9004C6229D900B}PrefabsEditable/Auto/Compositions/Slotted/SlotFlatSmall/E_AmmoStorage_S_USSR_01.et"
+   }
+  }
+  coords 5149.961 0.328 2830.352
+ }
+ ZW_Main_Attack_LightVehicles {
+  components {
+   ZW_MainRoleComponent "{6AE7A0040000A002}" {
+    m_eRole ATTACK
+    m_sNatoPrefab "{A0FEA3E718F5B605}PrefabsEditable/Auto/Compositions/Slotted/SlotFlatSmall/E_VehicleMaintenance_S_Conflict_US_01.et"
+    m_sRfPrefab "{5ACECF41C167567D}PrefabsEditable/Auto/Compositions/Slotted/SlotFlatSmall/E_VehicleMaintenance_S_Conflict_USSR_01.et"
+   }
+  }
+  coords 5122.997 0 2809.991
+ }
+ ZW_Main_Attack_HeavyVehicles {
+  components {
+   ZW_MainRoleComponent "{6AE7A0040000A003}" {
+    m_eRole ATTACK
+    m_sNatoPrefab "{7AD06D9CF2672AC5}PrefabsEditable/Auto/Compositions/Slotted/SlotFlatMedium/E_VehicleMaintenance_M_Conflict_US_01.et"
+    m_sRfPrefab "{6676FBB212B337D6}PrefabsEditable/Auto/Compositions/Slotted/SlotFlatMedium/E_VehicleMaintenance_M_Conflict_USSR_01.et"
+   }
+  }
+  coords 5094.997 0 2793.991
+ }
+ ZW_Main_Attack_Helipad {
+  components {
+   ZW_MainRoleComponent "{6AE7A0040000A004}" {
+    m_eRole ATTACK
+    m_sNatoPrefab "{D3DDB76548C16BDB}PrefabsEditable/Auto/Compositions/Slotted/SlotFlatLarge/E_Helipad_L_Conflict_US_01.et"
+    m_sRfPrefab "{C4114DAE8FDCE080}PrefabsEditable/Auto/Compositions/Slotted/SlotFlatLarge/E_Helipad_L_Conflict_USSR_01.et"
+   }
+  }
+  coords 5178.997 0 2811.991
+ }
+ ZW_Main_Attack_Fuel {
+  components {
+   ZW_MainRoleComponent "{6AE7A0040000A006}" {
+    m_eRole ATTACK
+    m_sNatoPrefab "{6D2A35DA74224780}PrefabsEditable/Auto/Compositions/Slotted/SlotFlatSmall/E_FuelStorage_S_US_01.et"
+    m_sRfPrefab "{C2D040BB21F15A20}PrefabsEditable/Auto/Compositions/Slotted/SlotFlatSmall/E_FuelStorage_S_USSR_01.et"
+   }
+  }
+  coords 5158.383 0.373 2779.39
+ }
+ ZW_Main_Attack_Medical {
+  components {
+   ZW_MainRoleComponent "{6AE7A0040000A007}" {
+    m_eRole ATTACK
+    m_sNatoPrefab "{D0281DAF0B131743}PrefabsEditable/Auto/Compositions/Slotted/SlotFlatMedium/E_FieldHospital_M_Conflict_US_01.et"
+    m_sRfPrefab "{505F78512FE8B697}PrefabsEditable/Auto/Compositions/Slotted/SlotFlatMedium/E_FieldHospital_M_Conflict_USSR_01.et"
+   }
+  }
+  coords 5164.997 0 2880.95
+ }
+ ZW_Main_Defense_Arsenal {
+  components {
+   ZW_MainRoleComponent "{6AE7A0040000D001}" {
+    m_eRole DEFENSE
+    m_sNatoPrefab "{1BED8F81D2FA2137}PrefabsEditable/Auto/Compositions/Slotted/SlotFlatSmall/E_AmmoStorage_S_US_01.et"
+    m_sRfPrefab "{CD9004C6229D900B}PrefabsEditable/Auto/Compositions/Slotted/SlotFlatSmall/E_AmmoStorage_S_USSR_01.et"
+   }
+  }
+  coords 6110.46 0 8064.931
+ }
+ ZW_Main_Defense_LightVehicles {
+  components {
+   ZW_MainRoleComponent "{6AE7A0040000D002}" {
+    m_eRole DEFENSE
+    m_sNatoPrefab "{A0FEA3E718F5B605}PrefabsEditable/Auto/Compositions/Slotted/SlotFlatSmall/E_VehicleMaintenance_S_Conflict_US_01.et"
+    m_sRfPrefab "{5ACECF41C167567D}PrefabsEditable/Auto/Compositions/Slotted/SlotFlatSmall/E_VehicleMaintenance_S_Conflict_USSR_01.et"
+   }
+  }
+  coords 6111.848 0.501 8033.931
+ }
+ ZW_Main_Defense_HeavyVehicles {
+  components {
+   ZW_MainRoleComponent "{6AE7A0040000D003}" {
+    m_eRole DEFENSE
+    m_sNatoPrefab "{7AD06D9CF2672AC5}PrefabsEditable/Auto/Compositions/Slotted/SlotFlatMedium/E_VehicleMaintenance_M_Conflict_US_01.et"
+    m_sRfPrefab "{6676FBB212B337D6}PrefabsEditable/Auto/Compositions/Slotted/SlotFlatMedium/E_VehicleMaintenance_M_Conflict_USSR_01.et"
+   }
+  }
+  coords 6173.652 0.08 8017.931
+ }
+ ZW_Main_Defense_Helipad {
+  components {
+   ZW_MainRoleComponent "{6AE7A0040000D004}" {
+    m_eRole DEFENSE
+    m_sNatoPrefab "{D3DDB76548C16BDB}PrefabsEditable/Auto/Compositions/Slotted/SlotFlatLarge/E_Helipad_L_Conflict_US_01.et"
+    m_sRfPrefab "{C4114DAE8FDCE080}PrefabsEditable/Auto/Compositions/Slotted/SlotFlatLarge/E_Helipad_L_Conflict_USSR_01.et"
+   }
+  }
+  coords 6159.46 0 8035.931
+ }
+ ZW_Main_Defense_Fuel {
+  components {
+   ZW_MainRoleComponent "{6AE7A0040000D006}" {
+    m_eRole DEFENSE
+    m_sNatoPrefab "{6D2A35DA74224780}PrefabsEditable/Auto/Compositions/Slotted/SlotFlatSmall/E_FuelStorage_S_US_01.et"
+    m_sRfPrefab "{C2D040BB21F15A20}PrefabsEditable/Auto/Compositions/Slotted/SlotFlatSmall/E_FuelStorage_S_USSR_01.et"
+   }
+  }
+  coords 6130.46 0 8009.931
+ }
+ ZW_Main_Defense_Medical {
+  components {
+   ZW_MainRoleComponent "{6AE7A0040000D007}" {
+    m_eRole DEFENSE
+    m_sNatoPrefab "{D0281DAF0B131743}PrefabsEditable/Auto/Compositions/Slotted/SlotFlatMedium/E_FieldHospital_M_Conflict_US_01.et"
+    m_sRfPrefab "{505F78512FE8B697}PrefabsEditable/Auto/Compositions/Slotted/SlotFlatMedium/E_FieldHospital_M_Conflict_USSR_01.et"
+   }
+  }
+  coords 6145.46 0 8073.931
+ }
+ ZW_Main_Attack_HeavyVehicleSlot {
+  components {
+   ZW_MainRoleComponent "{6AE7A0040000A008}" {
+    m_eRole ATTACK
+    m_sNatoPrefab "{450515CA8B7B05BC}Prefabs/Systems/Compositions/EntitySpawnerSlot/EntitySpawnerSlot_Vehicle_Medium.et"
+    m_sRfPrefab "{450515CA8B7B05BC}Prefabs/Systems/Compositions/EntitySpawnerSlot/EntitySpawnerSlot_Vehicle_Medium.et"
+   }
+  }
+  coords 5094.997 0.16 2810.991
+ }
+ ZW_Main_Defense_HeavyVehicleSlot {
+  components {
+   ZW_MainRoleComponent "{6AE7A0040000D008}" {
+    m_eRole DEFENSE
+    m_sNatoPrefab "{450515CA8B7B05BC}Prefabs/Systems/Compositions/EntitySpawnerSlot/EntitySpawnerSlot_Vehicle_Medium.et"
+    m_sRfPrefab "{450515CA8B7B05BC}Prefabs/Systems/Compositions/EntitySpawnerSlot/EntitySpawnerSlot_Vehicle_Medium.et"
+   }
+  }
+  coords 6160.465 0.677 8003.652
+ }
+}

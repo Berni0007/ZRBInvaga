@@ -8,13 +8,12 @@ GenericEntity : "{AD92C45B56130D08}PrefabLibrary/DefaultLibrary/Props/Shop/Crate
      m_eStorageType STORED
      m_fResourceValueCurrent 100000
      m_fResourceValueMax 100000
-     m_bEnableResourceGain 1
-     m_fResourceGain 1000
-     m_fResourceGainTickrate 1
     }
    }
   }
   RplComponent "{6AE5F2A1B3C400A4}" {
+  }
+  ZW_MainSupplyComponent "{213784F6E9DA70B2}" {
   }
  }
 }

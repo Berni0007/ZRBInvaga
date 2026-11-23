@@ -47,6 +47,25 @@ class ZW_MainRoleComponent : ScriptComponent
 	}
 
 	//------------------------------------------------------------------------------------------------
+	static SCR_SpawnPoint GetAttackMain(BaseWorld world, out float radius)
+	{
+		foreach (ZW_MainRoleComponent role : s_aAll)
+		{
+			if (!role || role.m_eRole != ZW_EMainRole.ATTACK)
+				continue;
+
+			SCR_SpawnPoint center = role.GetSafeZoneCenter(world);
+			if (center)
+			{
+				radius = role.m_fSafeZoneRadius;
+				return center;
+			}
+		}
+
+		return null;
+	}
+
+	//------------------------------------------------------------------------------------------------
 	static bool IsInMainSafeZone(IEntity entity)
 	{
 		if (!entity || !ZW_Invasion.GetObjectives())
@@ -68,6 +87,54 @@ class ZW_MainRoleComponent : ScriptComponent
 		}
 
 		return false;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	static bool IsMainProjectileBarrier(IEntity entity)
+	{
+		if (!entity || !entity.GetName().EndsWith("_ProjectileBarrier"))
+			return false;
+
+		foreach (ZW_MainRoleComponent role : s_aAll)
+		{
+			if (role && role.m_ProjectileBarrier == entity)
+				return true;
+		}
+
+		return false;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	static IEntity FindMainDepot(IEntity service)
+	{
+		if (!IsInMainSafeZone(service))
+			return null;
+
+		BaseWorld world = service.GetWorld();
+		vector position = service.GetOrigin();
+		IEntity nearest;
+		float nearestDistance = float.MAX;
+		foreach (ZW_MainRoleComponent role : s_aAll)
+		{
+			if (!role)
+				continue;
+
+			SCR_SpawnPoint center = role.GetSafeZoneCenter(world);
+			if (!center)
+				continue;
+
+			float distance = vector.DistanceSqXZ(position, center.GetOrigin());
+			if (distance >= nearestDistance || distance > role.m_fSafeZoneRadius * role.m_fSafeZoneRadius)
+				continue;
+
+			IEntity depot = world.FindEntityByName(center.GetName() + "_Depot");
+			if (depot)
+			{
+				nearest = depot;
+				nearestDistance = distance;
+			}
+		}
+		return nearest;
 	}
 
 	//------------------------------------------------------------------------------------------------
