@@ -68,11 +68,19 @@ class ZW_MainRoleComponent : ScriptComponent
 	//------------------------------------------------------------------------------------------------
 	static bool IsInMainSafeZone(IEntity entity)
 	{
+		return FindMainRole(entity) != null;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	static ZW_MainRoleComponent FindMainRole(IEntity entity)
+	{
 		if (!entity || !ZW_Invasion.GetObjectives())
-			return false;
+			return null;
 
 		BaseWorld world = entity.GetWorld();
 		vector position = entity.GetOrigin();
+		ZW_MainRoleComponent nearest;
+		float nearestDistance = float.MAX;
 		foreach (ZW_MainRoleComponent role : s_aAll)
 		{
 			if (!role)
@@ -82,11 +90,15 @@ class ZW_MainRoleComponent : ScriptComponent
 			if (!center)
 				continue;
 
-			if (vector.DistanceSqXZ(position, center.GetOrigin()) <= role.m_fSafeZoneRadius * role.m_fSafeZoneRadius)
-				return true;
+			float distance = vector.DistanceSqXZ(position, center.GetOrigin());
+			if (distance < nearestDistance && distance <= role.m_fSafeZoneRadius * role.m_fSafeZoneRadius)
+			{
+				nearest = role;
+				nearestDistance = distance;
+			}
 		}
 
-		return false;
+		return nearest;
 	}
 
 	//------------------------------------------------------------------------------------------------
