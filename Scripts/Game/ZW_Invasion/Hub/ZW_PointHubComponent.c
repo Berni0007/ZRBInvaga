@@ -102,6 +102,21 @@ class ZW_PointHubComponent : ScriptComponent
 	}
 
 	//------------------------------------------------------------------------------------------------
+	static IEntity GetTentForPoint(ZW_InvasionPoint point)
+	{
+		if (!point)
+			return null;
+
+		foreach (ZW_PointHubComponent hub : s_aAll)
+		{
+			if (hub && hub.m_Point == point && hub.m_Tent)
+				return hub.m_Tent;
+		}
+
+		return null;
+	}
+
+	//------------------------------------------------------------------------------------------------
 	protected bool Create(ZW_ObjectivesComponent objectives)
 	{
 		if (m_Point)

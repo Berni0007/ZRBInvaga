@@ -7,7 +7,7 @@ $grp GenericEntity {
     m_sRfPrefab "{CD9004C6229D900B}PrefabsEditable/Auto/Compositions/Slotted/SlotFlatSmall/E_AmmoStorage_S_USSR_01.et"
    }
   }
-  coords 5149.961 0.328 2830.352
+  coords 5073.684 2.5 2159.301
  }
  ZW_Main_Attack_LightVehicles {
   components {
@@ -17,7 +17,7 @@ $grp GenericEntity {
     m_sRfPrefab "{5ACECF41C167567D}PrefabsEditable/Auto/Compositions/Slotted/SlotFlatSmall/E_VehicleMaintenance_S_Conflict_USSR_01.et"
    }
   }
-  coords 5122.997 0 2809.991
+  coords 5060.72 2.5 2133.94
  }
  ZW_Main_Attack_HeavyVehicles {
   components {
@@ -27,7 +27,7 @@ $grp GenericEntity {
     m_sRfPrefab "{6676FBB212B337D6}PrefabsEditable/Auto/Compositions/Slotted/SlotFlatMedium/E_VehicleMaintenance_M_Conflict_USSR_01.et"
    }
   }
-  coords 5094.997 0 2793.991
+  coords 5035.72 2.5 2140.94
  }
  ZW_Main_Attack_Helipad {
   components {
@@ -37,7 +37,7 @@ $grp GenericEntity {
     m_sRfPrefab "{C4114DAE8FDCE080}PrefabsEditable/Auto/Compositions/Slotted/SlotFlatLarge/E_Helipad_L_Conflict_USSR_01.et"
    }
   }
-  coords 5178.997 0 2811.991
+  coords 5102.72 2.5 2140.94
  }
  ZW_Main_Attack_Fuel {
   components {
@@ -47,7 +47,7 @@ $grp GenericEntity {
     m_sRfPrefab "{C2D040BB21F15A20}PrefabsEditable/Auto/Compositions/Slotted/SlotFlatSmall/E_FuelStorage_S_USSR_01.et"
    }
   }
-  coords 5158.383 0.373 2779.39
+  coords 5072.106 2.5 2130.339
  }
  ZW_Main_Attack_Medical {
   components {
@@ -57,7 +57,7 @@ $grp GenericEntity {
     m_sRfPrefab "{505F78512FE8B697}PrefabsEditable/Auto/Compositions/Slotted/SlotFlatMedium/E_FieldHospital_M_Conflict_USSR_01.et"
    }
   }
-  coords 5164.997 0 2880.95
+  coords 5110.72 2.5 2199.94
  }
  ZW_Main_Defense_Arsenal {
   components {
@@ -127,7 +127,7 @@ $grp GenericEntity {
     m_sRfPrefab "{450515CA8B7B05BC}Prefabs/Systems/Compositions/EntitySpawnerSlot/EntitySpawnerSlot_Vehicle_Medium.et"
    }
   }
-  coords 5094.997 0.16 2810.991
+  coords 5035.72 2.5 2157.94
  }
  ZW_Main_Defense_HeavyVehicleSlot {
   components {

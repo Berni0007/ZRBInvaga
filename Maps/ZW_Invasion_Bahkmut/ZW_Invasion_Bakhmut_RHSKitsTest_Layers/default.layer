@@ -20,6 +20,7 @@ SCR_BaseGameMode GameMode_ZW_Invasion : "{BEECC6DCCEF65323}Prefabs/MP/Modes/Plai
   }
   ZW_TimerComponent "{6AE530275D000CF0}" {
    m_iPrepSeconds 600
+   m_fDefenseHubPrepRadius 65
   }
  }
  coords 5020.381 0 5109.962
@@ -67,10 +68,10 @@ SCR_LoadoutManager : "{AA4E7419A1FF65B0}Prefabs/MP/Managers/Loadouts/LoadoutMana
 }
 $grp ZW_InvasionPoint : "{ECE27EF946F651A9}Prefabs/MP/Modes/CaptureAndHold/Areas/ZW_InvasionPoint.et" {
  {
-  coords 4530.338 0 4354.685
+  coords 4466.468 0.101 4541.339
   DrawShape 0
   m_iOrder 1
-  m_sPointName "Road of Life"
+  m_sPointName "davinci"
  }
  {
   coords 4849.213 0.037 4777.812

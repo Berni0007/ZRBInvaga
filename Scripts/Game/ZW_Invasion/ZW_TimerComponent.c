@@ -11,6 +11,9 @@ class ZW_TimerComponent : SCR_BaseGameModeComponent
 	[Attribute("600", UIWidgets.EditBox, "Фаза подготовки, сек (0 = без подготовки)", category: "Invasion")]
 	protected int m_iPrepSeconds;
 
+	[Attribute("0", UIWidgets.EditBox, "Радиус границы подготовки от палатки хаба первой точки, м (0 = выключена)", category: "Invasion")]
+	protected float m_fDefenseHubPrepRadius;
+
 	[Attribute("3600", UIWidgets.EditBox, "Время на штурм, сек", category: "Invasion")]
 	protected int m_iMatchSeconds;
 
@@ -20,12 +23,19 @@ class ZW_TimerComponent : SCR_BaseGameModeComponent
 	[RplProp()]
 	protected int m_iRemainingSeconds;
 
-	[RplProp(onRplName: "SyncMainBarrier")]
+	[RplProp(onRplName: "SyncPrepBarriers")]
 	protected bool m_bPrepPhase;
+
+	[RplProp(onRplName: "ScheduleDefenseHubBarrierSync")]
+	protected vector m_vDefenseHubCenter;
+
+	[RplProp(onRplName: "ScheduleDefenseHubBarrierSync")]
+	protected bool m_bDefenseHubCenterReady;
 
 	protected bool m_bRunning;
 	protected float m_fPrepEndsAt;
 	protected ref ZW_AttackMainBarrier m_MainBarrier;
+	protected ref ZW_AttackMainBarrier m_DefenseHubBarrier;
 
 	//------------------------------------------------------------------------------------------------
 	int GetRemainingSeconds()
@@ -46,7 +56,7 @@ class ZW_TimerComponent : SCR_BaseGameModeComponent
 
 		if (!Replication.IsServer())
 		{
-			SyncMainBarrier();
+			SyncPrepBarriers();
 			return;
 		}
 
@@ -60,7 +70,9 @@ class ZW_TimerComponent : SCR_BaseGameModeComponent
 		m_bRunning = true;
 		GetGame().GetCallqueue().CallLater(Tick, 1000, true);
 
-		SyncMainBarrier();
+		SyncPrepBarriers();
+		if (m_iPrepSeconds > 0 && m_fDefenseHubPrepRadius > 0)
+			GetGame().GetCallqueue().CallLater(InitDefenseHubBarrier, 0, false);
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -68,6 +80,13 @@ class ZW_TimerComponent : SCR_BaseGameModeComponent
 	{
 		super.OnGameModeEnd(data);
 		Stop();
+	}
+
+	//------------------------------------------------------------------------------------------------
+	override void OnDelete(IEntity owner)
+	{
+		Stop();
+		super.OnDelete(owner);
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -102,7 +121,7 @@ class ZW_TimerComponent : SCR_BaseGameModeComponent
 			{
 				m_bPrepPhase = false;
 				m_iRemainingSeconds = m_iMatchSeconds;
-				SyncMainBarrier();
+				SyncPrepBarriers();
 				objectives.StartAssault();
 			}
 			else
@@ -116,6 +135,82 @@ class ZW_TimerComponent : SCR_BaseGameModeComponent
 		}
 
 		Replication.BumpMe();
+	}
+
+	//------------------------------------------------------------------------------------------------
+	protected void InitDefenseHubBarrier()
+	{
+		if (!m_bPrepPhase)
+			return;
+
+		ZW_ObjectivesComponent objectives = ZW_Invasion.GetObjectives();
+		if (!objectives)
+			return;
+
+		IEntity tent = ZW_PointHubComponent.GetTentForPoint(objectives.GetPoint(0));
+		if (!tent)
+		{
+			Print("[ZW_Invasion] Подготовка: не найдена палатка хаба первой точки", LogLevel.WARNING);
+			return;
+		}
+
+		m_vDefenseHubCenter = tent.GetOrigin();
+		m_bDefenseHubCenterReady = true;
+		Replication.BumpMe();
+		SyncDefenseHubBarrier();
+	}
+
+	//------------------------------------------------------------------------------------------------
+	protected void SyncPrepBarriers()
+	{
+		SyncMainBarrier();
+		ScheduleDefenseHubBarrierSync();
+	}
+
+	//------------------------------------------------------------------------------------------------
+	protected void ScheduleDefenseHubBarrierSync()
+	{
+		GetGame().GetCallqueue().Remove(SyncDefenseHubBarrier);
+		if (!m_bPrepPhase)
+			SyncDefenseHubBarrier();
+		else
+			GetGame().GetCallqueue().CallLater(SyncDefenseHubBarrier, 0, false);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	protected void SyncDefenseHubBarrier()
+	{
+		if (!m_bPrepPhase || !m_bDefenseHubCenterReady || m_fDefenseHubPrepRadius <= 0)
+		{
+			ClearDefenseHubBarrier();
+			return;
+		}
+
+		if (m_DefenseHubBarrier)
+			return;
+
+		m_DefenseHubBarrier = new ZW_AttackMainBarrier();
+		if (!m_DefenseHubBarrier.Create(GetOwner().GetWorld(), m_vDefenseHubCenter, m_fDefenseHubPrepRadius))
+		{
+			ClearDefenseHubBarrier();
+			Print("[ZW_Invasion] Не создана граница хаба первой точки", LogLevel.ERROR);
+			return;
+		}
+
+		if (Replication.IsServer())
+			Print(string.Format("[ZW_Invasion] Граница подготовки хаба первой точки включена: радиус %1 м, центр %2", m_fDefenseHubPrepRadius, m_vDefenseHubCenter), LogLevel.NORMAL);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	protected void ClearDefenseHubBarrier()
+	{
+		if (!m_DefenseHubBarrier)
+			return;
+
+		m_DefenseHubBarrier.Clear();
+		m_DefenseHubBarrier = null;
+		if (Replication.IsServer() && !m_bPrepPhase)
+			Print("[ZW_Invasion] Граница подготовки хаба первой точки снята", LogLevel.NORMAL);
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -143,7 +238,7 @@ class ZW_TimerComponent : SCR_BaseGameModeComponent
 		}
 
 		m_MainBarrier = new ZW_AttackMainBarrier();
-		if (!m_MainBarrier.Create(main, radius))
+		if (!m_MainBarrier.Create(main.GetWorld(), main.GetOrigin(), radius))
 		{
 			ClearMainBarrier();
 			Print("[ZW_Invasion] Не создана граница мейна атаки", LogLevel.ERROR);
@@ -170,7 +265,10 @@ class ZW_TimerComponent : SCR_BaseGameModeComponent
 	protected void Stop()
 	{
 		GetGame().GetCallqueue().Remove(SyncMainBarrier);
+		GetGame().GetCallqueue().Remove(InitDefenseHubBarrier);
+		GetGame().GetCallqueue().Remove(SyncDefenseHubBarrier);
 		ClearMainBarrier();
+		ClearDefenseHubBarrier();
 		if (!m_bRunning)
 			return;
 

@@ -1,4 +1,4 @@
-// Физическая граница на время подготовки атаки.
+// Невидимая физическая граница на время подготовки.
 class ZW_AttackMainBarrier
 {
 	protected const int PANEL_COUNT = 32;
@@ -11,14 +11,12 @@ class ZW_AttackMainBarrier
 	protected ref array<IEntity> m_aColliders = {};
 
 	//------------------------------------------------------------------------------------------------
-	bool Create(notnull SCR_SpawnPoint main, float radius)
+	bool Create(notnull BaseWorld world, vector center, float radius)
 	{
 		m_Material = Resource.Load(MATERIAL);
 		if (!m_Material || !m_Material.IsValid())
 			return false;
 
-		BaseWorld world = main.GetWorld();
-		vector center = main.GetOrigin();
 		float step = 360.0 / PANEL_COUNT;
 		float halfStep = step * Math.DEG2RAD * 0.5;
 		float cornerRadius = radius / Math.Cos(halfStep);
@@ -93,7 +91,7 @@ class ZW_AttackMainBarrier
 		wall.ClearFlags(EntityFlags.VISIBLE, false);
 		wall.SetFlags(EntityFlags.TRACEABLE, false);
 		ref PhysicsGeomDef geoms[1] = {
-			new PhysicsGeomDef("AttackMainBoundary", geometry, MATERIAL, EPhysicsLayerDefs.Static)
+			new PhysicsGeomDef("PrepBoundary", geometry, MATERIAL, EPhysicsLayerDefs.Static)
 		};
 		if (!Physics.CreateStaticEx(wall, geoms))
 			return false;

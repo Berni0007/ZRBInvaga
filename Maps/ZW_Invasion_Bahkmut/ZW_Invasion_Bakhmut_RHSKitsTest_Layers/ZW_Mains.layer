@@ -4,7 +4,7 @@ $grp GenericEntity {
    ZW_PointHubComponent "{6AE7B00100002001}" {
    }
   }
-  coords 4550.407 2.94 4371.771
+  coords 4466.468 0.101 4541.339
  }
  ZW_Hub_02 {
   components {
@@ -49,7 +49,7 @@ $grp GenericEntity {
     m_sRfPrefab "{1D2887BB9A7D4670}Prefabs/Compositions/Misc/SubCompositions/Tents/Tent_CommandPost_USSR_01.et"
    }
   }
-  coords 5127.997 0 2829.991
+  coords 5051.72 2.5 2158.94
  }
  ZW_Main_Attack_Flag {
   components {
@@ -59,7 +59,7 @@ $grp GenericEntity {
     m_sRfPrefab "{A4C8D02EB9F130C3}Prefabs/ZRB_Bahmut/ZW_FlagPole_RF.et"
    }
   }
-  coords 5131.997 0 2831.991
+  coords 5055.72 2.5 2160.94
  }
  ZW_Main_Attack_Command {
   components {
@@ -69,7 +69,7 @@ $grp GenericEntity {
     m_sRfPrefab "{AD3E5028C7B769E2}Prefabs/ZRB_Bahmut/ZWB_MainCommand_RF.et"
    }
   }
-  coords 5139.997 0 2825.991
+  coords 5063.72 2.5 2154.94
  }
  ZW_Main_Attack_KSHM {
   components {
@@ -79,7 +79,7 @@ $grp GenericEntity {
     m_sRfPrefab "{6AE5F2A1B3C40050}Prefabs/Invasion/ZW_KSHM_RF.et"
    }
   }
-  coords 5117.676 1.019 2850.156
+  coords 5041.399 2.5 2179.105
  }
  ZW_Main_Defense_Tent {
   components {
@@ -129,7 +129,7 @@ $grp GenericEntity {
     m_sRfPrefab "{D9B91FAB817A6033}Prefabs/Vehicles/Wheeled/Ural4320/Ural4320_transport_covered.et"
    }
   }
-  coords 5110.94 0.712 2837.641
+  coords 5034.663 2.5 2166.59
  }
  ZW_Main_Defense_SupplyTruck {
   components {
@@ -150,7 +150,7 @@ $grp SCR_SpawnPoint : "{5A2220DD0C16958B}Prefabs/MP/Spawning/SpawnPoint_US.et" {
     m_bMapMarker 1
    }
   }
-  coords 5135.997 0.459 2827.991
+  coords 5059.72 2.5 2156.94
   m_Info SCR_UIInfo "{6AE7A0010000A00F}" {
    Name "Мейн атаки"
   }
@@ -170,7 +170,7 @@ $grp SCR_SpawnPoint : "{5A2220DD0C16958B}Prefabs/MP/Spawning/SpawnPoint_US.et" {
 }
 $grp GenericEntity : "{6AE5E1B4C7D29F20}Prefabs/Invasion/ZW_RallyRadioCrate.et" {
  ZW_Main_Attack_RallyCrate {
-  coords 5135.997 -0.001 2832.991
+  coords 5059.72 2.5 2161.94
  }
  ZW_Main_Defense_RallyCrate {
   coords 6112.46 0 8057.931
@@ -180,5 +180,5 @@ GenericEntity ZW_Main_Defense_Depot : "{A7FA38E450DDEC92}Prefabs/ZRB_Bahmut/ZWB_
  coords 6120.46 0 8061.931
 }
 GenericEntity ZW_Main_Attack_Depot : "{D4451973AAB057CC}Prefabs/ZRB_Bahmut/ZWB_MainDepot.et" {
- coords 5139.997 -0.001 2827.991
+ coords 5063.72 2.5 2156.94
 }
