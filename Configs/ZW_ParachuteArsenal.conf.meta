@@ -1,0 +1,15 @@
+MetaFileClass {
+ Name "{D0543DC6DC3A4489}Configs/ZW_ParachuteArsenal.conf"
+ Configurations {
+  CONFResourceClass PC {
+  }
+  CONFResourceClass XBOX_ONE : PC {
+  }
+  CONFResourceClass XBOX_SERIES : PC {
+  }
+  CONFResourceClass PS4 : PC {
+  }
+  CONFResourceClass PS5 : PC {
+  }
+ }
+}

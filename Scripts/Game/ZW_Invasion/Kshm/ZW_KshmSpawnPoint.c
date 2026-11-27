@@ -6,14 +6,6 @@ class ZW_KshmSpawnPointClass : SCR_SpawnPointClass
 
 class ZW_KshmSpawnPoint : SCR_SpawnPoint
 {
-	protected ZW_KshmComponent m_Kshm;
-
-	//------------------------------------------------------------------------------------------------
-	void ZW_SetKshm(ZW_KshmComponent kshm)
-	{
-		m_Kshm = kshm;
-	}
-
 	//------------------------------------------------------------------------------------------------
 	//! Префаб точки спавна несёт красную метку редактора; у созданной в игре её надо скрыть.
 	override void EOnInit(IEntity owner)
@@ -36,13 +28,4 @@ class ZW_KshmSpawnPoint : SCR_SpawnPoint
 		return "КШМ";
 	}
 
-	//------------------------------------------------------------------------------------------------
-	//! Враг рядом — спавн выключен (на сервере это решает ZW_KshmComponent).
-	override bool IsSpawnPointEnabled()
-	{
-		if (m_Kshm && m_Kshm.IsEnemyNear())
-			return false;
-
-		return super.IsSpawnPointEnabled();
-	}
 }

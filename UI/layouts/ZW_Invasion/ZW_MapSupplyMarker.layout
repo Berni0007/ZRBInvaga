@@ -1,0 +1,24 @@
+FrameWidgetClass "{B9976D53D6A1F207}" {
+ Name "ZW_MapSupplyMarker"
+ Slot FrameWidgetSlot "{2C1267321BBD8458}" {
+ }
+ {
+  CanvasWidgetClass "{E82B96DD0A0C561F}" {
+   Name "SupplyDrawing"
+   Slot FrameWidgetSlot "{0CE0B56D5A32E4B6}" {
+   }
+  }
+  TextWidgetClass "{E1BBE96F31C0974D}" {
+   Name "SupplyText"
+   Slot FrameWidgetSlot "{BBCA6F426CA88C73}" {
+   }
+   "Font Size" 20
+   "Min Font Size" 20
+   "Horizontal Alignment" Center
+   "Vertical Alignment" Center
+   FontProperties FontProperties "{8DFDB45CA3CC7DE5}" {
+    Font "{D3E75BCBECEB273E}UI/Fonts/NotoSans/NotoSans-Enhanced-Regular-JP-KOR-SC-LAT.fnt"
+   }
+  }
+ }
+}

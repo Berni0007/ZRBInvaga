@@ -26,11 +26,6 @@ SCR_BaseGameMode : "{1B76F75A3175E85C}Prefabs/MP/Modes/Plain/GameMode_Plain.et" 
   ZW_ObjectivesComponent "{6AE53027676CF91B}" {
   }
   ZW_MainArsenalCatalogComponent "{6AE7B861741C302D}" {
-   m_NatoItems SCR_EntityCatalogMultiList "{6AE7B861741C302E}" : "{3BFC57A750823093}Configs/EntityCatalog/NATO/ZRB_Items_NATO.conf" {
-    m_eEntityCatalogType ITEM
-   }
-   m_RfItems SCR_EntityCatalogMultiList "{6AE7B861741C302F}" : "{32BAB1B847BFDB81}Configs/EntityCatalog/RUSSIA/ZRB_InventoryItems_RU.conf" {
-   }
   }
   ZW_RallyManagerComponent "{6AE5B7D2C41A8E37}" {
   }

@@ -21,4 +21,15 @@ modded class SCR_RestrictedDeployableSpawnPoint
 
 		return super.IsSpawnPointEnabled();
 	}
+
+	override bool CanReserveFor_S(int playerId, out SCR_ESpawnResult result = SCR_ESpawnResult.SPAWN_NOT_ALLOWED)
+	{
+		ZW_RallyManagerComponent manager = ZW_RallyManagerComponent.GetInstance();
+		if (manager && manager.IsRallySpawnBlocked(this))
+		{
+			result = SCR_ESpawnResult.SPAWN_NOT_ALLOWED;
+			return false;
+		}
+		return super.CanReserveFor_S(playerId, result);
+	}
 }

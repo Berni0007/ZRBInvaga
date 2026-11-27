@@ -1,0 +1,5 @@
+MatPBRBasic {
+ Color 1.06 1.04 0.98 1
+ BCRMap "{1870CB9C9A6B00CC}Assets/ZARUBA/Parachute/Data/ZW_KhakiRipstop_BCR.edds"
+ RoughnessScale 0.94
+}

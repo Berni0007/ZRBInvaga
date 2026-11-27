@@ -1,0 +1,18 @@
+MetaFileClass {
+ Name "{40BDA195E82911EB}Assets/ZARUBA/Parachute/Animations/ZW_Parachute_Land.anm"
+ Configurations {
+  TXAResourceClass PC {
+   SourceProfile "101_FullBodyABS"
+  }
+  TXAResourceClass XBOX_ONE : PC {
+  }
+  TXAResourceClass XBOX_SERIES : PC {
+  }
+  TXAResourceClass PS4 : PC {
+  }
+  TXAResourceClass PS5 : PC {
+  }
+  TXAResourceClass HEADLESS : PC {
+  }
+ }
+}

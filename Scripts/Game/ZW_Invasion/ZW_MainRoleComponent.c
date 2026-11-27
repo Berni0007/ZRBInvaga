@@ -26,10 +26,16 @@ class ZW_MainRoleComponent : ScriptComponent
 	[Attribute("", UIWidgets.ResourceNamePicker, "Префаб, если мейн у РФ (пусто — ничего не спавнить)", "et", category: "Мейн")]
 	protected ResourceName m_sRfPrefab;
 
-	[Attribute("0", UIWidgets.CheckBox, "Метка мейна на карте", category: "Мейн")]
+	[Attribute("0", UIWidgets.CheckBox, "Метка на карте", category: "Мейн")]
 	protected bool m_bMapMarker;
 
-	[Attribute("75", UIWidgets.EditBox, "Радиус запрета стрельбы и защиты от вражеских выстрелов, м (0 — выключено)", params: "0 inf", category: "Мейн")]
+	[Attribute("0", UIWidgets.CheckBox, "Показывать метку только своей стороне", category: "Мейн")]
+	protected bool m_bMapMarkerFriendlyOnly;
+
+	[Attribute("", UIWidgets.EditBox, "Название объекта на карте", category: "Мейн")]
+	protected string m_sMapMarkerLabel;
+
+	[Attribute("100", UIWidgets.EditBox, "Радиус защиты мейна от урона и атак, м (0 — выключено)", params: "0 inf", category: "Мейн")]
 	protected float m_fSafeZoneRadius;
 
 	[Attribute("USSR,RF,RU,RUS", UIWidgets.EditBox, "Ключи фракций РФ через запятую", category: "Мейн")]
@@ -194,14 +200,19 @@ class ZW_MainRoleComponent : ScriptComponent
 		Math3D.MatrixIdentity4(params.Transform);
 		params.Transform[3] = center.GetOrigin() + Vector(0, 50, 0);
 
-		SCR_GenericBoxEntity barrier = SCR_GenericBoxEntity.Cast(GetGame().SpawnEntity(SCR_GenericBoxEntity, center.GetWorld(), params));
+		GenericEntity barrier = GenericEntity.Cast(GetGame().SpawnEntity(GenericEntity, center.GetWorld(), params));
 		if (!barrier)
 			return;
 
 		barrier.SetName(center.GetName() + "_ProjectileBarrier");
-		// Движок ищет коллизию по габаритам модели. Сам короб не отображается.
-		float diameter = 2 * m_fSafeZoneRadius;
-		barrier.Generate(Vector(diameter, 200, diameter), "{3C10D749A4E84B38}Common/Materials/Default.emat");
+		// Габариты модели нужны для поиска коллизии. Сам короб не отображается.
+		if (!SetBarrierBounds(barrier))
+		{
+			SCR_EntityHelper.DeleteEntityAndChildren(barrier);
+			Print("[ZW_Invasion] Не заданы габариты границы мейна: " + center.GetName(), LogLevel.ERROR);
+			return;
+		}
+
 		barrier.ClearFlags(EntityFlags.VISIBLE, false);
 		barrier.SetFlags(EntityFlags.TRACEABLE, false);
 		ref PhysicsGeomDef geoms[1] = {
@@ -219,6 +230,42 @@ class ZW_MainRoleComponent : ScriptComponent
 		// Коллизия хранит ссылку на поверхность. Удерживаем ресурс до удаления барьера.
 		m_ProjectileBarrierMaterial = material;
 		m_ProjectileBarrier = barrier;
+		Print("[ZW_Invasion] Создана коллизия границы мейна: " + center.GetName());
+	}
+
+	//------------------------------------------------------------------------------------------------
+	protected bool SetBarrierBounds(notnull GenericEntity barrier)
+	{
+		const float halfHeight = 100;
+		float radius = m_fSafeZoneRadius;
+		vector vertices[8] = {
+			Vector(-radius, -halfHeight, -radius), Vector(radius, -halfHeight, -radius),
+			Vector(radius, -halfHeight, radius), Vector(-radius, -halfHeight, radius),
+			Vector(-radius, halfHeight, -radius), Vector(radius, halfHeight, -radius),
+			Vector(radius, halfHeight, radius), Vector(-radius, halfHeight, radius)
+		};
+		int indices[36] = {
+			2, 3, 0, 0, 1, 2, 7, 6, 5, 5, 4, 7,
+			4, 5, 1, 1, 0, 4, 6, 7, 3, 3, 2, 6,
+			7, 4, 0, 0, 3, 7, 5, 6, 2, 2, 1, 5
+		};
+		float uvs[16] = { 0, 0, 1, 0, 1, 1, 0, 1, 0, 0, 1, 0, 1, 1, 0, 1 };
+		int vertexCounts[1] = { 8 };
+		int indexCounts[1] = { 36 };
+		string materials[1] = { "{3C10D749A4E84B38}Common/Materials/Default.emat" };
+
+		Resource resource = MeshObject.Create(1, vertexCounts, indexCounts, materials, 0);
+		if (!resource || !resource.IsValid())
+			return false;
+
+		MeshObject mesh = resource.GetResource().ToMeshObject();
+		if (!mesh)
+			return false;
+
+		mesh.UpdateVerts(0, vertices, uvs);
+		mesh.UpdateIndices(0, indices);
+		barrier.SetObject(mesh, "");
+		return true;
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -228,9 +275,14 @@ class ZW_MainRoleComponent : ScriptComponent
 	}
 
 	//------------------------------------------------------------------------------------------------
-	bool HasMapMarker()
+	bool HasMapMarker(Faction viewer, notnull Faction ownerFaction)
 	{
-		return m_bMapMarker;
+		return m_bMapMarker && (!m_bMapMarkerFriendlyOnly || viewer == ownerFaction);
+	}
+
+	string GetMapMarkerLabel()
+	{
+		return m_sMapMarkerLabel;
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -307,6 +359,12 @@ class ZW_MainRoleComponent : ScriptComponent
 
 			spawnPoint.SetFactionKey(faction.GetFactionKey());
 			Print(string.Format("[ZW_Invasion] Мейн '%1': высота %2 → %3, поверхность %4", spawnPoint.GetSpawnPointName(), initialY, spawnPos[1], surfaceY), LogLevel.NORMAL);
+		}
+		else
+		{
+			FactionAffiliationComponent affiliation = FactionAffiliationComponent.Cast(GetOwner().FindComponent(FactionAffiliationComponent));
+			if (affiliation)
+				affiliation.SetAffiliatedFaction(faction);
 		}
 
 		ResourceName prefab = m_sNatoPrefab;

@@ -1,0 +1,212 @@
+$grp GenericEntity {
+ ZW_Main_Attack_Tent {
+  components {
+   ZW_MainRoleComponent "{6AE7A0010000A002}" {
+    m_eRole ATTACK
+    m_sNatoPrefab "{F09296B9255F6704}Prefabs/Compositions/Misc/SubCompositions/Tents/Tent_CommandPost_US_01.et"
+    m_sRfPrefab "{1D2887BB9A7D4670}Prefabs/Compositions/Misc/SubCompositions/Tents/Tent_CommandPost_USSR_01.et"
+   }
+  }
+  coords 3842 2 6702
+ }
+ ZW_Main_Attack_Flag {
+  components {
+   ZW_MainRoleComponent "{6AE7A0010000A003}" {
+    m_eRole ATTACK
+    m_sNatoPrefab "{A4C8D02EB9F130C2}Prefabs/ZRB_Bahmut/ZW_FlagPole_NATO.et"
+    m_sRfPrefab "{A4C8D02EB9F130C3}Prefabs/ZRB_Bahmut/ZW_FlagPole_RF.et"
+   }
+  }
+  coords 3846 0.437 6704
+ }
+ ZW_Main_Attack_Command {
+  components {
+   ZW_MainRoleComponent "{6AE7A0010000A004}" {
+    m_eRole ATTACK
+    m_sNatoPrefab "{AD3E5028C7B769E1}Prefabs/ZRB_Bahmut/ZWB_MainCommand_NATO.et"
+    m_sRfPrefab "{AD3E5028C7B769E2}Prefabs/ZRB_Bahmut/ZWB_MainCommand_RF.et"
+   }
+  }
+  coords 3854 0.312 6698
+ }
+ ZW_Main_Attack_KSHM {
+  components {
+   ZW_MainRoleComponent "{6AE7A0010000A005}" {
+    m_eRole ATTACK
+    m_sNatoPrefab "{6AE5F2A1B3C40010}Prefabs/Invasion/ZW_KSHM_US.et"
+    m_sRfPrefab "{6AE5F2A1B3C40050}Prefabs/Invasion/ZW_KSHM_RF.et"
+   }
+  }
+  coords 3845 2.7 6723
+ }
+ ZW_Main_Defense_Tent {
+  components {
+   ZW_MainRoleComponent "{6AE7A0010000D002}" {
+    m_eRole DEFENSE
+    m_sNatoPrefab "{F09296B9255F6704}Prefabs/Compositions/Misc/SubCompositions/Tents/Tent_CommandPost_US_01.et"
+    m_sRfPrefab "{1D2887BB9A7D4670}Prefabs/Compositions/Misc/SubCompositions/Tents/Tent_CommandPost_USSR_01.et"
+   }
+  }
+  coords 3607.64 4.999 3905.17
+ }
+ ZW_Main_Defense_Flag {
+  components {
+   ZW_MainRoleComponent "{6AE7A0010000D003}" {
+    m_eRole DEFENSE
+    m_sNatoPrefab "{A4C8D02EB9F130C2}Prefabs/ZRB_Bahmut/ZW_FlagPole_NATO.et"
+    m_sRfPrefab "{A4C8D02EB9F130C3}Prefabs/ZRB_Bahmut/ZW_FlagPole_RF.et"
+   }
+  }
+  coords 3598 1.531 3912
+ }
+ ZW_Main_Defense_Command {
+  components {
+   ZW_MainRoleComponent "{6AE7A0010000D004}" {
+    m_eRole DEFENSE
+    m_sNatoPrefab "{AD3E5028C7B769E1}Prefabs/ZRB_Bahmut/ZWB_MainCommand_NATO.et"
+    m_sRfPrefab "{AD3E5028C7B769E2}Prefabs/ZRB_Bahmut/ZWB_MainCommand_RF.et"
+   }
+  }
+  coords 3605 0.047 3909
+ }
+ ZW_Main_Defense_KSHM {
+  components {
+   ZW_MainRoleComponent "{6AE7A0010000D005}" {
+    m_eRole DEFENSE
+    m_sNatoPrefab "{6AE5F2A1B3C40010}Prefabs/Invasion/ZW_KSHM_US.et"
+    m_sRfPrefab "{6AE5F2A1B3C40050}Prefabs/Invasion/ZW_KSHM_RF.et"
+   }
+  }
+  coords 3612 2.2 3883.16
+ }
+ ZW_Hub_01 {
+  components {
+   ZW_PointHubComponent "{6AE7B00100002001}" {
+   }
+  }
+  coords 4664 0 5319
+ }
+ ZW_Hub_02 {
+  components {
+   ZW_PointHubComponent "{6AE7B00100002002}" {
+   }
+  }
+  coords 4810 0 5383
+ }
+ ZW_Hub_03 {
+  components {
+   ZW_PointHubComponent "{6AE7B00100002003}" {
+   }
+  }
+  coords 5061 0 5579
+ }
+ ZW_Hub_04 {
+  components {
+   ZW_PointHubComponent "{6AE7B00100002004}" {
+   }
+  }
+  coords 5381 0 5518
+ }
+ ZW_Hub_05 {
+  components {
+   ZW_PointHubComponent "{6AE7B00100002005}" {
+   }
+  }
+  coords 5640 0 5475
+ }
+ ZW_Hub_06 {
+  components {
+   ZW_PointHubComponent "{6AE7B00100002006}" {
+   }
+  }
+  coords 4750 0 4955
+ }
+ ZW_Hub_07 {
+  components {
+   ZW_PointHubComponent "{6AE7B00100002007}" {
+   }
+  }
+  coords 4909 0 4738
+ }
+ ZW_Hub_08 {
+  components {
+   ZW_PointHubComponent "{6AE7B00100002008}" {
+   }
+  }
+  coords 5277 0 4915
+ }
+ ZW_Hub_09 {
+  components {
+   ZW_PointHubComponent "{6AE7B00100002009}" {
+   }
+  }
+  coords 5250 0 5115
+ }
+ ZW_Hub_10 {
+  components {
+   ZW_PointHubComponent "{6AE7B00100002010}" {
+   }
+  }
+  coords 5510 0 5224
+ }
+ ZW_Main_Attack_SupplyTruck {
+  components {
+   ZW_MainRoleComponent "{6AE7A0010000A006}" {
+    m_eRole ATTACK
+    m_sNatoPrefab "{81FDAD5EB644CC3D}Prefabs/Vehicles/Wheeled/M923A1/M923A1_transport_covered.et"
+    m_sRfPrefab "{D9B91FAB817A6033}Prefabs/Vehicles/Wheeled/Ural4320/Ural4320_transport_covered.et"
+   }
+  }
+  coords 3855 1.2 6725
+ }
+ ZW_Main_Defense_SupplyTruck {
+  components {
+   ZW_MainRoleComponent "{6AE7A0010000D006}" {
+    m_eRole DEFENSE
+    m_sNatoPrefab "{81FDAD5EB644CC3D}Prefabs/Vehicles/Wheeled/M923A1/M923A1_transport_covered.et"
+    m_sRfPrefab "{D9B91FAB817A6033}Prefabs/Vehicles/Wheeled/Ural4320/Ural4320_transport_covered.et"
+   }
+  }
+  coords 3620 0.8 3888
+ }
+}
+$grp SCR_SpawnPoint : "{5A2220DD0C16958B}Prefabs/MP/Spawning/SpawnPoint_US.et" {
+ ZW_Main_Attack {
+  components {
+   ZW_MainRoleComponent "{6AE7A0010000A001}" {
+    m_eRole ATTACK
+    m_bMapMarker 1
+   }
+  }
+  coords 3850 1.875 6700
+  m_Info SCR_UIInfo "{6AE7A0010000A00F}" {
+   Name "Мейн атаки"
+  }
+ }
+ ZW_Main_Defense {
+  components {
+   ZW_MainRoleComponent "{6AE7A0010000D001}" {
+    m_eRole DEFENSE
+    m_bMapMarker 1
+   }
+  }
+  coords 3600 1.5 3900
+  m_Info SCR_UIInfo "{6AE7A0010000D00F}" {
+   Name "Мейн обороны"
+  }
+ }
+}
+$grp GenericEntity : "{6AE5E1B4C7D29F20}Prefabs/Invasion/ZW_RallyRadioCrate.et" {
+ ZW_Main_Attack_RallyCrate {
+  coords 3850 0.391 6705
+ }
+ ZW_Main_Defense_RallyCrate {
+  coords 3596 0 3906
+ }
+}
+GenericEntity ZW_Main_Defense_Depot : "{A7FA38E450DDEC92}Prefabs/ZRB_Bahmut/ZWB_MainDepot_RF.et" {
+ coords 3604 0.062 3910
+}
+GenericEntity ZW_Main_Attack_Depot : "{D4451973AAB057CC}Prefabs/ZRB_Bahmut/ZWB_MainDepot.et" {
+ coords 3854 1.812 6700
+}

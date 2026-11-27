@@ -1,0 +1,50 @@
+Vehicle {
+ ID "CD9B981886D653FB"
+ components {
+  Hierarchy "{D4125ED17E85CD9C}" {
+  }
+  ControllersManagerComponent "{4D4CD1157ADF1F11}" {
+  }
+  ActionsManagerComponent "{0FF9051573A9F8AA}" {
+  }
+  EventHandlerManagerComponent "{A35D507CE7BE2750}" {
+  }
+  RplComponent "{F97EDA4B13CA7B6C}" {
+   "Rpl State Override" Runtime
+  }
+  VehicleAnimationComponent "{3A1E18C32C04924F}" {
+   AnimGraph "{BB2C380F68964876}Assets/Vehicles/Helicopters/UH1H/workspace/UH1H_Armed.agr"
+   AnimInstance "{3D635D71F43E5689}Assets/Vehicles/Helicopters/UH1H/workspace/UH1H_Armed_vehicle.asi"
+   AnimInjection AnimationAttachmentInfo "{F50F937994283A24}" {
+    AnimGraph "{BB2C380F68964876}Assets/Vehicles/Helicopters/UH1H/workspace/UH1H_Armed.agr"
+    AnimInstance "{AF1BA65D1709F749}Assets/Vehicles/Helicopters/UH1H/workspace/UH1H_Armed_player.asi"
+   }
+  }
+  SCR_BaseCompartmentManagerComponent "{AAB6A43CFE984665}" {
+   CompartmentSlots {
+    CargoCompartmentSlot ParachuteHarness : "{9BD4548866DA1807}Prefabs/Vehicles/Core/Configs/CargoCompartment_Base.conf" {
+     PassengerPositionInfo EntitySlotInfo "{699366C6D607AD06}" {
+     }
+     SkipCharacterDoorAnimationsFromSeat 1
+     SeatType 2
+     ContextName "ParachuteHarness"
+     ForcedFreeLook 1
+    }
+   }
+  }
+  ZW_ParachuteFlightComponent "{AAB6A43CF728836B}" {
+  }
+ }
+ {
+  GenericEntity ZW_ParachuteCanopy {
+   ID "E8A6AC72411A2EF5"
+   components {
+    Hierarchy "{DF6E729F2813A5C0}" {
+    }
+    MeshObject "{90D7A9C18C08CA75}" {
+     Object "{3FECA8258E1D09A3}Assets/ZARUBA/Parachute/ZW_Parachute_Canopy.xob"
+    }
+   }
+  }
+ }
+}

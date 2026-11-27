@@ -1,5 +1,10 @@
 modded class SCR_CharacterControllerComponent
 {
+	override bool GetCanMeleeAttack()
+	{
+		return !ZW_MainRoleComponent.IsInMainSafeZone(GetOwner()) && super.GetCanMeleeAttack();
+	}
+
 	//------------------------------------------------------------------------------------------------
 	override void OnPrepareControls(IEntity owner, ActionManager am, float dt, bool player)
 	{
@@ -44,6 +49,38 @@ modded class SCR_HelicopterControllerComponent
 	}
 }
 
+modded class SCR_MeleeComponent
+{
+	override protected void HandleDamageDelayed()
+	{
+		// Удар мог начаться за границей мейна, а попасть уже внутри.
+		if (!ZW_MainRoleComponent.IsInMainSafeZone(GetOwner()))
+			super.HandleDamageDelayed();
+	}
+}
+
+modded class SCR_DamageManagerComponent
+{
+	override bool HijackDamageHandling(notnull BaseDamageContext damageContext)
+	{
+		if (damageContext.damageValue > 0 && ZW_MainRoleComponent.IsInMainSafeZone(GetOwner()))
+			return true;
+
+		return super.HijackDamageHandling(damageContext);
+	}
+}
+
+modded class SCR_DestructibleBuildingComponent
+{
+	override bool HijackDamageHandling(notnull BaseDamageContext damageContext)
+	{
+		if (damageContext.damageValue > 0 && ZW_MainRoleComponent.IsInMainSafeZone(GetOwner()))
+			return true;
+
+		return super.HijackDamageHandling(damageContext);
+	}
+}
+
 modded class SCR_CharacterDamageManagerComponent
 {
 	override bool HijackDamageHandling(notnull BaseDamageContext damageContext)
@@ -67,3 +104,4 @@ modded class SCR_VehicleDamageManagerComponent
 		return super.HijackDamageHandling(damageContext);
 	}
 }
+

@@ -1,0 +1,15 @@
+GenericEntity {
+ ID "AD3E5028C7B76000"
+ components {
+  RplComponent "{AD3E5028C7B76001}" {
+  }
+  SlotManagerComponent "{AD3E5028C7B76A00}" {
+   Slots {
+    EntitySlotInfo CommandSign {
+     Prefab "{AD3E5028C7B769F1}Prefabs/ZRB_Bahmut/ZWB_MainCommandSign_NATO.et"
+    }
+   }
+  }
+
+ }
+}

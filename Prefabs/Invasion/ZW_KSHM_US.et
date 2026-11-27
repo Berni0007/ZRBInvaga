@@ -62,6 +62,8 @@ Vehicle : "{36BDCC88B17B3BFA}Prefabs/Vehicles/Wheeled/M923A1/M923A1_command.et" 
     }
    }
   }
+  ZW_KshmArsenalComponent "{6AE5F2A1B3C40007}" {
+  }
   ZW_KshmComponent "{6AE5F2A1B3C40006}" {
    m_sArsenalPrefab "{6AE5F2A1B3C40080}Prefabs/Invasion/ZW_KshmArsenal_US.et"
    m_sFactionKey "US"

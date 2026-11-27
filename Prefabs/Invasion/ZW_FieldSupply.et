@@ -1,0 +1,7 @@
+GenericEntity : "{13A99500A14FA14C}Prefabs/Props/Military/SupplyBox/SupplyShippingContainers/SupplyShippingContainers_01/SupplyShippingContainers_01_20ft.et" {
+ ID "81C974E6B3208A01"
+ components {
+  SCR_FactionAffiliationComponent "{81C974E6B3208A02}" {
+  }
+ }
+}

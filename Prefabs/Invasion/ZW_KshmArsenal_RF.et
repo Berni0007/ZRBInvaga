@@ -1,6 +1,9 @@
 GenericEntity : "{EDE6EC8B05227E3E}Prefabs/Props/Military/Arsenal/ArsenalBoxes/USSR/ArsenalBox_USSR.et" {
  ID "6AE5F2A1B3C40091"
  components {
+  ZW_KshmArsenalComponent "{6AE5F2A1B3C40094}" {
+   m_bUseRfCatalog 1
+  }
   SCR_ResourceComponent "{5D7D07D2F7A252D2}" {
    m_aConsumers {
     SCR_ResourceConsumerServicePoint "{5E5AE189C57A9FD7}" {

@@ -1,0 +1,17 @@
+MetaFileClass {
+ Name "{8D2D2B65F5D80A94}Assets/ZARUBA/Parachute/Data/ZW_OliveCloth.emat"
+ Configurations {
+  EMATResourceClass PC {
+  }
+  EMATResourceClass XBOX_ONE : PC {
+  }
+  EMATResourceClass XBOX_SERIES : PC {
+  }
+  EMATResourceClass PS4 : PC {
+  }
+  EMATResourceClass PS5 : PC {
+  }
+  EMATResourceClass HEADLESS : PC {
+  }
+ }
+}

@@ -1,7 +1,0 @@
-GenericEntity : "{BFF74A287E8300FB}Prefabs/Structures/Signs/Military/Sign_CommandPost_US_01.et" {
- ID "AD3E5028C7B769F1"
- components {
-  Hierarchy "{AD3E5028C7B76801}" {
-  }
- }
-}

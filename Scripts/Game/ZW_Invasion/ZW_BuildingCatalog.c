@@ -1,8 +1,6 @@
 // Настраивает список размещения техники в режиме строительства Invasion.
 modded class SCR_EntityCatalogManagerComponent
 {
-	protected const ResourceName ZW_RF_T90A = "{6E2FBF3549A396D7}Prefabs/Vehicles/Tracked/T90A.et";
-
 	//------------------------------------------------------------------------------------------------
 	override int GetFilteredEditorPrefabs(EEntityCatalogType catalogType, EEditorMode editorMode, SCR_Faction faction, notnull out array<ResourceName> filteredPrefabsList, array<EEditableEntityLabel> includedLabels = null, array<EEditableEntityLabel> excludedLabels = null, bool needsAllIncludedLabels = true)
 	{
@@ -10,20 +8,15 @@ modded class SCR_EntityCatalogManagerComponent
 		if (editorMode != EEditorMode.BUILDING || !ZW_Invasion.GetObjectives())
 			return count;
 
-		bool rfVehicles = catalogType == EEntityCatalogType.VEHICLE && faction && faction.GetFactionLabel() == EEditableEntityLabel.FACTION_USSR;
 		for (int i = count - 1; i >= 0; i--)
 		{
 			string prefab = filteredPrefabsList[i];
-			if (prefab.StartsWith("{F649585ABB3706C4}") || prefab.StartsWith("{47D94E1193A88497}") || prefab.StartsWith("{F6B23D17D5067C11}"))
+			if (prefab.StartsWith("{F649585ABB3706C4}") || prefab.StartsWith("{47D94E1193A88497}")
+				|| prefab.StartsWith("{F6B23D17D5067C11}") || prefab.Contains("ZU23"))
 				filteredPrefabsList.RemoveOrdered(i);
-			else if (catalogType == EEntityCatalogType.VEHICLE && (ZW_IsCIET72(prefab) || (!rfVehicles && filteredPrefabsList[i] == ZW_RF_T90A)))
+			else if (catalogType == EEntityCatalogType.VEHICLE && (ZW_IsCIET72(prefab) || prefab.Contains("Prefabs/Vehicles/Helicopters/KA52/")))
 				filteredPrefabsList.RemoveOrdered(i);
 		}
-
-		// CIE регистрирует Т-90А у FIA, хотя префаб унаследовал метку фракции СССР.
-		// Штатный реестр режима строительства запрашивает полный список и фильтрует его по меткам.
-		if (rfVehicles && !includedLabels && !excludedLabels && !filteredPrefabsList.Contains(ZW_RF_T90A))
-			filteredPrefabsList.Insert(ZW_RF_T90A);
 
 		return filteredPrefabsList.Count();
 	}

@@ -3,7 +3,7 @@
 //   - Ставит командир, рядом должен быть ещё один боец отряда.
 //   - N спавнов, потом рация исчезает.
 //   - Враг рядом с развёрнутым rally — рация исчезает.
-//   - Новую рацию командир берёт только на мейне (ящик ZW_RallyRadioCrate). Одна рация на отряд.
+//   - Новую рацию можно взять на мейне. Одна развёртываемая рация на отряд.
 
 [ComponentEditorProps(category: "ZRB/Invasion", description: "Invasion: rally отрядов")]
 class ZW_RallyManagerComponentClass : SCR_BaseGameModeComponentClass
@@ -36,7 +36,7 @@ class ZW_RallyManagerComponent : SCR_BaseGameModeComponent
 	[Attribute("{54C68E438DD34265}Prefabs/Items/Equipment/Radios/Radio_R107M.et", UIWidgets.ResourceNamePicker, "Рация rally для РФ", "et", category: "Rally")]
 	protected ResourceName m_sRfRadio;
 
-	[Attribute("USSR,RF,RU,RUS", UIWidgets.EditBox, "Ключи фракций РФ через запятую (остальные получают рацию НАТО)", category: "Rally")]
+	[Attribute("USSR,RF,RU,RUS,RHS_AFRF", UIWidgets.EditBox, "Ключи фракций РФ через запятую (остальные получают рацию НАТО)", category: "Rally")]
 	protected string m_sRfFactionKeys;
 
 	[Attribute("1", UIWidgets.CheckBox, "Игрока без отряда при спавне сажать в свободный отряд своей фракции", category: "Rally")]
@@ -59,11 +59,11 @@ class ZW_RallyManagerComponent : SCR_BaseGameModeComponent
 	[RplProp()]
 	protected ref array<int> m_aDepletedGroups = {};
 
-	//! Отряды, у которых есть рация rally (выданная на мейне). Для отказа «уже есть рация» на клиенте.
+	//! Отряды, за которыми закреплена рация rally. Для проверки выдачи на клиенте.
 	[RplProp()]
 	protected ref array<int> m_aGroupsWithRadio = {};
 
-	//! Сервер: выданные рации по ID отряда.
+	//! Сервер: закреплённые рации по ID отряда.
 	protected ref map<int, IEntity> m_mGroupRadios = new map<int, IEntity>();
 
 	//! Сервер: спавнов на rally по ID отряда (сбрасывается при выдаче новой рации).
@@ -87,11 +87,6 @@ class ZW_RallyManagerComponent : SCR_BaseGameModeComponent
 	}
 
 	//------------------------------------------------------------------------------------------------
-	float GetEnemyBlockRadius()
-	{
-		return m_fEnemyBlockRadius;
-	}
-
 	//------------------------------------------------------------------------------------------------
 	bool BlockNearSpawnPoints()
 	{
@@ -133,7 +128,35 @@ class ZW_RallyManagerComponent : SCR_BaseGameModeComponent
 		if (!groups || playerId <= 0)
 			return null;
 
-		return groups.GetPlayerGroup(playerId);
+		SCR_AIGroup group = groups.GetPlayerGroup(playerId);
+		if (group)
+			return group;
+
+		SCR_PlayerControllerGroupComponent groupComponent = SCR_PlayerControllerGroupComponent.GetPlayerControllerComponent(playerId);
+		if (groupComponent)
+			return groups.FindGroup(groupComponent.GetGroupID());
+		return null;
+	}
+
+	// Сторона игрока в матче может отличаться от фракции префаба бойца RHS.
+	protected Faction GetRallyFaction(IEntity entity)
+	{
+		int playerId = GetPlayerId(entity);
+		Faction faction;
+		if (playerId > 0)
+			faction = SCR_FactionManager.SGetPlayerFaction(playerId);
+		if (!faction)
+			faction = ZW_Invasion.GetEntityFaction(entity);
+		if (!faction)
+			return null;
+
+		string key = faction.GetFactionKey();
+		FactionManager factions = GetGame().GetFactionManager();
+		if (key == "RHS_USAF" && factions)
+			return factions.GetFactionByKey("US");
+		if (key == "RHS_AFRF" && factions)
+			return factions.GetFactionByKey("USSR");
+		return faction;
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -180,12 +203,19 @@ class ZW_RallyManagerComponent : SCR_BaseGameModeComponent
 
 	//------------------------------------------------------------------------------------------------
 	//! Общая проверка развёртывания. reason — текст для игрока.
-	bool CanDeployRally(IEntity user, out string reason)
+	bool CanDeployRally(IEntity user, out string reason, IEntity radio = null)
 	{
 		SCR_AIGroup group;
 		if (!IsSquadLeader(user, group))
 		{
 			reason = "Rally ставит только командир отряда";
+			return false;
+		}
+
+		Faction faction = GetRallyFaction(user);
+		if (radio && IsRallyRadio(radio) && (!faction || radio.GetPrefabData().GetPrefabName() != GetRadioPrefab(faction)))
+		{
+			reason = "Эта рация предназначена для другой стороны";
 			return false;
 		}
 
@@ -195,13 +225,23 @@ class ZW_RallyManagerComponent : SCR_BaseGameModeComponent
 			return false;
 		}
 
+		if (radio && Replication.IsServer())
+		{
+			IEntity assignedRadio = m_mGroupRadios.Get(group.GetGroupID());
+			if (assignedRadio && assignedRadio != radio)
+			{
+				reason = "У отряда уже есть рация rally";
+				return false;
+			}
+		}
+
 		if (!m_bDebugSkipBuddy && !HasBuddyNearby(user, group))
 		{
 			reason = BUDDY_REQUIRED_REASON;
 			return false;
 		}
 
-		if (IsEnemyNear(user.GetOrigin(), ZW_Invasion.GetEntityFaction(user), m_fEnemyBlockRadius))
+		if (IsEnemyNear(user.GetOrigin(), faction, m_fEnemyBlockRadius))
 		{
 			reason = "Рядом враг";
 			return false;
@@ -230,6 +270,15 @@ class ZW_RallyManagerComponent : SCR_BaseGameModeComponent
 		return m_bQueryFoundEnemy;
 	}
 
+	bool IsRallySpawnBlocked(notnull SCR_SpawnPoint point)
+	{
+		FactionManager factions = GetGame().GetFactionManager();
+		if (!factions)
+			return false;
+
+		return IsEnemyNear(point.GetOrigin(), factions.GetFactionByKey(point.GetFactionKey()), m_fEnemyBlockRadius);
+	}
+
 	//------------------------------------------------------------------------------------------------
 	protected bool EnemyQueryCallback(IEntity entity)
 	{
@@ -237,7 +286,7 @@ class ZW_RallyManagerComponent : SCR_BaseGameModeComponent
 		if (!character || IsDead(character))
 			return true;
 
-		Faction faction = ZW_Invasion.GetEntityFaction(character);
+		Faction faction = GetRallyFaction(character);
 		if (!faction || faction == m_QueryFaction)
 			return true;
 
@@ -286,6 +335,15 @@ class ZW_RallyManagerComponent : SCR_BaseGameModeComponent
 		return m_sNatoRadio;
 	}
 
+	bool IsRallyRadio(IEntity radio)
+	{
+		if (!radio || !radio.GetPrefabData())
+			return false;
+
+		ResourceName prefab = radio.GetPrefabData().GetPrefabName();
+		return prefab == m_sNatoRadio || prefab == m_sRfRadio;
+	}
+
 	// ---------------------------------------------------------------------------------------------
 	// Выдача рации на мейне
 	// ---------------------------------------------------------------------------------------------
@@ -307,7 +365,7 @@ class ZW_RallyManagerComponent : SCR_BaseGameModeComponent
 			return false;
 		}
 
-		if (GetRadioPrefab(ZW_Invasion.GetEntityFaction(user)).IsEmpty())
+		if (GetRadioPrefab(GetRallyFaction(user)).IsEmpty())
 		{
 			reason = "Для этой фракции рация не настроена";
 			return false;
@@ -336,7 +394,7 @@ class ZW_RallyManagerComponent : SCR_BaseGameModeComponent
 		IsSquadLeader(user, group);
 		int groupId = group.GetGroupID();
 
-		ResourceName prefab = GetRadioPrefab(ZW_Invasion.GetEntityFaction(user));
+		ResourceName prefab = GetRadioPrefab(GetRallyFaction(user));
 		Resource resource = Resource.Load(prefab);
 		if (!resource || !resource.IsValid())
 		{
@@ -354,14 +412,19 @@ class ZW_RallyManagerComponent : SCR_BaseGameModeComponent
 			return;
 		}
 
+		TrackGroupRadio(groupId, radio);
+		Print(string.Format("[ZW_Invasion] Отряд %1 получил рацию rally", groupId), LogLevel.NORMAL);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	protected void TrackGroupRadio(int groupId, notnull IEntity radio)
+	{
 		m_mGroupRadios.Set(groupId, radio);
 		m_mSpawnsUsed.Remove(groupId);
 		m_aDepletedGroups.RemoveItem(groupId);
 		if (!m_aGroupsWithRadio.Contains(groupId))
 			m_aGroupsWithRadio.Insert(groupId);
 		Replication.BumpMe();
-
-		Print(string.Format("[ZW_Invasion] Отряд %1 получил рацию rally", groupId), LogLevel.NORMAL);
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -511,7 +574,7 @@ class ZW_RallyManagerComponent : SCR_BaseGameModeComponent
 		if (!groups || playerId <= 0 || groups.GetPlayerGroup(playerId))
 			return;
 
-		Faction faction = ZW_Invasion.GetEntityFaction(entity);
+		Faction faction = GetRallyFaction(entity);
 		if (!faction)
 			return;
 
@@ -539,8 +602,16 @@ class ZW_RallyManagerComponent : SCR_BaseGameModeComponent
 
 	//------------------------------------------------------------------------------------------------
 	//! Вызывается рацией после успешного развёртывания.
-	void OnRallyDeployed(IEntity user)
+	void OnRallyDeployed(IEntity user, notnull SCR_RestrictedDeployableSpawnPointComponent radio)
 	{
+		Faction faction = GetRallyFaction(user);
+		SCR_SpawnPoint spawnPoint = radio.GetSpawnPoint();
+		if (spawnPoint && faction)
+			spawnPoint.SetFaction(faction);
+		int groupId = radio.GetGroupID();
+		if (spawnPoint && !m_mGroupRadios.Get(groupId))
+			TrackGroupRadio(groupId, radio.GetOwner());
+
 		if (m_bDebugKillAfterDeploy && user)
 			GetGame().GetCallqueue().CallLater(DebugKill, 3000, false, user);
 	}
@@ -566,7 +637,7 @@ class ZW_RallyManagerComponent : SCR_BaseGameModeComponent
 		super.OnPlayerSpawnFinalize_S(requestComponent, handlerComponent, data, entity);
 
 		if (m_bAutoJoinGroup)
-			EnsurePlayerGroup(GetPlayerId(entity), entity);
+			EnsurePlayerGroup(requestComponent.GetPlayerId(), entity);
 
 		SCR_SpawnPointSpawnData pointData = SCR_SpawnPointSpawnData.Cast(data);
 		if (!pointData)

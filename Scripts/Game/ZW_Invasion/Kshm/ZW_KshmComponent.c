@@ -4,8 +4,8 @@
 //   - Враг ближе m_fEnemyBlockRadius — спавн на КШМ выключен (точка видна, но недоступна).
 //   - Не больше m_iMaxDeployedPerFaction развёрнутых КШМ на фракцию.
 //   - Ресурсы: штатный склад снабжения в машине (SCR_ResourceComponent в префабе КШМ), загрузка
-//     штатным действием «Загрузить снабжение» у склада мейна. У развёрнутой КШМ появляется штатный
-//     арсенал (m_sArsenalPrefab), который тратит ресурсы из машины.
+//     штатным действием «Загрузить снабжение» у склада мейна. У развёрнутой КШМ появляется
+//     ZARUBA Arsenal (m_sArsenalPrefab), который тратит ресурсы из машины.
 
 [ComponentEditorProps(category: "ZRB/Invasion", description: "Invasion: КШМ — мобильный хаб атаки")]
 class ZW_KshmComponentClass : ScriptComponentClass
@@ -78,6 +78,18 @@ class ZW_KshmComponent : ScriptComponent
 		return m_sFactionKey;
 	}
 
+	static array<ZW_KshmComponent> GetAll()
+	{
+		return s_aAll;
+	}
+
+	ZW_KshmSpawnPoint GetDeployedSpawnPoint()
+	{
+		if (m_bDeployed)
+			return m_SpawnPoint;
+		return null;
+	}
+
 	//------------------------------------------------------------------------------------------------
 	override void OnPostInit(IEntity owner)
 	{
@@ -96,6 +108,8 @@ class ZW_KshmComponent : ScriptComponent
 		GetGame().GetCallqueue().Remove(CheckState);
 		s_aAll.RemoveItem(this);
 		DeleteSpawnPoint();
+		if (m_bDeployed && Replication.IsServer())
+			UpdateMapStatus();
 		super.OnDelete(owner);
 	}
 
@@ -214,12 +228,13 @@ class ZW_KshmComponent : ScriptComponent
 		}
 
 		m_SpawnPoint.SetFactionKey(m_sFactionKey);
-		m_SpawnPoint.ZW_SetKshm(this);
 		SpawnArsenal();
 		m_vDeployOrigin = GetOwner().GetOrigin();
 		m_bDeployed = true;
-		m_bEnemyNear = false;
+		m_bEnemyNear = FindEnemyNear();
+		m_SpawnPoint.SetSpawnPointEnabled_S(!m_bEnemyNear);
 		Replication.BumpMe();
+		UpdateMapStatus();
 
 		Print(string.Format("[ZW_Invasion] КШМ %1 развёрнута", m_sFactionKey), LogLevel.NORMAL);
 	}
@@ -234,6 +249,7 @@ class ZW_KshmComponent : ScriptComponent
 		m_bDeployed = false;
 		m_bEnemyNear = false;
 		Replication.BumpMe();
+		UpdateMapStatus();
 		Print(string.Format("[ZW_Invasion] КШМ %1 %2", m_sFactionKey, why), LogLevel.NORMAL);
 	}
 
@@ -252,7 +268,7 @@ class ZW_KshmComponent : ScriptComponent
 	}
 
 	//------------------------------------------------------------------------------------------------
-	//! Сервер: штатный арсенал рядом с машиной, на земле.
+	//! Сервер: арсенал рядом с машиной, на земле.
 	protected void SpawnArsenal()
 	{
 		if (m_sArsenalPrefab.IsEmpty())
@@ -275,6 +291,29 @@ class ZW_KshmComponent : ScriptComponent
 		params.Transform[3] = pos;
 
 		m_Arsenal = GetGame().SpawnEntityPrefab(resource, GetOwner().GetWorld(), params);
+		if (m_Arsenal)
+			GetGame().GetCallqueue().CallLater(LinkArsenalSupplies, 500, false, m_Arsenal);
+	}
+
+	protected void LinkArsenalSupplies(IEntity arsenal)
+	{
+		if (!arsenal || arsenal != m_Arsenal)
+			return;
+
+		SCR_ResourceComponent vehicleResources = SCR_ResourceComponent.Cast(GetOwner().FindComponent(SCR_ResourceComponent));
+		SCR_ResourceComponent arsenalResources = SCR_ResourceComponent.Cast(arsenal.FindComponent(SCR_ResourceComponent));
+		if (!vehicleResources || !arsenalResources)
+			return;
+
+		SCR_ResourceContainer supplies = vehicleResources.GetContainer(EResourceType.SUPPLIES);
+		if (!supplies)
+			return;
+
+		foreach (SCR_ResourceConsumer consumer : arsenalResources.GetConsumers())
+		{
+			if (consumer && consumer.GetResourceType() == EResourceType.SUPPLIES && !supplies.IsInteractorLinked(consumer))
+				consumer.RegisterContainer(supplies);
+		}
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -300,12 +339,26 @@ class ZW_KshmComponent : ScriptComponent
 		if (enemy != m_bEnemyNear)
 		{
 			m_bEnemyNear = enemy;
+			if (m_SpawnPoint)
+				m_SpawnPoint.SetSpawnPointEnabled_S(!enemy);
 			Replication.BumpMe();
+			UpdateMapStatus();
 			if (enemy)
 				Print(string.Format("[ZW_Invasion] КШМ %1: враг рядом — спавн выключен", m_sFactionKey), LogLevel.NORMAL);
 			else
 				Print(string.Format("[ZW_Invasion] КШМ %1: врага нет — спавн включён", m_sFactionKey), LogLevel.NORMAL);
 		}
+	}
+
+	protected void UpdateMapStatus()
+	{
+		SCR_BaseGameMode gameMode = ZW_Invasion.GetGameMode();
+		if (!gameMode)
+			return;
+
+		ZW_PointMarkersComponent markers = ZW_PointMarkersComponent.Cast(gameMode.FindComponent(ZW_PointMarkersComponent));
+		if (markers)
+			markers.UpdateKshmSnapshot();
 	}
 
 	//------------------------------------------------------------------------------------------------

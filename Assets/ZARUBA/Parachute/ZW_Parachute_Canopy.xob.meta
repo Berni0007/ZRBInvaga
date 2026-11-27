@@ -1,0 +1,62 @@
+MetaFileClass {
+ Name "{3FECA8258E1D09A3}Assets/ZARUBA/Parachute/ZW_Parachute_Canopy.xob"
+ Configurations {
+  FBXResourceClass PC {
+   MaterialAssigns {
+    MaterialAssignClass "{6AF362EDBEE22CD2}" {
+     SourceMaterial "ZW_Webbing"
+     AssignedMaterial "{60A06DE2439BAD5C}Assets/ZARUBA/Parachute/Data/ZW_Webbing.emat"
+    }
+    MaterialAssignClass "{6AF362EDBEE22CA0}" {
+     SourceMaterial "ZW_SuspensionCord"
+     AssignedMaterial "{07F68AE7BBB94B78}Assets/ZARUBA/Parachute/Data/ZW_SuspensionCord.emat"
+    }
+    MaterialAssignClass "{6AF362EDBEE22CA2}" {
+     SourceMaterial "ZW_Stitching"
+     AssignedMaterial "{E0C1A882AE15BC27}Assets/ZARUBA/Parachute/Data/ZW_Stitching.emat"
+    }
+    MaterialAssignClass "{6AF362EDBEE22CA5}" {
+     SourceMaterial "ZW_CharcoalCloth"
+     AssignedMaterial "{ADFD9AEC05E25450}Assets/ZARUBA/Parachute/Data/ZW_CharcoalCloth.emat"
+    }
+    MaterialAssignClass "{6AF362EDBEE22CA4}" {
+     SourceMaterial "ZW_OliveCloth"
+     AssignedMaterial "{8D2D2B65F5D80A94}Assets/ZARUBA/Parachute/Data/ZW_OliveCloth.emat"
+    }
+   }
+   MeshParams {
+    MeshParam Lines {
+    }
+    MeshParam Seams {
+    }
+    MeshParam Wing {
+    }
+   }
+   Common TXOCommonClass "{6AF362EDBEEAC475}" : "{0877E7C4BB2B2C9A}Configs/System/ResourceTypes/PC/MeshObjectCommon.conf" {
+   }
+   ApplicationVendor "Blender Foundation"
+   ApplicationName "Blender (stable FBX IO)"
+   ApplicationVersion "4.5.17 LTS"
+  }
+  FBXResourceClass XBOX_ONE : PC {
+   Common TXOCommonClass "{6AF362EDBEEAC51E}" : "{9D5B6207F7628CE2}Configs/System/ResourceTypes/XBOX_ONE/MeshObjectCommon.conf" {
+   }
+  }
+  FBXResourceClass XBOX_SERIES : PC {
+   Common TXOCommonClass "{6AF362EDBEEACABA}" : "{DD9F02115C764647}Configs/System/ResourceTypes/XBOX_SERIES/MeshObjectCommon.conf" {
+   }
+  }
+  FBXResourceClass PS4 : PC {
+   Common TXOCommonClass "{6AF362EDBEEACA43}" : "{53EC476BC921D99A}Configs/System/ResourceTypes/PS4/MeshObjectCommon.conf" {
+   }
+  }
+  FBXResourceClass PS5 : PC {
+   Common TXOCommonClass "{6AF362EDBEEACA0D}" : "{F62AA8E7B8EA9D26}Configs/System/ResourceTypes/PS5/MeshObjectCommon.conf" {
+   }
+  }
+  FBXResourceClass HEADLESS : PC {
+   Common TXOCommonClass "{6AF362EDBEEACBF7}" : "{3A5B3356978039E8}Configs/System/ResourceTypes/HEADLESS/MeshObjectCommon.conf" {
+   }
+  }
+ }
+}

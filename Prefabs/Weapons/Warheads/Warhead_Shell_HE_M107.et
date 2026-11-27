@@ -1,0 +1,32 @@
+GenericEntity {
+ ID "9D9BE68EA2672F76"
+ components {
+  BaseTriggerComponent "{55129E81CBAA1390}" {
+   PROJECTILE_EFFECTS {
+    ExplosionDamageContainer "{68923B51B81DA2C9}" {
+     ExplosionEffects {
+      BaseExplosionDamage "{5D8D1EB3EF9D02C6}" {
+       DamageDistance 11.5624
+      }
+      BaseExplosionDamage "{61DAF5E24D9CA168}" {
+       DamageDistance 27.3848
+      }
+      BaseExplosionDamage "{689118C182E0F242}" {
+       DamageDistance 0.9696
+      }
+      BaseExplosionDamage "{689321615D9FA900}" {
+       DamageDistance 27.3848
+      }
+     }
+    }
+    ExplosionDamageContainer "{6892E18583FFF3B4}" {
+     ExplosionEffects {
+      ExplosionFragmentationEffect "{6892E185876C70AF}" {
+       DamageDistance 50
+      }
+     }
+    }
+   }
+  }
+ }
+}

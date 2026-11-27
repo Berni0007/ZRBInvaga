@@ -1,0 +1,82 @@
+SCR_FactionManager FactionManager_USxUSSR : "{589540B35EBA8CDC}Prefabs/MP/Managers/Factions/FactionManager_USxUSSR.et" {
+ coords 5020.381 0 5109.962
+}
+SCR_BaseGameMode GameMode_ZW_Invasion : "{BEECC6DCCEF65323}Prefabs/MP/Modes/Plain/GameMode_ZW_Invasion.et" {
+ components {
+  ZW_ObjectivesComponent "{6AE53027676CF91B}" {
+   m_iDebugAutoCaptureSeconds 0
+   m_iDebugMinPlayers 1
+  }
+  ZW_TimerComponent "{6AE530275D000CF0}" {
+   m_iPrepSeconds 600
+  }
+ }
+ coords 5020.381 0 5109.962
+}
+SCR_LoadoutManager : "{97EF4C1A41F63DDB}Prefabs/MP/Managers/Loadouts/LoadoutManager_USxUSSR.et" {
+ coords 5020.381 0 5109.962
+}
+$grp ZW_InvasionPoint : "{ECE27EF946F651A9}Prefabs/MP/Modes/CaptureAndHold/Areas/ZW_InvasionPoint.et" {
+ {
+  coords 5061 0 5594
+  DrawShape 0
+  m_iOrder 1
+  m_sPointName "Привокзальна"
+  m_sLane "A"
+ }
+ {
+  coords 5381 0 5533
+  DrawShape 0
+  m_iOrder 2
+  m_sPointName "Контакт"
+  m_sLane "A"
+ }
+ {
+  coords 5250 0 5130
+  DrawShape 0
+  m_iOrder 3
+  m_sPointName "Університет"
+  m_sLane "A"
+ }
+ {
+  coords 4750 0 4970
+  DrawShape 0
+  m_iOrder 4
+  m_sPointName "Автошлях"
+  m_sLane "A"
+ }
+ {
+  coords 4664 0 5334
+  DrawShape 0
+  m_iOrder 1
+  m_sPointName "Лікарня"
+  m_sLane "B"
+ }
+ {
+  coords 4810 0 5398
+  DrawShape 0
+  m_iOrder 2
+  m_sPointName "Вокзал"
+  m_sLane "B"
+ }
+ {
+  coords 5510 0 5239
+  DrawShape 0
+  m_iOrder 3
+  m_sPointName "Корсунський"
+  m_sLane "B"
+ }
+ {
+  coords 5277 0 4930
+  DrawShape 0
+  m_iOrder 4
+  m_sPointName "Східне передмістя"
+  m_sLane "B"
+ }
+ {
+  coords 4909 0 4753
+  DrawShape 0
+  m_iOrder 5
+  m_sPointName "Західний"
+ }
+}

@@ -1,0 +1,27 @@
+Vehicle : "{87636E665CBF5E8A}Prefabs/Vehicles/M777/M777_transport.et" {
+ ID "44EC665ABD2FF04B"
+ components {
+  SCR_EditableVehicleComponent "{50DEB7C26B5EB312}" {
+   m_EntityType VEHICLE
+   m_UIInfo SCR_EditableVehicleUIInfo "{5298E609432D192D}" {
+    m_sFaction "US"
+    m_aAuthoredLabels +{
+     FACTION_US VEHICLE_TRUCK TRAIT_ARMED
+    }
+    m_EntityBudgetCost {
+     SCR_EntityBudgetValue "{5EDC86E4AF8908B6}" {
+      m_BudgetType CAMPAIGN
+      m_Value 800
+     }
+    }
+   }
+  }
+  SCR_EditableVehicleComponent "{6890C515330F07F5}" {
+   m_UIInfo SCR_EditableVehicleUIInfo "{6890C51501CFA594}" {
+    m_aAuthoredLabels +{
+     VEHICLE_TRUCK TRAIT_ARMED
+    }
+   }
+  }
+ }
+}

@@ -1,0 +1,17 @@
+MetaFileClass {
+ Name "{07F68AE7BBB94B78}Assets/ZARUBA/Parachute/Data/ZW_SuspensionCord.emat"
+ Configurations {
+  EMATResourceClass PC {
+  }
+  EMATResourceClass XBOX_ONE : PC {
+  }
+  EMATResourceClass XBOX_SERIES : PC {
+  }
+  EMATResourceClass PS4 : PC {
+  }
+  EMATResourceClass PS5 : PC {
+  }
+  EMATResourceClass HEADLESS : PC {
+  }
+ }
+}

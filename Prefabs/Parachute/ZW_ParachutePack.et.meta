@@ -1,0 +1,15 @@
+MetaFileClass {
+ Name "{CC550EA06558ECDD}Prefabs/Parachute/ZW_ParachutePack.et"
+ Configurations {
+  EntityTemplateResourceClass PC {
+  }
+  EntityTemplateResourceClass XBOX_ONE : PC {
+  }
+  EntityTemplateResourceClass XBOX_SERIES : PC {
+  }
+  EntityTemplateResourceClass PS4 : PC {
+  }
+  EntityTemplateResourceClass PS5 : PC {
+  }
+ }
+}

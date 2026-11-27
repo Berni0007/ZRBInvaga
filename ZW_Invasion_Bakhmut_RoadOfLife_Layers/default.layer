@@ -1,0 +1,56 @@
+SCR_FactionManager FactionManager_USxUSSR : "{589540B35EBA8CDC}Prefabs/MP/Managers/Factions/FactionManager_USxUSSR.et" {
+ coords 5020.381 0 5109.962
+}
+SCR_BaseGameMode GameMode_ZW_Invasion : "{BEECC6DCCEF65323}Prefabs/MP/Modes/Plain/GameMode_ZW_Invasion.et" {
+ components {
+  ZW_ObjectivesComponent "{6AE53027676CF91B}" {
+   m_iDebugAutoCaptureSeconds 0
+   m_iDebugMinPlayers 1
+  }
+  ZW_TimerComponent "{6AE530275D000CF0}" {
+   m_iPrepSeconds 600
+  }
+ }
+ coords 5020.381 0 5109.962
+}
+SCR_LoadoutManager : "{97EF4C1A41F63DDB}Prefabs/MP/Managers/Loadouts/LoadoutManager_USxUSSR.et" {
+ coords 5020.381 0 5109.962
+}
+$grp ZW_InvasionPoint : "{ECE27EF946F651A9}Prefabs/MP/Modes/CaptureAndHold/Areas/ZW_InvasionPoint.et" {
+ {
+  coords 4530.338 0 4354.685
+  DrawShape 0
+  m_iOrder 1
+  m_sPointName "Road of Life"
+ }
+ {
+  coords 4849.213 0.037 4777.812
+  DrawShape 0
+  m_iOrder 2
+  m_sPointName "Західний"
+ }
+ {
+  coords 4765 0 5240
+  DrawShape 0
+  m_iOrder 3
+  m_sPointName "Спортплощадка"
+ }
+ {
+  coords 5313 0 5283
+  DrawShape 0
+  m_iOrder 4
+  m_sPointName "Жилой квартал"
+ }
+ {
+  coords 5568.426 0.005 6006.169
+  DrawShape 0
+  m_iOrder 5
+  m_sPointName "Поляна у Заречья"
+ }
+ {
+  coords 5115.407 0 7063.286
+  DrawShape 0
+  m_iOrder 6
+  m_sPointName "Ягідне"
+ }
+}
